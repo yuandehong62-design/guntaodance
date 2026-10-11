@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>棍涛舞团---成员Show--蔡顺毅</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+:root {
+    --bg-0:#eef3fb; --bg-1:#e2ecf9; --bg-2:#d6e2f4;
+    --paper:rgba(255,255,255,0.80); --paper-solid:#ffffff;
+    --line:rgba(120,145,185,0.24); --line-strong:rgba(120,145,185,0.44);
+    --ink:#2b3346; --ink-soft:#5b6880; --ink-faint:#94a0b6;
+    --blue:#5f8fd0; --blue-soft:#a8c4e6; --blue-glow:rgba(95,143,208,0.30);
+    --violet:#9a86c8; --violet-glow:rgba(154,134,200,0.22);
+    --pink:#d99ac0; --pink-glow:rgba(217,154,192,0.18);
+    --shadow:0 16px 40px rgba(88,110,150,0.12);
+    --shadow-soft:0 6px 20px rgba(88,110,150,0.07);
+    --serif:"Songti SC","STSong","Noto Serif SC","SimSun",serif;
+    --sans:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+}
+body.cute {
+    --bg-0:#fef7fb; --bg-1:#fbeaf5; --bg-2:#f5dcee;
+    --paper:rgba(255,255,255,0.86);
+    --line:rgba(222,152,192,0.24); --line-strong:rgba(222,152,192,0.46);
+    --ink:#5b4a57; --ink-soft:#8a7286; --ink-faint:#bda3b6;
+    --blue:#e8a0c8; --blue-soft:#f4c6de; --blue-glow:rgba(232,160,200,0.32);
+    --violet:#c9a7e8; --violet-glow:rgba(201,167,232,0.26);
+    --pink:#f2a8cf; --pink-glow:rgba(242,168,207,0.22);
+    --shadow:0 16px 40px rgba(220,150,190,0.16);
+    --shadow-soft:0 6px 20px rgba(220,150,190,0.10);
+}
+
+body {
+    font-family:var(--sans);
+    background:var(--bg-0);
+    color:var(--ink);
+    line-height:1.9;
+    letter-spacing:0.02em;
+    overflow-x:hidden;
+    transition:background .6s ease, color .6s ease;
+    -webkit-font-smoothing:antialiased;
+}
+
+.bg-layer {
+    position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background:
+        radial-gradient(circle at 18% 12%, var(--blue-glow), transparent 42%),
+        radial-gradient(circle at 84% 18%, var(--violet-glow), transparent 46%),
+        radial-gradient(circle at 50% 100%, var(--pink-glow), transparent 52%),
+        linear-gradient(162deg, var(--bg-0) 0%, var(--bg-1) 52%, var(--bg-2) 100%);
+    transition:background .6s ease;
+}
+.bg-noise {
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    opacity:.28; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-size:180px 180px;
+}
+.petal-layer { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.petal {
+    position:absolute; top:-40px;
+    border-radius:60% 0 60% 0;
+    background:linear-gradient(135deg, rgba(255,255,255,.9), var(--blue-soft));
+    opacity:0;
+    animation:fall linear infinite;
+}
+@keyframes fall {
+    0%   { transform:translate3d(0,-40px,0) rotate(0deg); opacity:0; }
+    12%  { opacity:.7; }
+    85%  { opacity:.28; }
+    100% { transform:translate3d(46px,106vh,0) rotate(380deg); opacity:0; }
+}
+
+.topbar {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(255,255,255,0.72);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+    transition:box-shadow .4s ease, background .4s ease;
+}
+body.cute .topbar { background:rgba(255,245,251,0.78); }
+.topbar.scrolled { box-shadow:var(--shadow-soft); }
+.topbar-inner {
+    max-width:1240px; margin:0 auto;
+    padding:13px 24px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+}
+.brand {
+    font-family:var(--serif);
+    font-size:.9rem; font-weight:600; letter-spacing:.06em;
+    color:var(--ink); text-decoration:none;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    transition:color .3s ease; min-width:0;
+}
+.brand:hover { color:var(--blue); }
+.topbar-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.pill {
+    font-family:var(--sans);
+    font-size:.72rem; font-weight:600; letter-spacing:.06em;
+    padding:6px 14px; border-radius:999px;
+    border:1px solid var(--line-strong);
+    background:rgba(255,255,255,0.6);
+    color:var(--ink-soft);
+    cursor:pointer; text-decoration:none; white-space:nowrap;
+    transition:background .3s ease, color .3s ease, border-color .3s ease, box-shadow .3s ease, transform .3s ease;
+}
+.pill:hover {
+    color:var(--blue); border-color:var(--blue);
+    box-shadow:0 0 16px var(--blue-glow);
+    transform:translateY(-1px);
+}
+.pill-solid { background:var(--blue); border-color:var(--blue); color:#fff; }
+.pill-solid:hover { color:#fff; box-shadow:0 0 20px var(--blue-glow); }
+.lang-group {
+    display:flex; align-items:center; gap:2px;
+    border:1px solid var(--line-strong); border-radius:999px;
+    padding:2px; background:rgba(255,255,255,0.6);
+}
+.lang-opt {
+    font-size:.7rem; font-weight:700; letter-spacing:.04em;
+    padding:4px 10px; border-radius:999px;
+    color:var(--ink-faint); cursor:pointer;
+    transition:background .3s ease, color .3s ease;
+    user-select:none;
+}
+.lang-opt.active { background:var(--blue); color:#fff; }
+
+.hair {
+    width:100%; height:1px; border:0;
+    background:linear-gradient(90deg, transparent, var(--line-strong) 22%, var(--line-strong) 78%, transparent);
+}
+.eyebrow {
+    font-size:.68rem; font-weight:700; letter-spacing:.34em;
+    color:var(--ink-faint); text-transform:uppercase; white-space:nowrap;
+}
+.sec-title {
+    font-family:var(--serif); font-weight:400;
+    font-size:clamp(1.4rem, 3vw, 1.8rem);
+    letter-spacing:.08em; color:var(--ink);
+    margin-top:10px; white-space:nowrap;
+}
+.section {
+    position:relative; z-index:1;
+    max-width:1120px; margin:0 auto;
+    padding:64px 24px;
+}
+.section-head { margin-bottom:34px; text-align:center; }
+.section-head .hair { margin-top:18px; }
+
+.reveal {
+    opacity:0; transform:translateY(20px);
+    transition:opacity .9s ease, transform .9s ease;
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+.hero {
+    position:relative; z-index:1;
+    min-height:88vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:130px 24px 70px; text-align:center;
+}
+.hero-inner { max-width:820px; width:100%; }
+.hero-badge {
+    display:inline-block; padding:6px 22px;
+    border:1px solid var(--line-strong); border-radius:999px;
+    font-size:.76rem; letter-spacing:.2em;
+    color:var(--blue); background:rgba(255,255,255,0.5);
+    margin-bottom:22px;
+}
+.hero-title {
+    font-family:var(--serif);
+    font-size:clamp(2.6rem, 7vw, 4.4rem);
+    font-weight:400; letter-spacing:.12em; line-height:1.2;
+    color:var(--ink); margin-bottom:14px;
+}
+.hero-title em {
+    font-style:normal; color:var(--blue);
+    text-shadow:0 0 32px var(--blue-glow);
+}
+.hero-subtitle {
+    font-size:.96rem; color:var(--ink-soft);
+    letter-spacing:.14em; margin-bottom:0;
+}
+
+.pick-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+    gap:16px; max-width:900px; margin:0 auto;
+}
+.pick-card {
+    position:relative;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:16px; padding:22px 14px;
+    text-align:center; cursor:pointer; user-select:none;
+    min-height:110px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:8px;
+    transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease, background .3s ease;
+}
+.pick-card:hover {
+    transform:translateY(-4px);
+    border-color:var(--blue-soft); box-shadow:var(--shadow-soft);
+}
+.pick-card.active {
+    border-color:var(--blue);
+    background:rgba(95,143,208,0.12);
+    box-shadow:0 0 22px var(--blue-glow);
+}
+.pick-num {
+    font-family:var(--serif); font-size:1.7rem;
+    color:var(--blue); letter-spacing:.06em; line-height:1;
+}
+.pick-name { font-size:.88rem; color:var(--ink); letter-spacing:.08em; }
+
+.countdown-box {
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:22px; padding:34px 26px; text-align:center;
+    box-shadow:var(--shadow-soft);
+}
+.countdown-tip {
+    font-size:.72rem; letter-spacing:.3em; color:var(--ink-faint);
+    margin-bottom:18px;
+}
+.countdown-grid { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.cd-cell {
+    min-width:78px; padding:15px 10px;
+    border-radius:14px; border:1px solid var(--line);
+    background:rgba(255,255,255,0.5);
+}
+.cd-num {
+    font-family:var(--serif); font-size:2rem; font-weight:400;
+    color:var(--blue); letter-spacing:.05em; line-height:1.1;
+}
+.cd-lab {
+    font-size:.68rem; letter-spacing:.24em;
+    color:var(--ink-faint); margin-top:6px;
+}
+.countdown-target {
+    margin-top:18px; font-size:.82rem; color:var(--ink-soft);
+    letter-spacing:.08em; word-break:break-word;
+}
+.countdown-ended {
+    font-family:var(--serif); font-size:1.2rem;
+    color:var(--ink-faint); letter-spacing:.14em;
+}
+
+.venue-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:18px;
+}
+.venue-card {
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:18px; padding:22px;
+    transition:transform .4s ease, border-color .4s ease, box-shadow .4s ease;
+}
+.venue-card:hover {
+    transform:translateY(-4px); border-color:var(--blue-soft);
+    box-shadow:var(--shadow-soft);
+}
+.venue-city {
+    font-family:var(--serif); font-size:1.18rem;
+    letter-spacing:.08em; color:var(--ink); margin-bottom:6px;
+}
+.venue-name { font-size:.84rem; color:var(--ink-soft); margin-bottom:10px; word-break:break-word; }
+.venue-date { font-size:.72rem; letter-spacing:.2em; color:var(--blue); }
+
+.buy-list { display:flex; flex-direction:column; gap:12px; }
+.buy-row {
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:16px; padding:16px 22px;
+    flex-wrap:wrap;
+    transition:border-color .3s ease, box-shadow .3s ease;
+}
+.buy-row:hover { border-color:var(--blue-soft); box-shadow:var(--shadow-soft); }
+.buy-info { flex:1 1 260px; min-width:0; }
+.buy-city { font-family:var(--serif); font-size:1rem; letter-spacing:.06em; color:var(--ink); }
+.buy-sub {
+    font-size:.76rem; color:var(--ink-faint); letter-spacing:.06em;
+    margin-top:3px; word-break:break-word;
+}
+.buy-btn {
+    font-family:var(--sans); font-size:.76rem; font-weight:600;
+    letter-spacing:.1em; padding:9px 24px; border-radius:999px;
+    background:var(--blue); color:#fff; border:1px solid var(--blue);
+    cursor:pointer; white-space:nowrap;
+    transition:box-shadow .3s ease, transform .3s ease;
+}
+.buy-btn:hover { box-shadow:0 0 20px var(--blue-glow); transform:translateY(-2px); }
+.buy-btn.sold-out {
+    background:transparent; color:var(--ink-faint);
+    border-color:var(--line-strong); cursor:not-allowed;
+    box-shadow:none; transform:none;
+}
+
+.verify-box {
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:22px; padding:32px 30px;
+    max-width:600px; margin:0 auto;
+    box-shadow:var(--shadow-soft);
+}
+.verify-input {
+    width:100%; padding:13px 16px;
+    border-radius:12px; border:1px solid var(--line-strong);
+    background:rgba(255,255,255,0.7); color:var(--ink);
+    font-family:var(--sans); font-size:.88rem; letter-spacing:.06em;
+    outline:none;
+    transition:border-color .3s ease, box-shadow .3s ease;
+}
+.verify-input:focus { border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-glow); }
+.verify-input::placeholder { color:var(--ink-faint); }
+.verify-btn {
+    width:100%; margin-top:14px;
+    padding:13px; border-radius:999px;
+    border:1px solid var(--blue); background:var(--blue); color:#fff;
+    font-family:var(--sans); font-size:.82rem; font-weight:600;
+    letter-spacing:.14em; cursor:pointer;
+    transition:box-shadow .3s ease, transform .3s ease;
+}
+.verify-btn:hover { box-shadow:0 0 22px var(--blue-glow); transform:translateY(-2px); }
+.verify-result {
+    margin-top:20px; font-size:.86rem; color:var(--ink-soft);
+    line-height:1.9; word-break:break-word;
+}
+.verify-result .ok { color:var(--blue); font-weight:600; }
+.verify-result .err { color:#c46a6a; font-weight:600; }
+.verify-result .warn { color:#c9a04a; font-weight:600; }
+.verify-result .dev {
+    color:var(--violet); font-weight:700;
+    letter-spacing:.06em;
+    text-shadow:0 0 16px var(--violet-glow);
+}
+.ticket-stub { margin-top:18px; }
+.ticket-stub img {
+    width:100%; height:auto; display:block;
+    border-radius:14px; border:1px solid var(--line-strong);
+    box-shadow:var(--shadow-soft);
+}
+.stub-actions {
+    display:flex; gap:10px; flex-wrap:wrap;
+    justify-content:center; margin-top:14px;
+}
+.stub-actions a, .stub-actions button {
+    font-family:var(--sans); font-size:.74rem; font-weight:600;
+    letter-spacing:.08em; padding:9px 22px; border-radius:999px;
+    text-decoration:none; cursor:pointer;
+    border:1px solid var(--line-strong);
+    background:rgba(255,255,255,0.6);
+    color:var(--ink-soft);
+    transition:background .3s ease, color .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.stub-actions a:hover, .stub-actions button:hover {
+    color:var(--blue); border-color:var(--blue);
+    box-shadow:0 0 16px var(--blue-glow);
+}
+
+.gallery-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+    gap:12px;
+}
+.gallery-item {
+    position:relative; aspect-ratio:1/1;
+    border-radius:14px; overflow:hidden;
+    border:1px solid var(--line);
+    background:linear-gradient(160deg, rgba(255,255,255,0.7), var(--bg-1));
+    box-shadow:var(--shadow-soft);
+}
+.gallery-item::after {
+    content:'📷'; position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.6rem; color:var(--ink-faint); opacity:.5; z-index:0;
+}
+.gallery-item img {
+    position:relative; z-index:1;
+    width:100%; height:100%; object-fit:cover; display:block;
+}
+
+.notice-list { display:flex; flex-direction:column; gap:12px; }
+.notice-item {
+    position:relative;
+    padding:16px 22px 16px 32px;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:14px; font-size:.86rem; color:var(--ink-soft);
+    transition:border-color .3s ease;
+}
+.notice-item::before {
+    content:''; position:absolute; left:14px; top:50%;
+    transform:translateY(-50%);
+    width:4px; height:4px; border-radius:50%;
+    background:var(--blue);
+}
+.notice-item:hover { border-color:var(--blue-soft); }
+.notice-date {
+    font-size:.7rem; letter-spacing:.2em;
+    color:var(--ink-faint); margin-bottom:4px;
+}
+
+.jump-list {
+    display:flex; flex-direction:column; gap:14px;
+    max-width:640px; margin:0 auto;
+}
+.jump-item {
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:16px 24px;
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:16px; text-decoration:none; color:var(--ink);
+    font-size:.9rem; letter-spacing:.06em;
+    cursor:pointer;
+    transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease, background .3s ease;
+}
+.jump-item:hover {
+    transform:translateY(-3px); border-color:var(--blue);
+    box-shadow:0 0 20px var(--blue-glow);
+    background:rgba(95,143,208,0.08);
+}
+.jump-item .jump-label {
+    font-family:var(--serif); font-size:.94rem;
+}
+.jump-item .jump-arrow {
+    color:var(--blue); font-size:1rem;
+    flex-shrink:0; transition:transform .3s ease;
+}
+.jump-item:hover .jump-arrow { transform:translateX(4px); }
+
+.faq-item {
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:14px; margin-bottom:12px;
+    overflow:hidden; transition:border-color .3s ease;
+}
+.faq-item:hover { border-color:var(--blue-soft); }
+.faq-q {
+    padding:16px 22px;
+    font-family:var(--serif); font-size:.94rem;
+    letter-spacing:.05em; color:var(--ink);
+    cursor:pointer; position:relative; user-select:none;
+}
+.faq-q::after {
+    content:'+'; position:absolute; right:22px; top:50%;
+    transform:translateY(-50%);
+    font-family:var(--sans); font-size:1.1rem;
+    color:var(--blue); transition:transform .3s ease;
+}
+.faq-item.open .faq-q::after { content:'−'; }
+.faq-a {
+    max-height:0; overflow:hidden;
+    transition:max-height .35s ease, padding .3s ease;
+    padding:0 22px; font-size:.84rem; color:var(--ink-soft);
+}
+.faq-item.open .faq-a { max-height:260px; padding:0 22px 18px; }
+
+.footer {
+    position:relative; z-index:1;
+    border-top:1px solid var(--line);
+    padding:56px 24px 70px; text-align:center;
+}
+.footer-powered {
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:14px; margin-bottom:26px;
+}
+.footer-powered span {
+    font-size:.72rem; letter-spacing:.1em;
+    color:var(--ink-faint); padding:6px 16px;
+    border:1px solid var(--line); border-radius:999px;
+    background:rgba(255,255,255,0.5); white-space:nowrap;
+}
+.footer-copy {
+    font-size:.7rem; letter-spacing:.2em; color:var(--ink-faint);
+}
+.footer-copyright {
+    margin-top:14px; font-size:.7rem;
+    letter-spacing:.2em; color:var(--ink-faint);
+}
+
+.modal-overlay {
+    position:fixed; inset:0; z-index:9999;
+    background:rgba(30,40,60,0.35);
+    backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    opacity:0; pointer-events:none;
+    transition:opacity .3s ease;
+}
+.modal-overlay.active { opacity:1; pointer-events:auto; }
+.modal-dialog {
+    background:var(--paper-solid);
+    border:1px solid var(--line-strong);
+    border-radius:22px; max-width:560px; width:100%;
+    max-height:86vh; overflow-y:auto;
+    padding:32px 26px; box-shadow:var(--shadow);
+    transform:translateY(20px);
+    transition:transform .3s ease;
+}
+.modal-overlay.active .modal-dialog { transform:translateY(0); }
+.modal-close {
+    float:right; width:32px; height:32px;
+    border-radius:50%; border:none;
+    background:rgba(0,0,0,0.06);
+    color:var(--ink-soft); font-size:1.1rem; cursor:pointer;
+    transition:background .3s ease, color .3s ease;
+}
+.modal-close:hover { background:var(--blue); color:#fff; }
+.modal-title {
+    font-family:var(--serif); font-size:1.2rem;
+    letter-spacing:.08em; color:var(--ink);
+    margin-bottom:6px;
+}
+.modal-sub {
+    font-size:.8rem; color:var(--ink-faint);
+    margin-bottom:20px; word-break:break-word;
+}
+
+.ticket-opt {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 18px;
+    border:1px solid var(--line-strong);
+    border-radius:12px; margin-bottom:10px;
+    cursor:pointer;
+    transition:border-color .25s ease, background .25s ease;
+}
+.ticket-opt:hover { border-color:var(--blue-soft); }
+.ticket-opt.selected { border-color:var(--blue); background:rgba(95,143,208,0.08); }
+.ticket-opt-name { font-size:.86rem; color:var(--ink); }
+.ticket-opt-left { font-size:.72rem; color:var(--ink-faint); margin-top:2px; }
+.ticket-opt-price {
+    font-family:var(--serif); font-size:.94rem;
+    color:var(--blue); letter-spacing:.04em;
+}
+.ticket-qty { display:flex; align-items:center; gap:10px; margin-top:16px; }
+.ticket-qty label { font-size:.8rem; color:var(--ink-soft); }
+.ticket-qty input {
+    width:90px; padding:7px 10px;
+    border:1px solid var(--line-strong);
+    border-radius:8px; background:rgba(255,255,255,0.7);
+    color:var(--ink); outline:none;
+}
+.ticket-notice {
+    font-size:.72rem; color:var(--ink-faint);
+    text-align:center; margin-top:10px;
+    letter-spacing:.04em;
+}
+.pay-log {
+    margin-top:14px;
+    font-family:'Courier New', monospace;
+    font-size:.78rem; color:var(--ink-soft); line-height:1.9;
+}
+.pay-ok { color:var(--blue); font-weight:600; }
+.code-big {
+    font-family:'Courier New', monospace;
+    font-size:1.05rem; color:var(--blue);
+    letter-spacing:.1em; margin:8px 0;
+    word-break:break-all;
+}
+.copy-btn {
+    font-family:var(--sans); font-size:.74rem; font-weight:600;
+    letter-spacing:.06em; padding:8px 20px; border-radius:999px;
+    border:1px solid var(--blue);
+    background:transparent; color:var(--blue);
+    cursor:pointer;
+    transition:background .3s ease, color .3s ease;
+}
+.copy-btn:hover { background:var(--blue); color:#fff; }
+
+.img-lightbox img {
+    width:100%; height:auto; display:block;
+    border-radius:14px; border:1px solid var(--line-strong);
+}
+
+.audio-modal-text {
+    font-size:.86rem; color:var(--ink-soft);
+    line-height:1.9; margin-bottom:22px;
+    text-align:center;
+}
+.audio-modal-actions {
+    display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+}
+.audio-modal-actions button {
+    font-family:var(--sans); font-size:.78rem; font-weight:600;
+    letter-spacing:.1em; padding:10px 26px; border-radius:999px;
+    cursor:pointer;
+    transition:background .3s ease, color .3s ease, box-shadow .3s ease, transform .3s ease;
+}
+.audio-yes { background:var(--blue); border:1px solid var(--blue); color:#fff; }
+.audio-yes:hover { box-shadow:0 0 20px var(--blue-glow); transform:translateY(-2px); }
+.audio-no {
+    background:transparent; border:1px solid var(--line-strong);
+    color:var(--ink-soft);
+}
+.audio-no:hover { border-color:var(--blue); color:var(--blue); }
+
+@media (max-width:768px) {
+    .topbar-inner { padding:11px 14px; gap:8px; }
+    .brand { font-size:.74rem; max-width:36vw; }
+    .pill { font-size:.64rem; padding:5px 10px; }
+    .lang-opt { padding:3px 8px; font-size:.64rem; }
+    .section { padding:48px 16px; }
+    .hero { padding:110px 18px 50px; min-height:80vh; }
+    .cd-cell { min-width:64px; padding:12px 8px; }
+    .cd-num { font-size:1.5rem; }
+    .pick-grid { grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:12px; }
+    .pick-card { min-height:92px; padding:16px 10px; }
+    .pick-num { font-size:1.4rem; }
+    .pick-name { font-size:.8rem; }
+    .footer-powered { gap:10px; }
+    .footer-powered span { font-size:.66rem; padding:5px 12px; }
+    .jump-item { padding:14px 18px; font-size:.82rem; }
+    .jump-item .jump-label { font-size:.86rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .petal { animation:none !important; display:none; }
+    .reveal { opacity:1; transform:none; transition:none; }
+    html { scroll-behavior:auto; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-noise"></div>
+<div class="petal-layer" id="petalLayer"></div>
+
+<header class="topbar" id="topbar">
+    <div class="topbar-inner">
+        <a class="brand" href="index.html">棍涛舞团---成员Show--蔡顺毅</a>
+        <div class="topbar-actions">
+            <div class="lang-group">
+                <span class="lang-opt active" id="langZh" onclick="setLang('zh')">中</span>
+                <span class="lang-opt" id="langJa" onclick="setLang('ja')">日</span>
+            </div>
+            <button class="pill" id="skinBtn" onclick="toggleSkin()">可爱风</button>
+            <a class="pill pill-solid" href="index.html">返回主站</a>
+        </div>
+    </div>
+</header>
+
+<section class="hero" id="home">
+    <div class="hero-inner">
+        <div class="hero-badge">棍涛舞团 · 成员SHOW</div>
+        <h1 class="hero-title"><em>蔡顺毅</em></h1>
+        <p class="hero-subtitle">点播 · 多场地巡演 · 购票与校验</p>
+    </div>
+</section>
+
+<section class="section reveal" id="pick">
+    <div class="section-head">
+        <p class="eyebrow">Pick</p>
+        <h2 class="sec-title">点播</h2>
+        <hr class="hair">
+    </div>
+    <div class="pick-grid" id="pickGrid"></div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">Countdown</p>
+        <h2 class="sec-title">下一场演出倒计时</h2>
+        <hr class="hair">
+    </div>
+    <div class="countdown-box">
+        <p class="countdown-tip">NEXT SHOW</p>
+        <div class="countdown-grid" id="cdGrid">
+            <div class="cd-cell"><div class="cd-num" id="cdD">--</div><div class="cd-lab">DAYS</div></div>
+            <div class="cd-cell"><div class="cd-num" id="cdH">--</div><div class="cd-lab">HOURS</div></div>
+            <div class="cd-cell"><div class="cd-num" id="cdM">--</div><div class="cd-lab">MIN</div></div>
+            <div class="cd-cell"><div class="cd-num" id="cdS">--</div><div class="cd-lab">SEC</div></div>
+        </div>
+        <p class="countdown-target" id="cdTarget"></p>
+    </div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">Venues</p>
+        <h2 class="sec-title">多场地演出</h2>
+        <hr class="hair">
+    </div>
+    <div class="venue-grid" id="venueGrid"></div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">Tickets</p>
+        <h2 class="sec-title">购票</h2>
+        <hr class="hair">
+    </div>
+    <div class="buy-list" id="buyList"></div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">Verify</p>
+        <h2 class="sec-title">校验门票</h2>
+        <hr class="hair">
+    </div>
+    <div class="verify-box">
+        <input class="verify-input" type="text" id="verifyInput" placeholder="请输入校验码">
+        <button class="verify-btn" onclick="verifyTicket()">核 对</button>
+        <div class="verify-result" id="verifyResult"></div>
+    </div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">Gallery</p>
+        <h2 class="sec-title">现场相册</h2>
+        <hr class="hair">
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">Notice</p>
+        <h2 class="sec-title">公告栏</h2>
+        <hr class="hair">
+    </div>
+    <div class="notice-list" id="noticeList"></div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">Quick Links</p>
+        <h2 class="sec-title">快速跳转</h2>
+        <hr class="hair">
+    </div>
+    <div class="jump-list" id="jumpList">
+        <a class="jump-item" href="https://funthing.me" target="_blank" rel="noopener" onclick="return handleJump(event)">
+            <span class="jump-label">前往导航页</span>
+            <span class="jump-arrow">→</span>
+        </a>
+        <a class="jump-item" href="https://zhfld.dpdns.org" target="_blank" rel="noopener" onclick="return handleJump(event)">
+            <span class="jump-label">前往国际卤蛋贸易有限公司</span>
+            <span class="jump-arrow">→</span>
+        </a>
+        <a class="jump-item" href="https://guntaodance.cc.cd" target="_blank" rel="noopener" onclick="return handleJump(event)">
+            <span class="jump-label">前往主页</span>
+            <span class="jump-arrow">→</span>
+        </a>
+    </div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">FAQ</p>
+        <h2 class="sec-title">常见问题</h2>
+        <hr class="hair">
+    </div>
+    <div id="faqList"></div>
+</section>
+
+<footer class="footer reveal">
+    <div class="footer-powered">
+        <span>Power by DeepSeek</span>
+        <span>Power by Aliyun</span>
+        <span>Power by Cloudflare</span>
+        <span>File From 126</span>
+    </div>
+    <p class="footer-copy">棍涛舞团---成员Show--蔡顺毅</p>
+    <p class="footer-copyright">© 2026 棍涛舞团 Gun Tao Troupe</p>
+</footer>
+
+<div class="modal-overlay" id="ticketModal">
+    <div class="modal-dialog">
+        <button class="modal-close" onclick="closeTicketModal()">✕</button>
+        <div id="ticketContent"></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="audioModal">
+    <div class="modal-dialog" style="max-width:420px;text-align:center;">
+        <h3 class="modal-title">需要您的允许</h3>
+        <p class="audio-modal-text">浏览器拦截了自动播放。点击下方按钮，允许播放音乐。</p>
+        <div class="audio-modal-actions">
+            <button class="audio-yes" onclick="confirmAudio()">允许播放</button>
+            <button class="audio-no" onclick="closeAudioModal()">暂不播放</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="imgModal">
+    <div class="modal-dialog img-lightbox" style="max-width:720px;">
+        <button class="modal-close" onclick="closeImgModal()">✕</button>
+        <div id="imgModalContent"></div>
+    </div>
+</div>
+
+<script>
+const scheduleData = [
+    { id:'shanghai2025', date:'2026-10-03', time:'', city:'广州', venue:'广东第二师范学院附属南沙珠江中学', currency:'CNY', rate:1, symbol:'¥' },
+    { id:'tokyo2025', date:'2026-11-02', time:'', city:'东京', venue:'国立代々木競技場', currency:'JPY', rate:20, symbol:'JP¥' },
+    { id:'newyork2025', date:'2026-11-18', time:'', city:'纽约', venue:'Lincoln Center', currency:'USD', rate:0.14, symbol:'$' },
+    { id:'london2025', date:'2029-11-05', time:'', city:'伦敦', venue:'Royal Albert Hall', currency:'GBP', rate:0.11, symbol:'£' },
+    { id:'berlin2025', date:'2027-08-22', time:'', city:'柏林', venue:'Berghain', currency:'EUR', rate:0.13, symbol:'€' },
+    { id:'shanghai2025', date:'2027-07-03', time:'', city:'广州', venue:'地点未知？LD家？还是学校？', currency:'CNY', rate:1, symbol:'¥' },
+    { id:'sydney2025', date:'2089-09-10', time:'', city:'悉尼', venue:'Sydney Opera House', currency:'AUD', rate:0.21, symbol:'AU$' }
+];
+
+const PRICES = { normal:4600, premium:5300, vip:15300 };
+const TYPE_LABEL = { normal:'普通票', premium:'高级票', vip:'VIP看台' };
+
+/* ============ 曲名（15 个，改这里换曲名） ============ */
+const SONG_NAMES = [
+    '海屿你',  '朋友的酒',  '红色高跟鞋',  '雨爱',  '忘情牛肉面',
+    '你若三冬',  '花海',  '爱情讯息',  '甲乙丙丁',  '心墙',
+    '把回忆拼好给你', '暂未添加', '暂未添加', '暂未添加', '暂未添加'
+];
+
+const noticeData = [
+    { date:'2026-10-06', text:'908午休一展歌喉迷晕全场观众。' },
+    { date:'2026-10-08', text:'课间再次施展歌喉，观众自发为其鼓掌' },
+    { date:'2026-10-11', text:'连夜赶版为CSY创作了此网站' }
+];
+
+const faqData = [
+    { q:'如何购票？', a:'在购票栏目点击按钮，选择票种和数量后付款即可获得校验码。' },
+    { q:'校验码如何兑换座位？', a:'在校验门票区域输入校验码，系统将显示座位号及演出信息。' },
+    { q:'校验码可以转让吗？', a:'可以，但每个校验码仅能核验一次，核验后即失效。' },
+    { q:'退票政策是什么？', a:'演出前0.7S可免费退票，7天内收取200%手续费。' }
+];
+
+/* ============ 开发者模式 ============ */
+const DEV_KEY = 'csy_dev_mode';
+const DEV_CODE = 'betatext';        // 解锁：BetaText
+const NO_DEV_CODE = 'nobeta';       // 关闭：NoBeta
+
+function isDevMode() {
+    return localStorage.getItem(DEV_KEY) === '1';
+}
+function unlockDevMode() {
+    localStorage.setItem(DEV_KEY, '1');
+}
+function lockDevMode() {
+    localStorage.removeItem(DEV_KEY);
+}
+function devTip() {
+    alert('请联系管理员输入调试代码以其用测试功能');
+}
+
+/* ============ 背景音乐 start.mp3 ============ */
+const bgm = new Audio();
+bgm.src = 'start.mp3';
+bgm.loop = false;
+bgm.volume = 0.8;
+bgm.preload = 'auto';
+
+let bgmAllowed = false;
+
+function tryPlayBgm() {
+    if (bgmAllowed) return;
+    const p = bgm.play();
+    if (p && p.catch) {
+        p.then(() => { bgmAllowed = true; })
+         .catch(() => { openAudioModal(); });
+    } else {
+        bgmAllowed = true;
+    }
+}
+function stopBgm() {
+    try { bgm.pause(); bgm.currentTime = 0; } catch (e) {}
+}
+function openAudioModal() {
+    document.getElementById('audioModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeAudioModal() {
+    document.getElementById('audioModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+function confirmAudio() {
+    document.getElementById('audioModal').classList.remove('active');
+    document.body.style.overflow = '';
+    const p = bgm.play();
+    if (p && p.catch) {
+        p.then(() => { bgmAllowed = true; }).catch(() => {});
+    } else {
+        bgmAllowed = true;
+    }
+}
+
+/* ============ 歌曲播放 ============ */
+const songAudio = new Audio();
+songAudio.volume = 0.85;
+songAudio.preload = 'none';
+
+function playSongMp3(i) {
+    songAudio.pause();
+    songAudio.src = (i + 1) + '.mp3';
+    songAudio.currentTime = 0;
+    const p = songAudio.play();
+    if (p && p.catch) p.catch(() => {});
+}
+
+/* ============ 点播 ============ */
+const PICK_UNLOCKED = 15;
+const PICK_LOCKED = 12;
+const LOCAL_MP3_MAX = 12;
+let pickedIndex = null;
+
+function renderPick() {
+    const grid = document.getElementById('pickGrid');
+    if (!grid) return;
+    const count = isDevMode() ? PICK_UNLOCKED : PICK_LOCKED;
+    let html = '';
+    for (let i = 0; i < count; i++) {
+        const name = SONG_NAMES[i] || ('曲目' + (i + 1));
+        html += `<div class="pick-card" data-index="${i}" onclick="selectPick(${i})">
+                    <div class="pick-num">${String(i + 1).padStart(2, '0')}</div>
+                    <div class="pick-name">${name}</div>
+                 </div>`;
+    }
+    grid.innerHTML = html;
+}
+
+function selectPick(i) {
+    pickedIndex = i;
+    document.querySelectorAll('.pick-card').forEach(el => {
+        el.classList.toggle('active', Number(el.dataset.index) === i);
+    });
+    stopBgm();
+    bgmAllowed = false;
+
+    if (i < LOCAL_MP3_MAX) {
+        playSongMp3(i);
+        return;
+    }
+
+    if (isDevMode()) {
+        window.open('https://example.com/song' + (i + 1), '_blank', 'noopener');
+    }
+}
+
+/* ============ 快速跳转 ============ */
+function handleJump(e) {
+    if (!isDevMode()) {
+        e.preventDefault();
+        devTip();
+        return false;
+    }
+    return true;
+}
+
+/* ============ 购票 / 校验 ============ */
+function getStore() { return JSON.parse(localStorage.getItem('troupe_tickets') || '{}'); }
+function saveStore(s) { localStorage.setItem('troupe_tickets', JSON.stringify(s)); }
+function getOrders() { return JSON.parse(localStorage.getItem('troupe_orders') || '[]'); }
+function saveOrders(o) { localStorage.setItem('troupe_orders', JSON.stringify(o)); }
+function initStore() {
+    let s = getStore();
+    scheduleData.forEach(sh => { if (!s[sh.id]) s[sh.id] = { normal:80, premium:80, vip:80 }; });
+    saveStore(s);
+}
+function genSeat() {
+    return String.fromCharCode(65 + Math.floor(Math.random()*26)) +
+           String(Math.floor(Math.random()*999)+1).padStart(3,'0');
+}
+function genCode(id) {
+    return 'GT-' + id.substring(0,4).toUpperCase() + '-' +
+           Math.random().toString(36).substring(2,8).toUpperCase();
+}
+
+let selectedShowId = null;
+let ticketTimer = null;
+let payTimer = null;
+
+function openTicketModal(showId) {
+    selectedShowId = showId;
+    const sh = scheduleData.find(s => s.id === showId);
+    if (!sh) return;
+    const store = getStore();
+    const tck = store[showId] || { normal:0, premium:0, vip:0 };
+    document.getElementById('ticketContent').innerHTML = `
+        <h3 class="modal-title">${sh.city}</h3>
+        <p class="modal-sub">${sh.venue} · ${sh.date}</p>
+        <div class="ticket-opt" data-type="normal" onclick="selTicket('normal')">
+            <div><div class="ticket-opt-name">普通票</div><div class="ticket-opt-left">剩余 ${tck.normal}</div></div>
+            <div class="ticket-opt-price">¥4600</div>
+        </div>
+        <div class="ticket-opt" data-type="premium" onclick="selTicket('premium')">
+            <div><div class="ticket-opt-name">高级票</div><div class="ticket-opt-left">剩余 ${tck.premium}</div></div>
+            <div class="ticket-opt-price">¥5300</div>
+        </div>
+        <div class="ticket-opt" data-type="vip" onclick="selTicket('vip')">
+            <div><div class="ticket-opt-name">VIP看台</div><div class="ticket-opt-left">剩余 ${tck.vip}</div></div>
+            <div class="ticket-opt-price">¥15300</div>
+        </div>
+        <div class="ticket-qty">
+            <label>数量：</label>
+            <input type="number" id="ticketQty" min="1" value="1">
+        </div>
+        <button class="verify-btn" style="margin-top:18px;" onclick="startPay()">立即付款</button>
+        <p class="ticket-notice">此支付选项不会扣取您一分钱，仅供项目展示</p>
+        <div class="pay-log" id="payLog"></div>
+    `;
+    document.getElementById('ticketModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function selTicket(type) {
+    document.querySelectorAll('.ticket-opt').forEach(e => e.classList.remove('selected'));
+    const el = document.querySelector(`[data-type="${type}"]`);
+    if (el) el.classList.add('selected');
+}
+function startPay() {
+    const sel = document.querySelector('.ticket-opt.selected');
+    if (!sel) return alert('请选择票种');
+    const type = sel.dataset.type;
+    const qty = parseInt(document.getElementById('ticketQty').value);
+    if (isNaN(qty) || qty < 1) return alert('数量至少 1');
+    if (!isDevMode() && qty > 5) return alert('数量 1-5（开发者模式可解除上限）');
+
+    const store = getStore();
+    if (qty > (store[selectedShowId]?.[type] ?? 0)) return alert('余票不足');
+
+    const log = document.getElementById('payLog');
+    log.innerHTML = '';
+    const steps = [
+        '🔗 连接支付网关…',
+        '🔐 验证支付环境…',
+        '📤 雕毛还想买票？',
+        '⏳ 等待确认…',
+        '✅ 生物识别支付授权成功！自动贷款1000万条内裤'
+    ];
+    let i = 0;
+    if (payTimer) clearInterval(payTimer);
+    payTimer = setInterval(() => {
+        if (i < steps.length) { log.innerHTML += steps[i] + '<br>'; i++; }
+        else {
+            clearInterval(payTimer); payTimer = null;
+            finalizePay(type, qty);
+        }
+    }, 460);
+}
+function finalizePay(type, qty) {
+    const total = PRICES[type] * qty;
+    const store = getStore();
+    store[selectedShowId][type] -= qty;
+    saveStore(store);
+
+    const orders = getOrders();
+    const code = genCode(selectedShowId);
+    const seats = [];
+    for (let i = 0; i < qty; i++) seats.push(genSeat());
+    orders.push({ code, showId:selectedShowId, type, seats, validated:false });
+    saveOrders(orders);
+
+    const sh = scheduleData.find(s => s.id === selectedShowId);
+    document.getElementById('payLog').innerHTML = `
+        <p class="pay-ok">🎉 支付成功！</p>
+        <p>总金额：¥${total}（≈ ${sh.symbol}${(total * sh.rate).toFixed(2)}）</p>
+        <p style="margin-top:8px;">校验码：</p>
+        <p class="code-big">${code}</p>
+        <button class="copy-btn" onclick="copyCode('${code}')">📋 复制校验码</button>
+        <p class="ticket-notice" style="margin-top:14px;">请到「校验门票」处输入校验码获取座位</p>
+    `;
+    renderBuyList();
+
+    if (ticketTimer) clearTimeout(ticketTimer);
+    ticketTimer = setTimeout(closeTicketModal, 30000);
+}
+function copyCode(code) {
+    navigator.clipboard.writeText(code).then(closeTicketModal).catch(closeTicketModal);
+}
+function closeTicketModal() {
+    document.getElementById('ticketModal').classList.remove('active');
+    document.body.style.overflow = '';
+    if (ticketTimer) { clearTimeout(ticketTimer); ticketTimer = null; }
+    if (payTimer) { clearInterval(payTimer); payTimer = null; }
+}
+document.getElementById('ticketModal').addEventListener('click', function(e){
+    if (e.target === this) closeTicketModal();
+});
+
+function verifyTicket() {
+    const raw = document.getElementById('verifyInput').value.trim();
+    const res = document.getElementById('verifyResult');
+
+    if (raw.toLowerCase() === DEV_CODE) {
+        unlockDevMode();
+        res.innerHTML = '<p class="dev">欢迎回来 DehongYuan 调试模式已解锁</p>';
+        document.getElementById('verifyInput').value = '';
+        setTimeout(() => { location.reload(); }, 1500);
+        return;
+    }
+
+    if (raw.toLowerCase() === NO_DEV_CODE) {
+        lockDevMode();
+        res.innerHTML = '<p class="warn">调试模式已关闭</p>';
+        document.getElementById('verifyInput').value = '';
+        setTimeout(() => { location.reload(); }, 1500);
+        return;
+    }
+
+    if (raw.toUpperCase() === 'CSY') {
+        res.innerHTML = '';
+        openImgModal('CSY.JPG', '输入 CSY 触发的专属票图');
+        return;
+    }
+
+    const orders = getOrders();
+    const order = orders.find(o => o.code === raw);
+    if (!order) { res.innerHTML = '<p class="err">无效校验码</p>'; return; }
+    if (order.validated) { res.innerHTML = '<p class="warn">此校验码已被使用</p>'; return; }
+
+    const show = scheduleData.find(s => s.id === order.showId);
+    if (!show) { res.innerHTML = '<p class="err">演出信息错误</p>'; return; }
+
+    order.validated = true;
+    saveOrders(orders);
+
+    const dataUrl = generateTicketDataUrl(order, show);
+    const fileName = 'ticket-' + order.code + '.png';
+    const seatsHtml = order.seats.map(s => `<span style="color:var(--pink);">${s}</span>`).join('、');
+
+    res.innerHTML = `
+        <p class="ok">✅ 校验成功 · 一切信息皆为虚构，仅供展示</p>
+        <p>场馆：${show.venue}（${show.city}）</p>
+        <p>日期：${show.date} 时间：${show.time || '11:20PM'}</p>
+        <p>座位号：${seatsHtml}</p>
+        <p>票种：${TYPE_LABEL[order.type] || order.type} × ${order.seats.length} 张</p>
+        <div class="ticket-stub">
+            <img src="${dataUrl}" alt="ticket stub">
+            <div class="stub-actions">
+                <a href="${dataUrl}" download="${fileName}">下载票根</a>
+                <button onclick="openImgModal('${dataUrl}', '长按或右键可保存图片')">放大查看</button>
+            </div>
+        </div>
+    `;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+}
+function generateTicketDataUrl(order, show) {
+    const W = 820, H = 420;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#eef3fb');
+    bg.addColorStop(1, '#d6e2f4');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+    const rg = ctx.createRadialGradient(W*0.15, H*0.2, 10, W*0.15, H*0.2, 420);
+    rg.addColorStop(0, 'rgba(95,143,208,0.24)');
+    rg.addColorStop(1, 'rgba(95,143,208,0)');
+    ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+
+    const rg2 = ctx.createRadialGradient(W*0.9, H*0.9, 10, W*0.9, H*0.9, 420);
+    rg2.addColorStop(0, 'rgba(154,134,200,0.20)');
+    rg2.addColorStop(1, 'rgba(154,134,200,0)');
+    ctx.fillStyle = rg2; ctx.fillRect(0, 0, W, H);
+
+    ctx.strokeStyle = 'rgba(95,143,208,0.55)';
+    ctx.lineWidth = 2;
+    roundRect(ctx, 16, 16, W-32, H-32, 18);
+    ctx.stroke();
+
+    ctx.save();
+    ctx.setLineDash([6, 8]);
+    ctx.strokeStyle = 'rgba(95,143,208,0.35)';
+    ctx.beginPath();
+    ctx.moveTo(W*0.66, 16);
+    ctx.lineTo(W*0.66, H-16);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.fillStyle = '#2b3346';
+    ctx.font = 'bold 32px "Songti SC","STSong","Microsoft YaHei",serif';
+    ctx.fillText('棍涛舞团-csy个人Show', 48, 84);
+    ctx.font = '600 15px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillStyle = '#5f8fd0';
+    ctx.fillText('Guntao - csy - show', 48, 112);
+
+    const left = 48;
+    let y = 170;
+    const line = (label, value) => {
+        ctx.font = '600 14px "PingFang SC","Microsoft YaHei",sans-serif';
+        ctx.fillStyle = '#7f93b5';
+        ctx.fillText(label, left, y);
+        ctx.font = 'bold 19px "Songti SC","STSong","Microsoft YaHei",serif';
+        ctx.fillStyle = '#2b3346';
+        const shortVenue = value.length > 14 ? value.substring(0, 14) + '…' : value;
+        ctx.fillText(shortVenue, left + 84, y);
+        y += 40;
+    };
+    line('场馆', show.venue);
+    line('城市', show.city);
+    line('日期', show.date + (show.time ? ' ' + show.time : ''));
+    line('座位', order.seats.join('、'));
+    line('票种', (TYPE_LABEL[order.type] || order.type) + ' × ' + order.seats.length);
+
+    const rx = W*0.66 + 40;
+    ctx.font = '600 14px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillStyle = '#7f93b5';
+    ctx.fillText('校验码', rx, 84);
+
+    ctx.font = 'bold 20px "Courier New",monospace';
+    ctx.fillStyle = '#5f8fd0';
+    ctx.fillText(order.code, rx, 116);
+
+    const qs = 120, qx = rx, qy = 156;
+    ctx.fillStyle = 'rgba(43,51,70,0.85)';
+    for (let i = 0; i < 12; i++) {
+        for (let j = 0; j < 12; j++) {
+            const ch = order.code.charCodeAt((i*3 + j*5) % order.code.length);
+            const seed = (i*31 + j*17 + ch) % 3;
+            if (seed !== 0) ctx.fillRect(qx + i*(qs/12), qy + j*(qs/12), qs/12 - 1.5, qs/12 - 1.5);
+        }
+    }
+    ctx.fillStyle = '#eef3fb';
+    ctx.fillRect(qx, qy, qs/4, qs/4);
+    ctx.fillRect(qx + qs*3/4, qy, qs/4, qs/4);
+    ctx.fillRect(qx, qy + qs*3/4, qs/4, qs/4);
+    ctx.fillStyle = '#2b3346';
+    ctx.fillRect(qx+4, qy+4, qs/4-8, qs/4-8);
+    ctx.fillRect(qx + qs*3/4 + 4, qy+4, qs/4-8, qs/4-8);
+    ctx.fillRect(qx+4, qy + qs*3/4 + 4, qs/4-8, qs/4-8);
+
+    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillStyle = '#5f7396';
+    ctx.fillText('仅供展示 · 非真实票务凭证', 48, H - 36);
+
+    return canvas.toDataURL('image/png');
+}
+
+function renderVenues() {
+    document.getElementById('venueGrid').innerHTML = scheduleData.map(s =>
+        `<div class="venue-card">
+            <div class="venue-city">${s.city}</div>
+            <div class="venue-name">${s.venue}</div>
+            <div class="venue-date">${s.date}</div>
+         </div>`
+    ).join('');
+}
+function renderBuyList() {
+    const store = getStore();
+    document.getElementById('buyList').innerHTML = scheduleData.map(s => {
+        const t = store[s.id] || { normal:0, premium:0, vip:0 };
+        const soldOut = (t.normal + t.premium + t.vip) <= 0;
+        return `<div class="buy-row">
+            <div class="buy-info">
+                <div class="buy-city">${s.city}</div>
+                <div class="buy-sub">${s.venue} · ${s.date}</div>
+            </div>
+            <button class="buy-btn ${soldOut ? 'sold-out' : ''}"
+                    ${soldOut ? 'disabled' : ''}
+                    onclick="openTicketModal('${s.id}')">
+                ${soldOut ? '售罄' : '购票'}
+            </button>
+        </div>`;
+    }).join('');
+}
+function renderGallery() {
+    document.getElementById('galleryGrid').innerHTML =
+        Array.from({ length:6 }, (_, i) =>
+            `<div class="gallery-item">
+                <img src="jc${i+1}.jpg" alt="Gallery ${i+1}"
+                     loading="lazy" decoding="async"
+                     onerror="this.style.display='none'">
+             </div>`
+        ).join('');
+}
+function renderNotice() {
+    document.getElementById('noticeList').innerHTML = noticeData.map(n =>
+        `<div class="notice-item">
+            <div class="notice-date">${n.date}</div>
+            <div>${n.text}</div>
+         </div>`
+    ).join('');
+}
+function renderFaq() {
+    document.getElementById('faqList').innerHTML = faqData.map((f, i) =>
+        `<div class="faq-item" id="faq${i}">
+            <div class="faq-q" onclick="toggleFaq(${i})">${f.q}</div>
+            <div class="faq-a">${f.a}</div>
+         </div>`
+    ).join('');
+}
+function toggleFaq(i) {
+    const el = document.getElementById('faq' + i);
+    if (!el) return;
+    el.classList.toggle('open');
+}
+
+function getNextShow() {
+    const now = new Date();
+    const future = scheduleData
+        .filter(s => new Date(s.date + 'T23:59:59') > now)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+    return future[0] || null;
+}
+function tickCountdown() {
+    const next = getNextShow();
+    const grid = document.getElementById('cdGrid');
+    const target = document.getElementById('cdTarget');
+    if (!next) {
+        grid.style.display = 'none';
+        target.innerHTML = '<span class="countdown-ended">暂无未来演出</span>';
+        return;
+    }
+    grid.style.display = '';
+    const t = new Date(next.date + 'T23:59:59') - new Date();
+    if (t <= 0) {
+        target.innerHTML = '<span class="countdown-ended">已开演</span>';
+        return;
+    }
+    const d = Math.floor(t / 86400000);
+    const h = Math.floor(t % 86400000 / 3600000);
+    const m = Math.floor(t % 3600000 / 60000);
+    const s = Math.floor(t % 60000 / 1000);
+    document.getElementById('cdD').textContent = d;
+    document.getElementById('cdH').textContent = String(h).padStart(2, '0');
+    document.getElementById('cdM').textContent = String(m).padStart(2, '0');
+    document.getElementById('cdS').textContent = String(s).padStart(2, '0');
+    target.textContent = `${next.city} · ${next.venue} · ${next.date}`;
+}
+
+function openImgModal(src, hint) {
+    document.getElementById('imgModalContent').innerHTML =
+        `<img src="${src}" alt="ticket">` +
+        (hint ? `<p style="text-align:center;color:var(--ink-faint);font-size:.76rem;margin-top:10px;">${hint}</p>` : '');
+    document.getElementById('imgModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeImgModal() {
+    document.getElementById('imgModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+document.getElementById('imgModal').addEventListener('click', function(e){
+    if (e.target === this) closeImgModal();
+});
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        closeTicketModal();
+        closeImgModal();
+        closeAudioModal();
+    }
+});
+
+function toggleSkin() {
+    document.body.classList.toggle('cute');
+    const btn = document.getElementById('skinBtn');
+    btn.textContent = document.body.classList.contains('cute') ? '清冷风' : '可爱风';
+}
+
+function setLang(lang) {
+    document.getElementById('langZh').classList.toggle('active', lang === 'zh');
+    document.getElementById('langJa').classList.toggle('active', lang === 'ja');
+}
+
+(function () {
+    const bar = document.getElementById('topbar');
+    let ticking = false, last = false;
+    window.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            const should = window.scrollY > 40;
+            if (should !== last) { bar.classList.toggle('scrolled', should); last = should; }
+            ticking = false;
+        });
+    }, { passive: true });
+})();
+
+(function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const layer = document.getElementById('petalLayer');
+    const isMobile = window.matchMedia('(max-width:768px)').matches;
+    const count = isMobile ? 5 : 8;
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+        const p = document.createElement('span');
+        p.className = 'petal';
+        const size = 6 + Math.random() * 9;
+        p.style.width = size + 'px';
+        p.style.height = size * 0.85 + 'px';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (18 + Math.random() * 16) + 's';
+        p.style.animationDelay = (-Math.random() * 28) + 's';
+        frag.appendChild(p);
+    }
+    layer.appendChild(frag);
+})();
+
+(function () {
+    const els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+        els.forEach(e => e.classList.add('visible'));
+        return;
+    }
+    const ob = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+            if (en.isIntersecting) {
+                en.target.classList.add('visible');
+                ob.unobserve(en.target);
+            }
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    els.forEach(e => ob.observe(e));
+})();
+
+(function init() {
+    initStore();
+    renderPick();
+    renderVenues();
+    renderBuyList();
+    renderGallery();
+    renderNotice();
+    renderFaq();
+    tickCountdown();
+    setInterval(tickCountdown, 1000);
+    setTimeout(() => { tryPlayBgm(); }, 300);
+})();
+</script>
+</body>
+</html>

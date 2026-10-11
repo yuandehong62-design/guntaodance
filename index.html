@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<!-- Mirrored from https://gunwu.pages.dev/ by HTTrack Website Copier/3.x [XR&CO], Fri, 18 Sep 2026 11:48:55 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>棍涛舞团 | Gun Tao Troupe</title>
+    <style>
+        :root {
+            --neon-blue: #00b4d8;
+            --neon-cyan: #48cae4;
+            --neon-purple: #9b5de5;
+            --neon-pink: #f15bb5;
+            --neon-green: #00f5d4;
+            --dark-bg: #0a0a12;
+            --darker-bg: #05050a;
+            --card-bg: rgba(18, 20, 30, 0.85);
+            --card-border: rgba(72, 202, 228, 0.25);
+            --text-primary: #e0f0ff;
+            --text-secondary: #a0b8d8;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--darker-bg);
+            color: var(--text-primary);
+            line-height:1.6;
+            overflow-x:hidden;
+        }
+        /* ---------- 阅读进度条 ---------- */
+        .progress-bar {
+            position:fixed; top:0; left:0;
+            height:3px; width:0;
+            background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            z-index:1100;
+            box-shadow:0 0 10px var(--neon-blue);
+            pointer-events:none;
+            will-change:width;
+        }
+        /* ---------- 回到顶部 ---------- */
+        .back-to-top {
+            position:fixed; right:24px; bottom:24px;
+            width:46px; height:46px;
+            border-radius:50%;
+            background:rgba(10,10,20,0.85);
+            border:1px solid var(--neon-cyan);
+            color:var(--neon-cyan);
+            font-size:1.3rem; line-height:1;
+            cursor:pointer;
+            z-index:900;
+            opacity:0; pointer-events:none;
+            transition:opacity .3s, transform .3s, background .3s, box-shadow .3s;
+            backdrop-filter:blur(8px);
+            -webkit-backdrop-filter:blur(8px);
+            font-family:inherit;
+        }
+        .back-to-top.show { opacity:1; pointer-events:auto; }
+        .back-to-top:hover {
+            background:var(--neon-cyan); color:#000;
+            box-shadow:0 0 18px var(--neon-cyan);
+            transform:translateY(-3px);
+        }
+        body.cute .back-to-top {
+            background:rgba(255,245,250,0.9);
+            border-color:#ff8fc4; color:#ff5fa2;
+        }
+        body.cute .back-to-top:hover {
+            background:#ff8fc4; color:#fff; box-shadow:0 0 18px #ff9ecd;
+        }
+        /* ---------- 点击粒子 ---------- */
+        .click-spark {
+            position:fixed;
+            width:8px; height:8px;
+            border-radius:50%;
+            pointer-events:none;
+            z-index:9998;
+            transform:translate(-50%,-50%);
+            will-change:transform, opacity;
+        }
+        /* ---------- 鼠标跟随光晕 ---------- */
+        .cursor-glow {
+            position:fixed;
+            top:0; left:0;
+            width:520px; height:520px;
+            margin:-260px 0 0 -260px;
+            border-radius:50%;
+            pointer-events:none;
+            z-index:2;
+            background:radial-gradient(circle,
+                rgba(72,202,228,0.16) 0%,
+                rgba(72,202,228,0.08) 28%,
+                rgba(155,93,229,0.05) 52%,
+                transparent 70%);
+            transform:translate3d(-9999px,-9999px,0);
+            opacity:0;
+            transition:opacity 0.4s ease;
+            will-change:transform;
+            backface-visibility:hidden;
+        }
+        .cursor-glow.on { opacity:1; }
+        body.cute .cursor-glow {
+            background:radial-gradient(circle,
+                rgba(255,158,205,0.22) 0%,
+                rgba(255,158,205,0.12) 28%,
+                rgba(201,167,255,0.07) 52%,
+                transparent 70%);
+        }
+        /* ---------- 粒子 ---------- */
+        .tech-bg {
+            position:fixed; inset:0; z-index:0; pointer-events:none;
+        }
+        .particle {
+            position:absolute;
+            border-radius:50%;
+            background:var(--neon-blue);
+            box-shadow:0 0 8px var(--neon-blue);
+            animation:floatParticle 8s infinite;
+            opacity:0;
+            will-change:transform, opacity;
+            transform:translate3d(0,0,0);
+            backface-visibility:hidden;
+        }
+        @keyframes floatParticle {
+            0%,100% { transform:translate3d(0,0,0) scale(1); opacity:0; }
+            15% { opacity:0.7; }
+            40% { opacity:0.2; transform:translate3d(0,-80px,0) scale(1.4); }
+            70% { opacity:0.1; }
+        }
+        /* ---------- 导航 ---------- */
+        .navbar {
+            position:fixed; top:0; left:0; right:0; z-index:1000;
+            padding:14px 30px;
+            display:flex; align-items:center; justify-content:space-between;
+            background:rgba(10,10,18,0.85);
+            backdrop-filter:blur(8px);
+            -webkit-backdrop-filter:blur(8px);
+            border-bottom:1px solid rgba(72,202,228,0.2);
+            transition:background 0.3s, box-shadow 0.3s;
+            will-change:background, box-shadow;
+        }
+        .navbar.scrolled { background:rgba(5,5,10,0.95); box-shadow:0 4px 30px rgba(0,180,216,0.25); }
+        .nav-logo {
+            font-size:1.6rem; font-weight:900; color:var(--neon-cyan);
+            text-decoration:none; text-shadow:0 0 15px rgba(72,202,228,0.5);
+        }
+        .nav-links {
+            display:flex; gap:14px; align-items:center; list-style:none; flex-wrap:wrap;
+        }
+        .nav-links a {
+            color:#b0c8e0; text-decoration:none; font-weight:600; font-size:0.85rem;
+            padding:4px 0; transition:color 0.3s, text-shadow 0.3s; cursor:pointer; white-space:nowrap;
+            position:relative;
+        }
+        .nav-links a::after {
+            content:''; position:absolute; bottom:0; left:0; width:0; height:2px;
+            background:var(--neon-cyan); transition:width 0.3s;
+        }
+        .nav-links a:hover { color:#fff; text-shadow:0 0 12px var(--neon-cyan); }
+        .nav-links a:hover::after { width:100%; }
+        .lang-switch {
+            display:flex; align-items:center; gap:4px;
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(72,202,228,0.5);
+            border-radius:25px; padding:4px; cursor:pointer;
+        }
+        .lang-option {
+            padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:700;
+            color:#888; transition:background 0.3s, color 0.3s;
+        }
+        .lang-option.active { background:var(--neon-blue); color:#000; box-shadow:0 0 12px var(--neon-blue); }
+        .mobile-toggle {
+            display:none; background:none; border:none; color:#fff; font-size:1.6rem; cursor:pointer;
+        }
+        /* ---------- 返回导航页按钮 ---------- */
+        .nav-goto {
+            padding:5px 14px;
+            border-radius:20px;
+            font-size:0.72rem;
+            font-weight:700;
+            color:var(--neon-cyan);
+            background:rgba(72,202,228,0.1);
+            border:1px solid var(--neon-cyan);
+            cursor:pointer;
+            transition:background 0.3s, color 0.3s, box-shadow 0.3s;
+            white-space:nowrap;
+            font-family:inherit;
+        }
+        .nav-goto:hover {
+            background:var(--neon-cyan);
+            color:#000;
+            box-shadow:0 0 14px var(--neon-cyan);
+        }
+        body.cute .nav-goto {
+            color:#a87fff;
+            background:rgba(201,167,255,0.12);
+            border-color:#c9a7ff;
+        }
+        body.cute .nav-goto:hover {
+            background:#c9a7ff;
+            color:#fff;
+            box-shadow:0 0 14px #c9a7ff;
+        }
+        /* ---------- 英雄区 ---------- */
+        .hero {
+            position:relative; min-height:100vh;
+            display:flex; align-items:center; justify-content:center;
+            background:linear-gradient(135deg, rgba(0,0,0,0.75), rgba(10,10,30,0.7)), url('hero-bg.html') center/cover;
+            text-align:center; z-index:1;
+        }
+        .hero::before {
+            content:''; position:absolute; inset:0;
+            background:radial-gradient(circle at 30% 50%, rgba(72,202,228,0.12), transparent 50%),
+                       radial-gradient(circle at 70% 50%, rgba(155,93,229,0.08), transparent 50%);
+            animation:heroGlow 8s infinite alternate;
+            will-change:opacity;
+        }
+        @keyframes heroGlow { 0%{opacity:0.6} 100%{opacity:1} }
+        .hero-content { position:relative; z-index:2; max-width:850px; padding:20px; }
+        .hero-badge {
+            display:inline-block; padding:6px 24px;
+            border:1px solid rgba(72,202,228,0.6); border-radius:30px;
+            font-size:0.85rem; color:var(--neon-cyan);
+            background:rgba(10,10,20,0.35);
+            margin-bottom:20px;
+        }
+        .hero-title {
+            font-size:clamp(2.8rem, 5vw, 5rem);
+            font-weight:900; color:#fff;
+            text-shadow:0 0 30px rgba(72,202,228,0.4); margin-bottom:12px;
+        }
+        .hero-subtitle { font-size:1.1rem; color:#c0d8f0; margin-bottom:32px; }
+        .btn-primary {
+            padding:12px 32px; border-radius:40px; font-weight:700;
+            background:linear-gradient(135deg, var(--neon-blue), #0077b6);
+            color:#fff; border:none; cursor:pointer; text-decoration:none;
+            box-shadow:0 0 20px rgba(0,180,216,0.4); transition:transform 0.3s, box-shadow 0.3s; display:inline-block; margin:0 6px;
+        }
+        .btn-primary:hover { transform:translateY(-2px); }
+        .btn-outline {
+            padding:12px 32px; border-radius:40px; font-weight:700;
+            border:2px solid var(--neon-cyan); background:transparent;
+            color:var(--neon-cyan); cursor:pointer; text-decoration:none;
+            transition:background 0.3s, transform 0.3s; display:inline-block; margin:0 6px;
+        }
+        .btn-outline:hover { transform:translateY(-2px); background:rgba(72,202,228,0.1); }
+        /* ---------- 通用区块 ---------- */
+        .section {
+            padding:80px 30px; max-width:1300px; margin:0 auto; position:relative; z-index:1;
+            content-visibility:auto;
+            contain-intrinsic-size: 800px;
+        }
+        .section-header { text-align:center; margin-bottom:50px; }
+        .section-tag {
+            display:inline-block; padding:4px 18px;
+            border:1px solid var(--neon-purple); border-radius:20px;
+            font-size:0.75rem; color:var(--neon-purple); margin-bottom:12px;
+        }
+        .section-title { font-size:2.2rem; font-weight:800; color:#fff; text-shadow:0 0 18px rgba(0,180,216,0.45); }
+        .section-divider { width:70px; height:3px; background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); margin:12px auto 0; }
+        /* ---------- 筛选栏 ---------- */
+        .filter-bar {
+            display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+            margin:-30px 0 40px;
+        }
+        .filter-btn {
+            padding:5px 16px;
+            border-radius:20px;
+            font-size:0.75rem;
+            font-weight:700;
+            color:#8fa5c4;
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(72,202,228,0.3);
+            cursor:pointer;
+            transition:background .25s, color .25s, border-color .25s, box-shadow .25s;
+            font-family:inherit;
+            white-space:nowrap;
+        }
+        .filter-btn:hover { color:#fff; border-color:var(--neon-cyan); }
+        .filter-btn.active {
+            background:var(--neon-blue);
+            color:#000;
+            border-color:var(--neon-blue);
+            box-shadow:0 0 12px rgba(0,180,216,0.5);
+        }
+        body.cute .filter-btn {
+            color:#b39aad;
+            border-color:rgba(255,158,205,0.4);
+            background:rgba(255,255,255,0.6);
+        }
+        body.cute .filter-btn:hover { color:#ff5fa2; border-color:#ff8fc4; }
+        body.cute .filter-btn.active {
+            background:#ff9ecd; color:#fff; border-color:#ff9ecd;
+            box-shadow:0 0 12px rgba(255,158,205,0.5);
+        }
+        .about-content { display:flex; gap:30px; flex-wrap:wrap; align-items:center; }
+        .about-text { flex:1 1 350px; color:#c0d8f0; font-size:1rem; line-height:1.8; }
+        .about-stats { flex:1 1 280px; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .stat-card {
+            background:var(--card-bg); border:1px solid var(--card-border);
+            border-radius:14px; padding:18px; text-align:center;
+            transition:transform 0.3s, border-color 0.3s;
+        }
+        .stat-number { font-size:2rem; font-weight:900; color:var(--neon-cyan); display:block; }
+        .members-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:25px; }
+        .member-card {
+            background:var(--card-bg); border-radius:18px; padding:28px 16px;
+            text-align:center; border:1px solid var(--card-border);
+            transition:transform 0.35s, border-color 0.35s, box-shadow 0.35s; cursor:pointer;
+            will-change:transform;
+        }
+        .member-card:hover { transform:translateY(-8px); border-color:var(--neon-cyan); box-shadow:0 0 25px rgba(0,180,216,0.25); }
+        .member-avatar {
+            width:80px; height:80px; border-radius:50%;
+            background:linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            margin:0 auto 14px; display:flex; align-items:center; justify-content:center;
+            font-size:2.2rem; color:#fff; box-shadow:0 0 20px rgba(72,202,228,0.4);
+        }
+        .member-name { font-size:1.3rem; font-weight:700; color:#fff; }
+        .member-role { color:var(--neon-cyan); font-weight:500; font-size:0.9rem; }
+        .schedule-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:20px; }
+        .schedule-card {
+            background:var(--card-bg); border-radius:14px; padding:22px;
+            border:1px solid rgba(155,93,229,0.3);
+            transition:transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            display:flex; flex-direction:column; gap:6px;
+            will-change:transform;
+        }
+        .schedule-card:hover { border-color:var(--neon-pink); box-shadow:0 0 20px rgba(241,91,181,0.2); transform:translateY(-4px); }
+        .countdown {
+            font-size:0.75rem; font-weight:700;
+            color:var(--neon-green); letter-spacing:0.5px;
+        }
+        .countdown.ended { color:#7a8799; }
+        .buy-btn {
+            margin-top:8px; padding:6px 18px; border-radius:20px;
+            background:var(--neon-blue); color:#000; border:none; font-weight:700;
+            cursor:pointer; align-self:flex-start; transition:background 0.3s, box-shadow 0.3s;
+        }
+        .buy-btn:hover { background:#00c8f0; box-shadow:0 0 16px var(--neon-blue); }
+        .verify-box {
+            background:var(--card-bg); border-radius:18px; padding:32px;
+            border:1px solid var(--card-border); max-width:560px; margin:0 auto;
+        }
+        .verify-box input {
+            width:100%; padding:12px; background:#1a1e30;
+            border:1px solid var(--neon-cyan); color:#fff; border-radius:8px;
+        }
+        .testimonials-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:20px; }
+        .testimonial-card {
+            background:rgba(20,22,35,0.8); border-radius:14px; padding:22px 18px;
+            border:1px solid rgba(155,93,229,0.25); transition:border-color 0.3s, box-shadow 0.3s;
+        }
+        .testimonial-card:hover { border-color:var(--neon-pink); box-shadow:0 0 20px rgba(241,91,181,0.15); }
+        .stars { color:var(--neon-pink); font-size:1.1rem; }
+        .news-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:20px; }
+        .news-card { background:var(--card-bg); border-radius:14px; padding:20px; border:1px solid var(--card-border); }
+        /* ---------- 画廊 ---------- */
+        .gallery-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:12px; }
+        .gallery-item {
+            position:relative;
+            aspect-ratio:1/1; background:rgba(20,22,35,0.7); border-radius:10px;
+            border:1px solid var(--card-border);
+            overflow:hidden;
+        }
+        .gallery-item .ph {
+            position:absolute; inset:0;
+            display:flex; align-items:center; justify-content:center;
+            font-size:2rem; color:rgba(255,255,255,0.15);
+        }
+        .gallery-item img {
+            position:relative; z-index:1;
+            width:100%; height:100%;
+            object-fit:cover; display:block;
+        }
+        /* ---------- 合作伙伴 ---------- */
+        .partner-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; }
+        .partner-logo {
+            width:130px; height:56px; background:rgba(255,255,255,0.04);
+            border-radius:10px; display:flex; align-items:center; justify-content:center;
+            color:#8fa5c4; font-weight:700; font-size:0.9rem;
+            transition:background 0.3s, color 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            text-decoration:none;
+            border:1px solid transparent;
+        }
+        .partner-logo:hover {
+            background:rgba(72,202,228,0.12);
+            color:#fff;
+            border-color:var(--neon-cyan);
+            transform:translateY(-3px);
+            box-shadow:0 0 18px rgba(0,180,216,0.3);
+        }
+        body.cute .partner-logo { background:rgba(255,158,205,0.1); color:#b39aad; }
+        body.cute .partner-logo:hover {
+            background:rgba(255,158,205,0.25);
+            color:#ff5fa2;
+            border-color:#ff8fc4;
+            box-shadow:0 0 18px rgba(255,158,205,0.35);
+        }
+        .faq-item {
+            background:var(--card-bg); border-radius:12px; padding:18px;
+            margin-bottom:14px; border:1px solid var(--card-border);
+        }
+        .contact-wrapper { display:flex; gap:24px; flex-wrap:wrap; }
+        .contact-info {
+            flex:1 1 320px; background:var(--card-bg); border-radius:18px;
+            padding:30px 24px; border:1px solid var(--card-border);
+            transition:border-color 0.3s, box-shadow 0.3s;
+        }
+        .contact-info:hover { border-color:var(--neon-purple); box-shadow:0 0 20px rgba(155,93,229,0.15); }
+        .qq-link { color:var(--neon-blue); text-decoration:none; font-weight:700; }
+        .ticket-option {
+            display:flex; justify-content:space-between; padding:10px 14px;
+            border:1px solid rgba(72,202,228,0.25); border-radius:10px; margin-bottom:10px;
+            cursor:pointer; transition:border-color 0.2s, background 0.2s;
+        }
+        .ticket-option.selected { border-color:var(--neon-pink); background:rgba(241,91,181,0.08); }
+        .ticket-price { font-weight:700; color:var(--neon-cyan); }
+        .ticket-local { color:#8899cc; font-size:0.75rem; }
+        .copy-btn {
+            background:rgba(72,202,228,0.15); border:1px solid var(--neon-cyan);
+            color:var(--neon-cyan); padding:4px 14px; border-radius:14px; cursor:pointer;
+            font-weight:600; transition:background 0.3s, color 0.3s;
+        }
+        .copy-btn:hover { background:var(--neon-cyan); color:#000; }
+        /* ---------- 页脚 ---------- */
+        .site-footer {
+            background:#030308; padding:40px 20px; text-align:center;
+            border-top:1px solid rgba(72,202,228,0.15);
+        }
+        .footer-powered {
+            display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-bottom:16px;
+        }
+        .power-link {
+            padding:8px 18px; border-radius:30px; text-decoration:none; font-weight:700;
+            border:1px solid; transition:transform 0.3s; display:inline-flex; align-items:center; gap:4px;
+            font-size:0.8rem;
+        }
+        .power-link:hover { transform:translateY(-2px); }
+        .pw-cloudflare { color:#f6821f; border-color:#f6821f; }
+        .pw-deepseek { color:#b89ef5; border-color:#b89ef5; }
+        .pw-chatgpt { color:#74c89b; border-color:#74c89b; }
+        .pw-grok { color:#ff6b6b; border-color:#ff6b6b; }
+        /* ---------- 模态框 ---------- */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999;
+            display:flex; align-items:center; justify-content:center; padding:20px;
+            opacity:0; pointer-events:none; transition:opacity 0.35s;
+        }
+        .modal-overlay.active { opacity:1; pointer-events:auto; }
+        .modal-dialog {
+            background:linear-gradient(145deg, #111320, #1a1e30);
+            border-radius:24px; max-width:600px; width:100%; max-height:85vh;
+            overflow-y:auto; padding:32px 24px;
+            border:1px solid var(--neon-cyan); box-shadow:0 0 50px rgba(0,180,216,0.4);
+            transform:translateY(30px); transition:transform 0.35s;
+            will-change:transform;
+        }
+        .modal-overlay.active .modal-dialog { transform:translateY(0); }
+        .modal-close {
+            position:sticky; top:0; float:right;
+            background:rgba(255,255,255,0.08); border:none; color:#fff;
+            width:32px; height:32px; border-radius:50%; font-size:1.2rem; cursor:pointer;
+            transition:background 0.3s, box-shadow 0.3s;
+        }
+        .modal-close:hover { background:var(--neon-pink); box-shadow:0 0 16px var(--neon-pink); }
+        /* ---------- 返回导航页弹窗底部小字 ---------- */
+        .nav-fallback {
+            margin-top:22px;
+            font-size:0.78rem;
+            color:#8899aa;
+            line-height:1.9;
+        }
+        .nav-fallback .backup-link {
+            color:var(--neon-cyan);
+            font-weight:800;
+            cursor:pointer;
+            text-decoration:underline;
+            text-underline-offset:3px;
+            text-shadow:0 0 10px rgba(72,202,228,0.6);
+            transition:color .25s, text-shadow .25s;
+        }
+        .nav-fallback .backup-link:hover {
+            color:#fff;
+            text-shadow:0 0 16px var(--neon-cyan);
+        }
+        body.cute .nav-fallback { color:#b39aad; }
+        body.cute .nav-fallback .backup-link {
+            color:#ff5fa2;
+            text-shadow:0 0 10px rgba(255,158,205,0.6);
+        }
+        body.cute .nav-fallback .backup-link:hover { color:#fff; }
+        /* ---------- 图片灯箱 ---------- */
+        .img-lightbox img {
+            width:100%; height:auto; border-radius:12px; display:block;
+            border:1px solid rgba(72,202,228,0.35);
+        }
+        .img-lightbox .img-hint {
+            color:#8899aa; font-size:0.78rem; text-align:center; margin-top:12px;
+        }
+        /* ---------- 票根 ---------- */
+        .ticket-stub {
+            margin-top:16px;
+        }
+        .ticket-stub img {
+            width:100%; height:auto; border-radius:12px; display:block;
+            border:1px solid rgba(72,202,228,0.35);
+            box-shadow:0 0 24px rgba(0,180,216,0.25);
+        }
+        .stub-actions {
+            display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px;
+        }
+        /* ---------- 响应式 ---------- */
+        @media (max-width:768px) {
+            .nav-links {
+                position:fixed; right:-100%; width:70%; height:100vh;
+                background:rgba(5,5,12,0.98); flex-direction:column;
+                padding:70px 24px; transition:right 0.4s; top:0; z-index:1001;
+            }
+            .nav-links.open { right:0; }
+            .mobile-toggle { display:block; z-index:1002; }
+            .section { padding:50px 16px; }
+            .hero-title { font-size:2.5rem; }
+            .cursor-glow { display:none; }
+            .nav-goto { font-size:0.65rem; padding:4px 10px; }
+            .back-to-top { right:16px; bottom:16px; width:42px; height:42px; }
+            .filter-bar { margin:-24px 0 30px; gap:6px; }
+            .filter-btn { font-size:0.7rem; padding:4px 12px; }
+        }
+        /* 滚动渐入 */
+        .reveal { opacity:0; transform:translateY(30px); transition:opacity 0.6s ease, transform 0.6s ease; will-change:opacity, transform; }
+        .reveal.visible { opacity:1; transform:translateY(0); }
+
+        /* ========================================================= */
+        /* ================= 左上角风格切换 ======================== */
+        /* ========================================================= */
+        .nav-left { display:flex; align-items:center; gap:14px; }
+        .style-switch {
+            padding:5px 14px;
+            border-radius:20px;
+            font-size:0.72rem;
+            font-weight:700;
+            color:var(--neon-pink);
+            background:rgba(241,91,181,0.1);
+            border:1px solid var(--neon-pink);
+            cursor:pointer;
+            transition:background 0.3s, color 0.3s, box-shadow 0.3s;
+            white-space:nowrap;
+            font-family:inherit;
+        }
+        .style-switch:hover {
+            background:var(--neon-pink);
+            color:#000;
+            box-shadow:0 0 14px var(--neon-pink);
+        }
+
+        /* ========================================================= */
+        /* ================= 科幻增强 ============================== */
+        /* ========================================================= */
+        .tech-bg::before {
+            content:'';
+            position:absolute; inset:0;
+            background-image:
+                linear-gradient(rgba(72,202,228,0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(72,202,228,0.06) 1px, transparent 1px);
+            background-size:60px 60px;
+            -webkit-mask-image:radial-gradient(circle at 50% 40%, #000 30%, transparent 80%);
+            mask-image:radial-gradient(circle at 50% 40%, #000 30%, transparent 80%);
+        }
+        .tech-bg::after {
+            content:'';
+            position:absolute; left:0; right:0; top:0; height:140px;
+            background:linear-gradient(to bottom, transparent, rgba(72,202,228,0.10), transparent);
+            animation:scanLine 10s linear infinite;
+            will-change:transform;
+            transform:translate3d(0,-140px,0);
+            backface-visibility:hidden;
+        }
+        @keyframes scanLine {
+            0%   { transform:translate3d(0,-140px,0); }
+            100% { transform:translate3d(0, 100vh,0); }
+        }
+        .section-title { text-shadow:0 0 18px rgba(0,180,216,0.45); }
+
+        /* ========================================================= */
+        /* ================= 成员头像图片 ========================== */
+        /* ========================================================= */
+        .member-avatar { position:relative; overflow:hidden; }
+        .member-avatar::after {
+            content:'👤';
+            position:absolute; inset:0;
+            display:flex; align-items:center; justify-content:center;
+            font-size:2.2rem; color:rgba(255,255,255,0.65);
+            z-index:0;
+        }
+        .member-avatar img {
+            position:relative; z-index:1;
+            width:100%; height:100%;
+            object-fit:cover; border-radius:50%;
+            display:block;
+        }
+
+        /* ========================================================= */
+        /* ================= 可爱风皮肤 ============================ */
+        /* ========================================================= */
+        body.cute {
+            --neon-blue:#ff9ecd;
+            --neon-cyan:#ff8fc4;
+            --neon-purple:#c9a7ff;
+            --neon-pink:#ff7eb6;
+            --neon-green:#7fd8b8;
+            --dark-bg:#fff5fa;
+            --darker-bg:#ffeef6;
+            --card-bg:rgba(255,255,255,0.92);
+            --card-border:rgba(255,158,205,0.45);
+            --text-primary:#6b5566;
+            --text-secondary:#b39aad;
+            background:var(--darker-bg);
+            color:var(--text-primary);
+        }
+        body.cute .progress-bar {
+            background:linear-gradient(90deg, #ffb6d9, #c9a7ff, #ff7eb6);
+            box-shadow:0 0 10px #ff9ecd;
+        }
+        body.cute .navbar {
+            background:rgba(255,240,248,0.88);
+            border-bottom:1px solid rgba(255,158,205,0.4);
+        }
+        body.cute .navbar.scrolled {
+            background:rgba(255,245,250,0.96);
+            box-shadow:0 4px 30px rgba(255,158,205,0.3);
+        }
+        body.cute .nav-logo { color:#ff5fa2; text-shadow:0 0 15px rgba(255,158,205,0.6); }
+        body.cute .nav-links a { color:#a88aa0; }
+        body.cute .nav-links a:hover { color:#ff5fa2; text-shadow:0 0 12px #ffb6d9; }
+        body.cute .nav-links a::after { background:#ff8fc4; }
+        body.cute .lang-switch {
+            background:rgba(255,158,205,0.12);
+            border-color:rgba(255,158,205,0.6);
+        }
+        body.cute .lang-option { color:#b39aad; }
+        body.cute .lang-option.active {
+            background:#ff9ecd; color:#fff; box-shadow:0 0 12px #ffb6d9;
+        }
+        body.cute .style-switch {
+            color:#7bb8ff;
+            background:rgba(123,184,255,0.12);
+            border-color:#7bb8ff;
+        }
+        body.cute .style-switch:hover {
+            background:#7bb8ff; color:#fff; box-shadow:0 0 14px #7bb8ff;
+        }
+        body.cute .tech-bg::before {
+            background-image:
+                linear-gradient(rgba(255,158,205,0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,158,205,0.12) 1px, transparent 1px);
+        }
+        body.cute .tech-bg::after {
+            background:linear-gradient(to bottom, transparent, rgba(255,158,205,0.18), transparent);
+        }
+        body.cute .particle {
+            background:#ffc8e0 !important;
+            box-shadow:0 0 10px #ffb6d9 !important;
+        }
+        body.cute .hero {
+            background:linear-gradient(135deg, rgba(255,240,248,0.75), rgba(255,225,240,0.7)), url('hero-bg.html') center/cover;
+        }
+        body.cute .hero::before {
+            background:radial-gradient(circle at 30% 50%, rgba(255,158,205,0.28), transparent 50%),
+                       radial-gradient(circle at 70% 50%, rgba(201,167,255,0.22), transparent 50%);
+        }
+        body.cute .hero-badge {
+            border-color:rgba(255,158,205,0.7);
+            color:#ff5fa2;
+            background:rgba(255,255,255,0.5);
+        }
+        body.cute .hero-title { color:#ff5fa2; text-shadow:0 0 30px rgba(255,158,205,0.55); }
+        body.cute .hero-subtitle { color:#8a7284; }
+        body.cute .btn-primary {
+            background:linear-gradient(135deg, #ffb6d9, #ff8fc4);
+            color:#fff;
+            box-shadow:0 0 20px rgba(255,158,205,0.5);
+        }
+        body.cute .btn-outline {
+            border-color:#ff8fc4;
+            color:#ff5fa2;
+            background:rgba(255,255,255,0.45);
+        }
+        body.cute .btn-outline:hover { background:rgba(255,158,205,0.18); }
+        body.cute .section-title {
+            color:#ff5fa2;
+            text-shadow:0 0 15px rgba(255,158,205,0.45);
+        }
+        body.cute .section-tag { border-color:#c9a7ff; color:#a87fff; }
+        body.cute .section-divider { background:linear-gradient(90deg, #ff9ecd, #c9a7ff); }
+        body.cute .about-text { color:#8a7284; }
+        body.cute .stat-number { color:#ff5fa2; }
+        body.cute .member-name { color:#ff5fa2; }
+        body.cute .member-role { color:#a87fff; }
+        body.cute .member-avatar {
+            background:linear-gradient(135deg, #ffb6d9, #c9a7ff);
+            box-shadow:0 0 20px rgba(255,158,205,0.5);
+        }
+        body.cute .member-avatar::after { color:rgba(255,255,255,0.85); }
+        body.cute .member-card:hover {
+            border-color:#ff8fc4;
+            box-shadow:0 0 25px rgba(255,158,205,0.35);
+        }
+        body.cute .schedule-card { border-color:rgba(201,167,255,0.4); }
+        body.cute .schedule-card:hover {
+            border-color:#ff7eb6;
+            box-shadow:0 0 20px rgba(255,126,182,0.3);
+        }
+        body.cute .countdown { color:#5fc9a3; }
+        body.cute .countdown.ended { color:#b39aad; }
+        body.cute .buy-btn { background:#ff9ecd; color:#fff; }
+        body.cute .buy-btn:hover { background:#ff8fc4; box-shadow:0 0 16px #ff9ecd; }
+        body.cute .verify-box input {
+            background:#fff0f7;
+            border-color:#ff8fc4;
+            color:#6b5566;
+        }
+        body.cute .testimonial-card {
+            background:rgba(255,255,255,0.85);
+            border-color:rgba(201,167,255,0.35);
+        }
+        body.cute .stars { color:#ff7eb6; }
+        body.cute .gallery-item {
+            background:rgba(255,255,255,0.8);
+            border-color:rgba(255,158,205,0.35);
+        }
+        body.cute .gallery-item .ph { color:rgba(255,158,205,0.55); }
+        body.cute .stat-card,
+        body.cute .member-card,
+        body.cute .schedule-card,
+        body.cute .news-card,
+        body.cute .testimonial-card,
+        body.cute .faq-item,
+        body.cute .contact-info {
+            box-shadow:0 4px 16px rgba(255,158,205,0.16);
+        }
+        body.cute .site-footer {
+            background:#fff0f7;
+            border-top:1px solid rgba(255,158,205,0.3);
+        }
+        body.cute .site-footer p { color:#b39aad !important; }
+        body.cute .modal-dialog {
+            background:linear-gradient(145deg, #fff5fa, #ffe8f3);
+            border-color:#ff8fc4;
+            box-shadow:0 0 50px rgba(255,158,205,0.5);
+            color:#6b5566;
+        }
+        body.cute .modal-close {
+            background:rgba(255,158,205,0.18);
+            color:#ff5fa2;
+        }
+        body.cute .modal-close:hover {
+            background:#ff7eb6; color:#fff; box-shadow:0 0 16px #ff7eb6;
+        }
+        body.cute .ticket-option { border-color:rgba(255,158,205,0.4); }
+        body.cute .ticket-price { color:#ff5fa2; }
+        body.cute .copy-btn {
+            background:rgba(255,158,205,0.15);
+            border-color:#ff8fc4;
+            color:#ff5fa2;
+        }
+        body.cute .copy-btn:hover { background:#ff8fc4; color:#fff; }
+        @media (max-width:768px) {
+            body.cute .nav-links { background:rgba(255,245,250,0.98); }
+            .nav-left { gap:8px; }
+            .nav-logo { font-size:1.2rem; }
+            .style-switch { font-size:0.65rem; padding:4px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <div class="tech-bg" id="particlesContainer"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-left">
+            <a href="#" class="nav-logo" data-i18n="nav.logo">⚡棍涛舞团</a>
+            <button class="style-switch" id="styleSwitch" onclick="toggleStyle()">可爱风 Beta</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" data-i18n="nav.home">首页</a></li>
+                <li><a href="#about" data-i18n="nav.about">关于舞团</a></li>
+                <li><a href="#members" data-i18n="nav.members">团队成员</a></li>
+                <li><a href="#schedule" data-i18n="nav.schedule">演出日程</a></li>
+                <li><a href="#verify" data-i18n="nav.verify">校验门票</a></li>
+                <li><a href="#reviews" data-i18n="nav.reviews">巡演评价</a></li>
+                <li><a href="#news" data-i18n="nav.news">最新动态</a></li>
+                <li><a href="#gallery" data-i18n="nav.gallery">精彩瞬间</a></li>
+                <li><a href="#partners" data-i18n="nav.partners">合作伙伴</a></li>
+                <li><a href="#faq" data-i18n="nav.faq">常见问题</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">联系我们</a></li>
+                <li><a href="#csy-show">棍涛舞团---成员Show--蔡顺毅</a></li>
+            </ul>
+            <div class="lang-switch" onclick="toggleLanguage()">
+                <span class="lang-option active" id="langZh">中</span>
+                <span class="lang-option" id="langEn">EN</span>
+            </div>
+            <button class="nav-goto" onclick="openNavChoice()">返回导航页</button>
+            <button class="nav-goto" onclick="window.location.href='csy.html'">前往New Page Beta</button>
+            <button class="mobile-toggle" id="mobileToggle">☰</button>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-badge" data-i18n="hero.badge">GLOBAL PERFORMING ARTS</div>
+            <h1 class="hero-title" data-i18n="hero.title">棍涛舞团</h1>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">融合科技与肢体艺术 · 巡演足迹遍布世界</p>
+            <div>
+                <a href="#members" class="btn-primary" data-i18n="hero.btnMembers">探索团队</a>
+                <a href="#contact" class="btn-outline" data-i18n="hero.btnContact">联系我们</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal" id="about">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="about.tag">About Us</span>
+            <h2 class="section-title" data-i18n="about.title">关于棍涛舞团</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="about-content">
+            <div class="about-text" data-i18n="about.desc"></div>
+            <div class="about-stats" id="statsGrid"></div>
+        </div>
+    </section>
+
+    <section class="section reveal" id="members">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="members.tag">Core Team</span>
+            <h2 class="section-title" data-i18n="members.title">核心成员</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="filter-bar" id="membersFilter"></div>
+        <div class="members-grid" id="membersGrid"></div>
+    </section>
+
+    <section class="section reveal" id="csy-show">
+        <div class="section-header">
+            <h2 class="section-title">棍涛舞团---成员Show--蔡顺毅</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div style="text-align:center;">
+            <button class="btn-outline" onclick="window.location.href='csy.html'">前往棍涛舞团不带涛网站</button>
+        </div>
+    </section>
+
+    <section class="section reveal" id="schedule">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="schedule.tag">Tour Dates</span>
+            <h2 class="section-title" data-i18n="schedule.title">演出日程</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="filter-bar" id="scheduleFilter"></div>
+        <div class="schedule-grid" id="scheduleGrid"></div>
+    </section>
+
+    <section class="section reveal" id="verify">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="verify.tag">Ticket Verify</span>
+            <h2 class="section-title" data-i18n="verify.title">校验门票</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="verify-box">
+            <input type="text" id="verifyInputPage" placeholder="请输入校验码">
+            <button class="btn-primary" style="width:100%;margin-top:14px;" onclick="verifyTicketPage()">核对</button>
+            <div id="verifyResultPage" style="margin-top:16px;color:#c8d8f0;"></div>
+        </div>
+    </section>
+
+    <section class="section reveal" id="reviews">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="reviews.tag">Testimonials</span>
+            <h2 class="section-title" data-i18n="reviews.title">全球巡演评价</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="testimonials-grid" id="testimonialsGrid"></div>
+    </section>
+
+    <section class="section reveal" id="news">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="news.tag">Latest News</span>
+            <h2 class="section-title" data-i18n="news.title">最新动态</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="news-grid" id="newsGrid"></div>
+    </section>
+
+    <section class="section reveal" id="gallery">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="gallery.tag">Gallery</span>
+            <h2 class="section-title" data-i18n="gallery.title">精彩瞬间</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
+
+    <section class="section reveal" id="partners">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="partners.tag">Partners</span>
+            <h2 class="section-title" data-i18n="partners.title">合作伙伴</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="partner-grid" id="partnerGrid"></div>
+    </section>
+
+    <section class="section reveal" id="faq">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="faq.tag">FAQ</span>
+            <h2 class="section-title" data-i18n="faq.title">常见问题</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div id="faqGrid"></div>
+    </section>
+
+    <section class="section reveal" id="contact">
+        <div class="section-header">
+            <span class="section-tag" data-i18n="contact.tag">Contact</span>
+            <h2 class="section-title" data-i18n="contact.title">联系我们</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="contact-wrapper">
+            <div class="contact-info">
+                <h3 data-i18n="contact.heading">📡 联系棍涛舞团</h3>
+                <p><strong data-i18n="contact.qqLabel">QQ：</strong><a href="https://wpa.qq.com/msgrd?v=3&amp;uin=3827548972&amp;site=qq&amp;menu=yes" target="_blank" class="qq-link">3827548972</a></p>
+                <p style="margin-top:16px;color:#a0b8d8;" data-i18n="contact.slogan">若您有需求随时与我们联系</p>
+                <div class="legal-note" data-i18n="contact.legal"></div>
+            </div>
+            <div class="contact-info" style="text-align:center;">
+                <div style="font-size:3.5rem;">🌐</div>
+                <h3 data-i18n="contact.worldwide">全球巡演</h3>
+                <p data-i18n="contact.worldDesc" style="color:#a0b8d8;">亚洲 · 欧洲 · 北美 · 大洋洲<br>超过30个城市</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="footer-powered">
+            <a href="https://www.cloudflare.com/" target="_blank" rel="noopener" class="power-link pw-cloudflare">☁️ Power by Cloudflare</a>
+            <a href="https://www.deepseek.com/" target="_blank" rel="noopener" class="power-link pw-deepseek">🧠 Power by DeepSeek</a>
+            <a href="https://chat.openai.com/" target="_blank" rel="noopener" class="power-link pw-chatgpt">🤖 Power by ChatGPT</a>
+            <a href="https://grok.com/" target="_blank" rel="noopener" class="power-link pw-grok">🔮 Power by Grok</a>
+        </div>
+        <p style="color:#666;margin-top:12px;">© 2026 棍涛舞团 Gun Tao Troupe</p>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="回到顶部">↑</button>
+
+    <!-- 模态框 -->
+    <div class="modal-overlay" id="memberModal">
+        <div class="modal-dialog">
+            <button class="modal-close" onclick="closeMemberModal()">✕</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal-dialog">
+            <button class="modal-close" onclick="closeTicketModal()">✕</button>
+            <div id="ticketContent"></div>
+        </div>
+    </div>
+    <!-- 返回导航页选择框 -->
+    <div class="modal-overlay" id="navChoiceModal">
+        <div class="modal-dialog" style="max-width:440px;text-align:center;">
+            <button class="modal-close" onclick="closeNavChoice()">✕</button>
+            <h2 style="color:var(--neon-cyan);margin-bottom:8px;">返回导航页</h2>
+            <p style="color:#a0b8d8;margin-bottom:24px;font-weight:600;">随机前往 ninety-one.cc.cd 或 funthing.me</p>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <button class="btn-primary" style="margin:0;" onclick="gotoNav('self')">当前窗口打开</button>
+                <button class="btn-outline" style="margin:0;" onclick="gotoNav('blank')">新标签页打开</button>
+            </div>
+            <p class="nav-fallback">
+                有疑问？失败了？ 可点击<span class="backup-link" onclick="gotoBackup()">备用通道</span>跳转
+            </p>
+        </div>
+    </div>
+    <!-- 图片灯箱 -->
+    <div class="modal-overlay" id="imgModal">
+        <div class="modal-dialog img-lightbox" style="max-width:760px;">
+            <button class="modal-close" onclick="closeImgModal()">✕</button>
+            <div id="imgModalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 多语言 ==========
+        const i18n = {
+            zh: {
+                'nav.logo':'⚡棍涛舞团','nav.home':'首页','nav.about':'关于舞团','nav.members':'团队成员','nav.schedule':'演出日程','nav.verify':'校验门票','nav.reviews':'巡演评价','nav.news':'最新动态','nav.gallery':'精彩瞬间','nav.partners':'合作伙伴','nav.faq':'常见问题','nav.contact':'联系我们',
+                'hero.badge':'GLOBAL PERFORMING ARTS','hero.title':'棍涛舞团','hero.subtitle':'融合科技与肢体艺术 · 巡演足迹遍布世界','hero.btnMembers':'探索团队','hero.btnContact':'联系我们',
+                'about.tag':'About Us','about.title':'关于棍涛舞团','about.desc':'<p>棍涛舞团成立于2026年，以前沿科技与当代舞蹈融合为核心理念，通过全息投影与动作捕捉创造沉浸式艺术体验。</p><p>拥有现代舞、数字媒体等多元背景，已在30+城市留下足迹。</p>',
+                'members.tag':'Core Team','members.title':'核心成员-点击可查看人物简介','schedule.tag':'Tour Dates','schedule.title':'演出日程','verify.tag':'Ticket Verify','verify.title':'校验门票',
+                'reviews.tag':'Testimonials','reviews.title':'全球巡演评价','news.tag':'Latest News','news.title':'最新动态','gallery.tag':'Gallery','gallery.title':'精彩瞬间',
+                'partners.tag':'Partners','partners.title':'合作伙伴','faq.tag':'FAQ','faq.title':'常见问题','contact.tag':'Contact','contact.title':'联系我们',
+                'contact.heading':'📡 联系棍涛舞团','contact.qqLabel':'QQ：','contact.slogan':'若您有需求随时与我们联系','contact.legal':'若您认为有任何部分侵犯了您的权益，请与网站所有者联系。具体可通过WHOIS查询该域名信息获取联系方式，当然如果你认识我，欢迎直接与我沟通，您的诉求一定认真以对','contact.worldwide':'全球巡演','contact.worldDesc':'亚洲 · 欧洲 · 北美 · 大洋洲<br>超过Ninety-One个城市',
+                'ticket.notice':'此支付选项不会扣取您一分钱，仅供项目展示'
+            },
+            en: {
+                'nav.logo':'⚡Gun Tao Troupe','nav.home':'Home','nav.about':'About','nav.members':'Members','nav.schedule':'Schedule','nav.verify':'Verify Ticket','nav.reviews':'Reviews','nav.news':'News','nav.gallery':'Gallery','nav.partners':'Partners','nav.faq':'FAQ','nav.contact':'Contact',
+                'hero.badge':'GLOBAL PERFORMING ARTS','hero.title':'Gun Tao Troupe','hero.subtitle':'Fusing Technology & Physical Art · Tours Worldwide','hero.btnMembers':'Meet the Team','hero.btnContact':'Contact Us',
+                'about.tag':'About Us','about.title':'About Gun Tao Troupe','about.desc':'<p>Founded in 2018, Gun Tao Troupe merges cutting-edge tech with contemporary dance.</p><p>Members from around the world, performed in 30+ cities.</p>',
+                'members.tag':'Core Team','members.title':'Core Members','schedule.tag':'Tour Dates','schedule.title':'Upcoming Shows','verify.tag':'Ticket Verify','verify.title':'Verify Ticket',
+                'reviews.tag':'Testimonials','reviews.title':'Global Tour Reviews','news.tag':'Latest News','news.title':'Latest News','gallery.tag':'Gallery','gallery.title':'Gallery',
+                'partners.tag':'Partners','partners.title':'Partners','faq.tag':'FAQ','faq.title':'FAQ','contact.tag':'Contact','contact.title':'Contact Us',
+                'contact.heading':'📡 Contact Gun Tao Troupe','contact.qqLabel':'QQ:','contact.slogan':'Feel free to contact us.','contact.legal':'If you believe any content infringes your rights, please contact the site owner via WHOIS.','contact.worldwide':'Worldwide Tours','contact.worldDesc':'Asia · Europe · North America · Oceania<br>Over 30 cities',
+                'ticket.notice':'This payment option will not charge you a penny, for demonstration only.'
+            }
+        };
+
+        // ========== 数据 ==========
+        // 成员头像：1.jpg ~ 6.jpg（放在与 index.html 同目录）
+        // 成员简介：1.txt ~ 6.txt（用 ===EN=== 分隔中英）
+        // 画廊图片：jc1.jpg ~ jc6.jpg
+        // CSY 特殊票：CSY.JPG
+        const membersData = [
+            { id:'1', nameZh:'蔡顺毅', nameEn:'Cai Shunyi',   roleZh:'团队主体',     roleEn:'Team Principal' },
+            { id:'2', nameZh:'黄周涛', nameEn:'Huang Zhoutao', roleZh:'项目创新研发', roleEn:'R&D Lead' },
+            { id:'3', nameZh:'吴济康', nameEn:'Wu Jikang',     roleZh:'团队成员',     roleEn:'Team Member' },
+            { id:'4', nameZh:'谢添骐', nameEn:'Xie Tianqi',    roleZh:'创新传播',     roleEn:'Creative Comms' },
+            { id:'5', nameZh:'张罗睿', nameEn:'ZhangLuorui',          roleZh:'动作指导',            roleEn:'' },
+            { id:'6', nameZh:'陈演军', nameEn:'Chen Yanjun',          roleZh:'群演招募',            roleEn:'' }
+        ];
+        const scheduleData = [
+            { id:'shanghai2025', date:'2026-10-03', time:'', city:'广州', venue:'广东第二师范学院附属南沙珠江中学', currency:'CNY', rate:1, symbol:'¥' },
+            { id:'tokyo2025', date:'2026-11-02', time:'', city:'东京', venue:'国立代々木競技場', currency:'JPY', rate:20, symbol:'JP¥' },
+            { id:'newyork2025', date:'2026-11-18', time:'', city:'纽约', venue:'Lincoln Center', currency:'USD', rate:0.14, symbol:'$' },
+            { id:'london2025', date:'2029-11-05', time:'', city:'伦敦', venue:'Royal Albert Hall', currency:'GBP', rate:0.11, symbol:'£' },
+            { id:'berlin2025', date:'2027-08-22', time:'', city:'柏林', venue:'Berghain', currency:'EUR', rate:0.13, symbol:'€' },
+            { id:'shanghai2025', date:'2027-07-03', time:'', city:'广州', venue:'地点未知？LD家？还是学校？', currency:'CNY', rate:1, symbol:'¥' },
+            { id:'sydney2025', date:'2089-09-10', time:'', city:'悉尼', venue:'Sydney Opera House', currency:'AUD', rate:0.21, symbol:'AU$' }
+        ];
+
+        const testimonialsZh = [
+            {stars:'★★★★★', text:'广州演出令人震撼！', author:'Mrs.Hu', role:'晚修结束监控复盘'},
+            {stars:'★★★★★', text:'东京站全场沸腾，本土演员家乡味十足。', author:'田中裕也', role:'东京国际剧场总监'},
+            {stars:'★★★★☆', text:'纽约门票一抢而空。', author:'Michael Chen', role:'林肯中心'},
+            {stars:'★★★★★', text:'伦敦科技感十足。', author:'Emily Watson', role:'南岸中心'},
+            {stars:'★★★★★', text:'巴黎完美结合。', author:'Jean-Luc Moreau', role:'夏特莱剧院'},
+            {stars:'★★★★★', text:'悉尼歌剧院起立鼓掌。', author:'Olivia Brown', role:'悉尼艺术节'},
+            {stars:'★★★★☆', text:'米兰设计周亮点。', author:'Marco Rossi', role:'米兰设计周'},
+            {stars:'★★★★★', text:'首尔融合K-pop。', author:'朴志勋', role:'首尔艺术中心'},
+            {stars:'★★★★★', text:'迪拜超现实体验。', author:'Layla Al-Farsi', role:'未来博物馆'},
+            {stars:'★★★★★', text:'莫斯科大剧院满座。', author:'Dmitri Volkov', role:'莫斯科大剧院'}
+        ];
+        const testimonialsEn = [
+            {stars:'★★★★★', text:'Berlin was breathtaking!', author:'Anna Schmidt', role:'Berlin Arts Festival'},
+            {stars:'★★★★★', text:'Tokyo a total sensation.', author:'Yuya Tanaka', role:'Tokyo Theatre'},
+            {stars:'★★★★☆', text:'NY sold out instantly.', author:'Michael Chen', role:'Lincoln Center'},
+            {stars:'★★★★★', text:'London unforgettable.', author:'Emily Watson', role:'Southbank Centre'},
+            {stars:'★★★★★', text:'Paris mesmerizing.', author:'Jean-Luc Moreau', role:'Théâtre du Châtelet'},
+            {stars:'★★★★★', text:'Sydney ovation.', author:'Olivia Brown', role:'Sydney Festival'},
+            {stars:'★★★★☆', text:'Milan highlight.', author:'Marco Rossi', role:'Milan Design Week'},
+            {stars:'★★★★★', text:'Seoul K-pop fusion.', author:'Park Ji-hoon', role:'Seoul Arts Center'},
+            {stars:'★★★★★', text:'Dubai surreal.', author:'Layla Al-Farsi', role:'Museum of the Future'},
+            {stars:'★★★★★', text:'Bolshoi packed.', author:'Dmitri Volkov', role:'Bolshoi Theatre'}
+        ];
+
+        const newsZh = [
+            {date:'2025-05-20', title:'全新剧目亮相广二师珠江908艺术节', summary:'1000万以内最好的表演'},
+            {date:'2025-04-15', title:'与柏林爱乐乐团跨界合作', summary:'探索音乐与舞蹈的科技融合。'},
+            {date:'2025-03-01', title:'获得国际表演艺术创新奖', summary:'评委会高度评价数字舞台突破。'}
+        ];
+        const newsEn = [
+            {date:'2025-05-20', title:'New show at Shanghai Arts Festival', summary:'Holograms and real-time interaction.'},
+            {date:'2025-04-15', title:'Cross-border with Berlin Philharmonic', summary:'Tech fusion of music and dance.'},
+            {date:'2025-03-01', title:'Won Innovation Award', summary:'Recognized for digital stage breakthroughs.'}
+        ];
+
+        // 合作伙伴（全部可点击跳转官网）
+        const partners = [
+            { name:'Cloudflare', url:'https://www.cloudflare.com/' },
+            { name:'Aliyun',     url:'https://www.aliyun.com/' },
+            { name:'DPDNS',      url:'https://digitalplat.org/' },
+            { name:'Deepseek',   url:'https://www.deepseek.com/' },
+            { name:'Apple',      url:'https://www.apple.com/' },
+            { name:'iQOO',       url:'https://www.iqoo.com/' }
+        ];
+
+        const faqZh = [
+            {q:'如何购票？', a:'在演出日程栏目点击“购票”按钮，选择票种和数量后付款即可获得校验码。'},
+            {q:'校验码如何兑换座位？', a:'请在本页“校验门票”区域输入校验码，系统将显示座位号及演出信息。'},
+            {q:'校验码可以转让吗？', a:'可以，但每个校验码仅能核验一次，核验后即失效。'},
+            {q:'退票政策是什么？', a:'演出前0.7S可免费退票，7天内收取200%手续费。'}
+        ];
+        const faqEn = [
+            {q:'How to buy tickets?', a:'Click "Buy" in Schedule, choose type and quantity, pay to get verification code.'},
+            {q:'How to redeem seats?', a:'Enter code in "Verify Ticket" section to see seat and show details.'},
+            {q:'Can codes be transferred?', a:'Yes, but each code can only be verified once.'},
+            {q:'Refund policy?', a:'Free refund up to 7 S before show, 200% fee within 7 days.'}
+        ];
+
+        // ========== 全局状态 ==========
+        let currentLang = 'zh';
+        let selectedShowId = null;
+        let ticketCloseTimer = null;
+        let logTimer = null;
+        let cityFilter = '全部';
+        let roleFilter = '全部';
+
+        // ========== 本地存储 ==========
+        function getStore() { return JSON.parse(localStorage.getItem('troupe_tickets') || '{}'); }
+        function saveStore(s) { localStorage.setItem('troupe_tickets', JSON.stringify(s)); }
+        function getOrders() { return JSON.parse(localStorage.getItem('troupe_orders') || '[]'); }
+        function saveOrders(o) { localStorage.setItem('troupe_orders', JSON.stringify(o)); }
+        function initStore() {
+            let s = getStore();
+            scheduleData.forEach(sh => { if (!s[sh.id]) s[sh.id] = { normal:80, premium:80, vip:80 }; });
+            saveStore(s);
+        }
+        function genSeat() { return String.fromCharCode(65 + Math.floor(Math.random()*26)) + String(Math.floor(Math.random()*999)+1).padStart(3,'0'); }
+        function genCode(id) { return 'GT-'+id.substring(0,4).toUpperCase()+'-'+Math.random().toString(36).substring(2,8).toUpperCase(); }
+
+        // ========== 倒计时 ==========
+        function getCountdownText(dateStr) {
+            const target = new Date(dateStr + 'T23:59:59');
+            const now = new Date();
+            const diff = Math.ceil((target - now) / 86400000);
+            if(diff > 0) return { text: currentLang === 'zh' ? `距开演 ${diff} 天` : `${diff} days to go`, ended:false };
+            if(diff === 0) return { text: currentLang === 'zh' ? '今日开演' : 'Today', ended:false };
+            return { text: currentLang === 'zh' ? '已结束' : 'Ended', ended:true };
+        }
+
+        // ========== 返回导航页 ==========
+        const NAV_URLS = ['https://ninety-one.cc.cd', 'https://funthing.me'];
+        const NAV_BACKUP = 'https://ninety-one.cc.cd';
+        window.openNavChoice = function() {
+            document.getElementById('navChoiceModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        window.closeNavChoice = function() {
+            document.getElementById('navChoiceModal').classList.remove('active');
+            document.body.style.overflow = '';
+        };
+        window.gotoNav = function(mode) {
+            const url = NAV_URLS[Math.floor(Math.random() * NAV_URLS.length)];
+            if(mode === 'blank') {
+                window.open(url, '_blank', 'noopener');
+            } else {
+                window.location.href = url;
+            }
+            closeNavChoice();
+        };
+        window.gotoBackup = function() {
+            window.open(NAV_BACKUP, '_blank', 'noopener');
+            closeNavChoice();
+        };
+        document.getElementById('navChoiceModal').addEventListener('click', function(e){
+            if(e.target === this) closeNavChoice();
+        });
+
+        // ========== 图片灯箱 ==========
+        window.openImgModal = function(src, hint) {
+            document.getElementById('imgModalContent').innerHTML =
+                `<img src="${src}" alt="CSY" onerror="this.alt='图片未找到：${src}'">` +
+                `<p class="img-hint">${hint || ''}</p>`;
+            document.getElementById('imgModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        window.closeImgModal = function() {
+            document.getElementById('imgModal').classList.remove('active');
+            document.body.style.overflow = '';
+            document.getElementById('imgModalContent').innerHTML = '';
+        };
+        document.getElementById('imgModal').addEventListener('click', function(e){
+            if(e.target === this) closeImgModal();
+        });
+
+        // ========== 购票相关 ==========
+        window.openTicketModal = function(showId) {
+            selectedShowId = showId;
+            const sh = scheduleData.find(s=>s.id===showId);
+            if(!sh) return;
+            const store = getStore();
+            const tck = store[showId];
+            const notice = i18n[currentLang]['ticket.notice'];
+            document.getElementById('ticketContent').innerHTML = `
+                <h2 style="color:var(--neon-cyan);">${sh.city} - ${sh.venue}</h2>
+                <p>${sh.date} ${sh.time || (currentLang==='zh'?'11:20PM':'TBA')}</p>
+                <div class="ticket-option" data-type="normal" onclick="selT('normal')">
+                    <div><strong>普通票</strong><br>剩余 ${tck.normal}</div>
+                    <div><span class="ticket-price">¥4600</span><span class="ticket-local">≈ ${sh.symbol}${(4600*sh.rate).toFixed(2)}</span></div>
+                </div>
+                <div class="ticket-option" data-type="premium" onclick="selT('premium')">
+                    <div><strong>高级票</strong><br>剩余 ${tck.premium}</div>
+                    <div><span class="ticket-price">¥5300</span><span class="ticket-local">≈ ${sh.symbol}${(5300*sh.rate).toFixed(2)}</span></div>
+                </div>
+                <div class="ticket-option" data-type="vip" onclick="selT('vip')">
+                    <div><strong>VIP看台</strong><br>剩余 ${tck.vip}</div>
+                    <div><span class="ticket-price">¥15300</span><span class="ticket-local">≈ ${sh.symbol}${(15300*sh.rate).toFixed(2)}</span></div>
+                </div>
+                <div style="margin-top:16px;">
+                    <label>数量 (1-5):</label>
+                    <input type="number" id="ticketQty" min="1" max="5" value="1" style="width:70px;margin-left:8px;padding:4px;background:#1a1e30;border:1px solid var(--neon-cyan);color:#fff;">
+                </div>
+                <button class="btn-primary" style="width:100%;margin-top:16px;" onclick="startPayment()">立即付款</button>
+                <p style="color:#aaa;font-size:0.75rem;text-align:center;margin-top:6px;">${notice}</p>
+                <div id="purchaseResult" style="margin-top:12px;"></div>
+            `;
+            document.getElementById('ticketModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if(logTimer) clearInterval(logTimer);
+        };
+        window.selT = function(type) {
+            document.querySelectorAll('.ticket-option').forEach(e=>e.classList.remove('selected'));
+            const el = document.querySelector(`[data-type="${type}"]`);
+            if(el) el.classList.add('selected');
+        };
+        window.startPayment = function() {
+            const sel = document.querySelector('.ticket-option.selected');
+            if(!sel) return alert('请选择票种');
+            const type = sel.dataset.type;
+            const qty = parseInt(document.getElementById('ticketQty').value);
+            if(qty<1||qty>5) return alert('数量1-5');
+            const store = getStore();
+            if(qty > store[selectedShowId][type]) return alert('余票不足');
+            const resDiv = document.getElementById('purchaseResult');
+            resDiv.innerHTML = '<div style="color:#ccc;font-family:monospace;">';
+            const logs = ['🔗 连接支付网关...','🔐 验证支付环境...','📤 提交订单信息...','⏳ 等待VISA/MASTER CARD确认...','✅ 生物识别支付授权成功！'];
+            let i=0;
+            if(logTimer) clearInterval(logTimer);
+            logTimer = setInterval(()=>{
+                if(i<logs.length){ resDiv.innerHTML += logs[i]+'<br>'; i++; }
+                else { clearInterval(logTimer); logTimer=null; finalizePayment(type,qty,resDiv); }
+            },500);
+        };
+        function finalizePayment(type, qty, resDiv) {
+            const prices = { normal:4600, premium:5300, vip:15300 };
+            const total = prices[type]*qty;
+            const store = getStore();
+            store[selectedShowId][type] -= qty;
+            saveStore(store);
+            const orders = getOrders();
+            const code = genCode(selectedShowId);
+            const seats = [];
+            for(let i=0;i<qty;i++) seats.push(genSeat());
+            orders.push({ code, showId:selectedShowId, type, seats, validated:false });
+            saveOrders(orders);
+            const sh = scheduleData.find(s=>s.id===selectedShowId);
+            let html = `<p style="color:var(--neon-green);">🎉 支付成功！请将校验码输至校验门票处以获得座位号与演出时间 总金额：¥${total} (≈ ${sh.symbol}${(total*sh.rate).toFixed(2)})</p>`;
+            html += `<p>校验码：<strong style="color:var(--neon-cyan);">${code}</strong></p>`;
+            html += `<button class="copy-btn" onclick="copySingleCode('${code}')">📋 复制校验码</button>`;
+            resDiv.innerHTML = html;
+            if(ticketCloseTimer) clearTimeout(ticketCloseTimer);
+            ticketCloseTimer = setTimeout(closeTicketModal, 30000);
+        }
+        window.copySingleCode = function(code) {
+            navigator.clipboard.writeText(code).then(()=>closeTicketModal());
+        };
+        function closeTicketModal() {
+            document.getElementById('ticketModal').classList.remove('active');
+            document.body.style.overflow = '';
+            if(ticketCloseTimer) { clearTimeout(ticketCloseTimer); ticketCloseTimer=null; }
+            if(logTimer) { clearInterval(logTimer); logTimer=null; }
+        }
+        document.getElementById('ticketModal').addEventListener('click', function(e){ if(e.target===this) closeTicketModal(); });
+
+        // ========== 票根图片生成 ==========
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r);
+            ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r);
+            ctx.arcTo(x, y, x + w, y, r);
+            ctx.closePath();
+        }
+        const TYPE_LABEL = { normal:'普通票', premium:'高级票', vip:'VIP看台' };
+        function generateTicketDataUrl(order, show) {
+            const W = 820, H = 420;
+            const canvas = document.createElement('canvas');
+            canvas.width = W; canvas.height = H;
+            const ctx = canvas.getContext('2d');
+
+            // 背景
+            const bg = ctx.createLinearGradient(0, 0, W, H);
+            bg.addColorStop(0, '#0b0e1a');
+            bg.addColorStop(1, '#151a2e');
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, W, H);
+
+            // 光晕
+            const rg = ctx.createRadialGradient(W*0.15, H*0.2, 10, W*0.15, H*0.2, 420);
+            rg.addColorStop(0, 'rgba(0,180,216,0.28)');
+            rg.addColorStop(1, 'rgba(0,180,216,0)');
+            ctx.fillStyle = rg;
+            ctx.fillRect(0, 0, W, H);
+
+            const rg2 = ctx.createRadialGradient(W*0.9, H*0.9, 10, W*0.9, H*0.9, 420);
+            rg2.addColorStop(0, 'rgba(155,93,229,0.24)');
+            rg2.addColorStop(1, 'rgba(155,93,229,0)');
+            ctx.fillStyle = rg2;
+            ctx.fillRect(0, 0, W, H);
+
+            // 边框
+            ctx.strokeStyle = 'rgba(72,202,228,0.55)';
+            ctx.lineWidth = 2;
+            roundRect(ctx, 16, 16, W-32, H-32, 18);
+            ctx.stroke();
+
+            // 虚线分隔
+            ctx.save();
+            ctx.setLineDash([6, 8]);
+            ctx.strokeStyle = 'rgba(72,202,228,0.35)';
+            ctx.beginPath();
+            ctx.moveTo(W*0.66, 16);
+            ctx.lineTo(W*0.66, H-16);
+            ctx.stroke();
+            ctx.restore();
+
+            // 标题
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 34px "PingFang SC","Microsoft YaHei",sans-serif';
+            ctx.fillText('棍涛舞团', 48, 84);
+            ctx.font = '600 15px "Segoe UI",sans-serif';
+            ctx.fillStyle = '#48cae4';
+            ctx.fillText('GUN TAO TROUPE · E-TICKET', 48, 112);
+
+            // 左侧信息
+            const left = 48;
+            let y = 170;
+            const line = (label, value) => {
+                ctx.font = '600 14px "PingFang SC","Microsoft YaHei",sans-serif';
+                ctx.fillStyle = '#7f93b5';
+                ctx.fillText(label, left, y);
+                ctx.font = 'bold 19px "PingFang SC","Microsoft YaHei",sans-serif';
+                ctx.fillStyle = '#e0f0ff';
+                const shortVenue = value.length > 14 ? value.substring(0, 14) + '…' : value;
+                ctx.fillText(shortVenue, left + 84, y);
+                y += 40;
+            };
+            line('场馆', show.venue);
+            line('城市', show.city);
+            line('日期', show.date + (show.time ? ' ' + show.time : ''));
+            line('座位', order.seats.join('、'));
+            line('票种', (TYPE_LABEL[order.type] || order.type) + ' × ' + order.seats.length);
+
+            // 右侧校验码
+            const rx = W*0.66 + 40;
+            ctx.font = '600 14px "PingFang SC","Microsoft YaHei",sans-serif';
+            ctx.fillStyle = '#7f93b5';
+            ctx.fillText('校验码', rx, 84);
+
+            ctx.font = 'bold 20px "Courier New",monospace';
+            ctx.fillStyle = '#00f5d4';
+            ctx.fillText(order.code, rx, 116);
+
+            // 伪二维码
+            const qs = 120, qx = rx, qy = 156;
+            ctx.fillStyle = 'rgba(224,240,255,0.9)';
+            for(let i=0;i<12;i++){
+                for(let j=0;j<12;j++){
+                    const ch = order.code.charCodeAt((i*3 + j*5) % order.code.length);
+                    const seed = (i*31 + j*17 + ch) % 3;
+                    if(seed !== 0) ctx.fillRect(qx + i*(qs/12), qy + j*(qs/12), qs/12 - 1.5, qs/12 - 1.5);
+                }
+            }
+            // 三个定位角
+            ctx.fillStyle = '#0b0e1a';
+            ctx.fillRect(qx, qy, qs/4, qs/4);
+            ctx.fillRect(qx + qs*3/4, qy, qs/4, qs/4);
+            ctx.fillRect(qx, qy + qs*3/4, qs/4, qs/4);
+            ctx.fillStyle = '#e0f0ff';
+            ctx.fillRect(qx+4, qy+4, qs/4-8, qs/4-8);
+            ctx.fillRect(qx + qs*3/4 + 4, qy+4, qs/4-8, qs/4-8);
+            ctx.fillRect(qx+4, qy + qs*3/4 + 4, qs/4-8, qs/4-8);
+
+            // 底部提示
+            ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+            ctx.fillStyle = '#5f7396';
+            ctx.fillText('仅供展示 · 非真实票务凭证', 48, H - 36);
+
+            return canvas.toDataURL('image/png');
+        }
+
+        // ========== 校验门票 ==========
+        window.verifyTicketPage = function() {
+            const code = document.getElementById('verifyInputPage').value.trim();
+            const res = document.getElementById('verifyResultPage');
+
+            // 特殊票：CSY
+            if(code.toUpperCase() === 'CSY') {
+                res.innerHTML = '';
+                openImgModal('CSY.JPG', '输入 CSY 触发的专属票图，本地放置 CSY.JPG 即可显示。');
+                return;
+            }
+
+            const orders = getOrders();
+            const order = orders.find(o=>o.code===code);
+            if(!order) { res.innerHTML='<p style="color:red;">无效校验码</p>'; return; }
+            if(order.validated) { res.innerHTML='<p style="color:orange;">此校验码已被使用</p>'; return; }
+            const show = scheduleData.find(s=>s.id===order.showId);
+            if(!show) { res.innerHTML='<p style="color:red;">演出信息错误</p>'; return; }
+            order.validated = true;
+            saveOrders(orders);
+
+            const dataUrl = generateTicketDataUrl(order, show);
+            const fileName = `ticket-${order.code}.png`;
+            let seatsHtml = order.seats.map(s=>`<span style="color:var(--neon-pink);">${s}</span>`).join('、');
+            res.innerHTML = `
+                <p style="color:var(--neon-green);">✅ 校验成功 一切信息皆为虚构，在现实无任何实际效力，输出仅供展示，非真实票</p>
+                <p>场馆：${show.venue} (${show.city})</p>
+                <p>日期：${show.date} 时间：${show.time||'11:20PM'}</p>
+                <p>座位号：${seatsHtml}</p>
+                <p>票种：${TYPE_LABEL[order.type] || order.type} × ${order.seats.length}张</p>
+                <div class="ticket-stub">
+                    <img src="${dataUrl}" alt="ticket stub">
+                    <div class="stub-actions">
+                        <a class="btn-primary" style="margin:0;" href="${dataUrl}" download="${fileName}">下载票根</a>
+                        <button class="btn-outline" style="margin:0;" onclick="openImgModal('${dataUrl}', '长按或右键可保存图片')">放大查看</button>
+                    </div>
+                </div>
+            `;
+        };
+
+        // ========== 从外部 txt 加载成员简介（双语） ==========
+        window.openMemberModal = function(id) {
+            const m = membersData.find(mm=>mm.id===id);
+            if(!m) return;
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <h2 style="color:var(--neon-cyan);">${currentLang==='zh' ? m.nameZh : m.nameEn}</h2>
+                <p style="color:var(--neon-purple);">${currentLang==='zh' ? m.roleZh : m.roleEn}</p>
+                <div style="color:#c8d8f0;line-height:1.8;">⏳ 加载中…</div>
+            `;
+            document.getElementById('memberModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            fetch(`${id}.txt`)
+                .then(res => {
+                    if(!res.ok) throw new Error('File not found');
+                    return res.text();
+                })
+                .then(text => {
+                    let zhPart = '', enPart = '';
+                    const sep = '===EN===';
+                    const idx = text.indexOf(sep);
+                    if(idx !== -1) {
+                        zhPart = text.substring(0, idx).trim();
+                        enPart = text.substring(idx + sep.length).trim();
+                    } else {
+                        zhPart = text.trim();
+                    }
+                    const displayText = currentLang === 'zh' ? zhPart : (enPart || zhPart);
+                    modalContent.innerHTML = `
+                        <h2 style="color:var(--neon-cyan);">${currentLang==='zh' ? m.nameZh : m.nameEn}</h2>
+                        <p style="color:var(--neon-purple);">${currentLang==='zh' ? m.roleZh : m.roleEn}</p>
+                        <div style="color:#c8d8f0;line-height:1.8;white-space:pre-wrap;">${displayText || (currentLang==='zh' ? '暂无简介' : 'No bio available')}</div>
+                    `;
+                })
+                .catch(() => {
+                    modalContent.innerHTML = `
+                        <h2 style="color:var(--neon-cyan);">${currentLang==='zh' ? m.nameZh : m.nameEn}</h2>
+                        <p style="color:var(--neon-purple);">${currentLang==='zh' ? m.roleZh : m.roleEn}</p>
+                        <div style="color:#888;line-height:1.8;">${currentLang==='zh' ? '暂无简介' : 'No bio available'}</div>
+                    `;
+                });
+        };
+
+        window.closeMemberModal = function() {
+            document.getElementById('memberModal').classList.remove('active');
+            document.body.style.overflow = '';
+        };
+        document.getElementById('memberModal').addEventListener('click', function(e){ if(e.target===this) closeMemberModal(); });
+        document.addEventListener('keydown', function(e){
+            if(e.key==='Escape'){
+                closeMemberModal();
+                closeTicketModal();
+                closeNavChoice();
+                closeImgModal();
+            }
+        });
+
+        // ========== 语言切换 ==========
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if(i18n[lang] && i18n[lang][k]) {
+                    if(k.includes('desc') || k.includes('legal') || k.includes('notice')) el.innerHTML = i18n[lang][k];
+                    else el.textContent = i18n[lang][k];
+                }
+            });
+            document.getElementById('langZh').classList.toggle('active', lang==='zh');
+            document.getElementById('langEn').classList.toggle('active', lang==='en');
+            updateStyleSwitchText();
+            renderAll();
+        }
+        window.toggleLanguage = function() { setLanguage(currentLang==='zh' ? 'en' : 'zh'); };
+
+        // ========== 风格切换 ==========
+        function updateStyleSwitchText() {
+            const btn = document.getElementById('styleSwitch');
+            if(!btn) return;
+            const isCute = document.body.classList.contains('cute');
+            if(currentLang === 'zh') {
+                btn.textContent = isCute ? '科幻风 Beta' : '可爱风 Beta';
+            } else {
+                btn.textContent = isCute ? 'Sci-Fi Beta' : 'Cute Beta';
+            }
+        }
+        window.toggleStyle = function() {
+            document.body.classList.toggle('cute');
+            updateStyleSwitchText();
+        };
+
+        // ========== 筛选取舍 ==========
+        window.setCityFilter = function(city) {
+            cityFilter = city;
+            renderScheduleFilter();
+            renderScheduleGrid();
+        };
+        window.setRoleFilter = function(roleZh) {
+            roleFilter = roleZh;
+            renderMembersFilter();
+            renderMembersGrid();
+        };
+
+        function getRoleOptions() {
+            const map = new Map();
+            membersData.forEach(m => {
+                const zh = m.roleZh || '__empty__';
+                const en = m.roleEn || '';
+                if(!map.has(zh)) map.set(zh, en);
+            });
+            return map;
+        }
+
+        function renderScheduleFilter() {
+            const cities = ['全部', ...Array.from(new Set(scheduleData.map(s => s.city)))];
+            document.getElementById('scheduleFilter').innerHTML = cities.map(c => {
+                const label = c === '全部' ? (currentLang === 'zh' ? '全部城市' : 'All Cities') : c;
+                return `<button class="filter-btn ${c === cityFilter ? 'active' : ''}" onclick="setCityFilter('${c}')">${label}</button>`;
+            }).join('');
+        }
+
+        function renderMembersFilter() {
+            const map = getRoleOptions();
+            const allLabel = currentLang === 'zh' ? '全部角色' : 'All Roles';
+            const emptyLabel = currentLang === 'zh' ? '待定' : 'TBD';
+            let html = `<button class="filter-btn ${roleFilter === '全部' ? 'active' : ''}" onclick="setRoleFilter('全部')">${allLabel}</button>`;
+            map.forEach((en, zh) => {
+                const label = zh === '__empty__' ? emptyLabel : (currentLang === 'zh' ? zh : (en || zh));
+                const key = zh;
+                html += `<button class="filter-btn ${roleFilter === key ? 'active' : ''}" onclick="setRoleFilter('${key}')">${label}</button>`;
+            });
+            document.getElementById('membersFilter').innerHTML = html;
+        }
+
+        // ========== 渲染 ==========
+        function renderMembersGrid() {
+            const list = roleFilter === '全部'
+                ? membersData
+                : membersData.filter(m => (m.roleZh || '__empty__') === roleFilter);
+            document.getElementById('membersGrid').innerHTML = list.map(m =>
+                `<div class="member-card" onclick="openMemberModal('${m.id}')">
+                    <div class="member-avatar">
+                        <img src="${m.id}.jpg" alt="${currentLang==='zh'?m.nameZh:m.nameEn}" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                    </div>
+                    <div class="member-name">${currentLang==='zh'?m.nameZh:m.nameEn}</div>
+                    <div class="member-role">${currentLang==='zh'?m.roleZh:m.roleEn}</div>
+                </div>`
+            ).join('');
+        }
+
+        function renderScheduleGrid() {
+            const list = cityFilter === '全部'
+                ? scheduleData
+                : scheduleData.filter(s => s.city === cityFilter);
+            document.getElementById('scheduleGrid').innerHTML = list.map(s => {
+                const cd = getCountdownText(s.date);
+                return `<div class="schedule-card">
+                    <span style="color:var(--neon-pink);">${s.date}</span>
+                    <strong style="color:#fff;">${s.city}</strong>
+                    <span>${s.venue}</span>
+                    <span>${s.time||(currentLang==='zh'?'':'TBA')}</span>
+                    <span class="countdown ${cd.ended?'ended':''}">${cd.text}</span>
+                    <button class="buy-btn" onclick="openTicketModal('${s.id}')">${currentLang==='zh'?'购票':'Buy'}</button>
+                </div>`;
+            }).join('');
+        }
+
+        function renderAll() {
+            // 统计
+            document.getElementById('statsGrid').innerHTML = ['30+','120+','15+','50万+'].map((n,i) =>
+                `<div class="stat-card"><span class="stat-number">${n}</span><span class="stat-label">${['巡演城市','演出场次','国际奖项','现场观众'][i]}</span></div>`
+            ).join('');
+            // 成员筛选 + 列表
+            renderMembersFilter();
+            renderMembersGrid();
+            // 日程筛选 + 列表
+            renderScheduleFilter();
+            renderScheduleGrid();
+            // 评价
+            document.getElementById('testimonialsGrid').innerHTML = (currentLang==='zh'?testimonialsZh:testimonialsEn).map(t =>
+                `<div class="testimonial-card">
+                    <div class="stars">${t.stars}</div>
+                    <p>"${t.text}"</p>
+                    <p class="testimonial-author">${t.author}</p>
+                    <small>${t.role}</small>
+                </div>`
+            ).join('');
+            // 新闻
+            document.getElementById('newsGrid').innerHTML = (currentLang==='zh'?newsZh:newsEn).map(n =>
+                `<div class="news-card">
+                    <span class="news-date">${n.date}</span>
+                    <h4>${n.title}</h4>
+                    <p style="color:#aaa;">${n.summary}</p>
+                </div>`
+            ).join('');
+            // 画廊：jc1.jpg ~ jc6.jpg
+            document.getElementById('galleryGrid').innerHTML =
+                Array.from({length:6}, (_, i) =>
+                    `<div class="gallery-item">
+                        <span class="ph">📸</span>
+                        <img src="jc${i+1}.jpg" alt="Gallery ${i+1}" loading="lazy" decoding="async" onerror="this.style.display='none'">
+                    </div>`
+                ).join('');
+            // 合作伙伴（可点击）
+            document.getElementById('partnerGrid').innerHTML = partners.map(p =>
+                `<a class="partner-logo" href="${p.url}" target="_blank" rel="noopener">${p.name}</a>`
+            ).join('');
+            // 常见问题
+            document.getElementById('faqGrid').innerHTML = (currentLang==='zh'?faqZh:faqEn).map(f =>
+                `<div class="faq-item"><div class="faq-question">${f.q}</div><div>${f.a}</div></div>`
+            ).join('');
+        }
+
+        // ========== 回到顶部 ==========
+        window.scrollToTop = function() {
+            window.scrollTo({ top:0, behavior:'smooth' });
+        };
+
+        // ========== 滚动监听（进度条 + 导航栏 + 回到顶部） ==========
+        const progressBar = document.getElementById('progressBar');
+        const backToTop = document.getElementById('backToTop');
+        let scrollTicking = false;
+        let lastScrolled = false;
+        let lastShowTop = false;
+        window.addEventListener('scroll', () => {
+            if(scrollTicking) return;
+            scrollTicking = true;
+            requestAnimationFrame(() => {
+                const y = window.scrollY;
+                // 进度条
+                const doc = document.documentElement;
+                const max = doc.scrollHeight - window.innerHeight;
+                const pct = max > 0 ? (y / max) * 100 : 0;
+                progressBar.style.width = pct + '%';
+                // 导航栏状态
+                const shouldScrolled = y > 50;
+                if(shouldScrolled !== lastScrolled) {
+                    document.getElementById('navbar').classList.toggle('scrolled', shouldScrolled);
+                    lastScrolled = shouldScrolled;
+                }
+                // 回到顶部显隐
+                const shouldShowTop = y > 400;
+                if(shouldShowTop !== lastShowTop) {
+                    backToTop.classList.toggle('show', shouldShowTop);
+                    lastShowTop = shouldShowTop;
+                }
+                scrollTicking = false;
+            });
+        }, { passive:true });
+
+        // ========== 鼠标跟随光晕 ==========
+        (function initCursorGlow() {
+            const glow = document.getElementById('cursorGlow');
+            if(!glow) return;
+            if(window.matchMedia('(pointer: coarse)').matches) return;
+            if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            let targetX = window.innerWidth / 2;
+            let targetY = window.innerHeight / 2;
+            let curX = targetX;
+            let curY = targetY;
+            let rafId = null;
+
+            function loop() {
+                curX += (targetX - curX) * 0.12;
+                curY += (targetY - curY) * 0.12;
+                glow.style.transform = `translate3d(${curX}px, ${curY}px, 0)`;
+
+                if(Math.abs(targetX - curX) > 0.5 || Math.abs(targetY - curY) > 0.5) {
+                    rafId = requestAnimationFrame(loop);
+                } else {
+                    curX = targetX; curY = targetY;
+                    glow.style.transform = `translate3d(${curX}px, ${curY}px, 0)`;
+                    rafId = null;
+                }
+            }
+
+            window.addEventListener('mousemove', (e) => {
+                targetX = e.clientX;
+                targetY = e.clientY;
+                glow.classList.add('on');
+                if(rafId === null) rafId = requestAnimationFrame(loop);
+            }, { passive:true });
+
+            document.addEventListener('mouseleave', () => { glow.classList.remove('on'); });
+            document.addEventListener('mouseenter', () => { glow.classList.add('on'); });
+            window.addEventListener('blur', () => { glow.classList.remove('on'); });
+        })();
+
+        // ========== 点击粒子特效 ==========
+        (function initClickBurst() {
+            if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const colors = ['#00b4d8','#48cae4','#9b5de5','#f15bb5','#00f5d4'];
+
+            document.addEventListener('click', (e) => {
+                const n = 6;
+                for(let i = 0; i < n; i++) {
+                    const d = document.createElement('div');
+                    d.className = 'click-spark';
+                    d.style.left = e.clientX + 'px';
+                    d.style.top = e.clientY + 'px';
+                    const c = colors[i % colors.length];
+                    d.style.background = c;
+                    d.style.boxShadow = `0 0 8px ${c}`;
+                    document.body.appendChild(d);
+                    const angle = (Math.PI * 2 * i) / n + Math.random() * 0.6;
+                    const dist = 28 + Math.random() * 42;
+                    const dx = Math.cos(angle) * dist;
+                    const dy = Math.sin(angle) * dist;
+                    const anim = d.animate([
+                        { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 },
+                        { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0)`, opacity: 0 }
+                    ], { duration: 550 + Math.random() * 250, easing: 'cubic-bezier(.2,.7,.3,1)' });
+                    anim.onfinish = () => d.remove();
+                }
+            }, { passive:true });
+        })();
+
+        // ========== 移动端菜单 ==========
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+            mobileToggle.textContent = navLinks.classList.contains('open') ? '✕' : '☰';
+        });
+        navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+            navLinks.classList.remove('open');
+            mobileToggle.textContent = '☰';
+        }));
+
+        // ========== 粒子 ==========
+        (function initParticles() {
+            const container = document.getElementById('particlesContainer');
+            const colors = ['#00b4d8','#48cae4','#9b5de5','#f15bb5','#00f5d4'];
+            const isMobile = window.matchMedia('(max-width:768px)').matches;
+            const count = isMobile ? 8 : 14;
+            for(let i=0; i<count; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = 3 + Math.random() * 4;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.animationDuration = 8 + Math.random() * 10 + 's';
+                container.appendChild(p);
+            }
+        })();
+
+        // ========== 滚动渐入 ==========
+        const revealElements = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold:0.12, rootMargin:'0px 0px -40px 0px' });
+        revealElements.forEach(el => observer.observe(el));
+
+        // ========== 初始化 ==========
+        initStore();
+        setLanguage('zh');
+    </script>
+</body>
+
+<!-- Mirrored from https://gunwu.pages.dev/ by HTTrack Website Copier/3.x [XR&CO], Fri, 18 Sep 2026 11:48:55 GMT -->
+</html>
