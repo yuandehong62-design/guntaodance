@@ -44,7 +44,6 @@ body {
     -webkit-font-smoothing:antialiased;
 }
 
-/* 隐藏元素的类 */
 .hidden { display: none !important; }
 
 /* 设备选择弹窗 */
@@ -263,22 +262,48 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 }
 .pick-name { font-size:.88rem; color:var(--ink); letter-spacing:.08em; }
 
-/* Folia 嵌入框样式 */
-.folia-container {
-    width: 100%;
-    height: 75vh;
-    min-height: 600px;
-    background: #0a0e1a;
+/* ===== 歌词面板样式 ===== */
+.lyrics-box {
+    margin-top: 30px;
+    background: var(--paper);
+    border: 1px solid var(--line);
     border-radius: 20px;
+    padding: 30px 20px;
+    height: 200px;
     overflow: hidden;
-    border: 1px solid var(--line-strong);
-    box-shadow: var(--shadow);
     position: relative;
+    box-shadow: var(--shadow-soft);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.5s ease;
 }
-.folia-container iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
+/* 渐隐遮罩 */
+.lyrics-box::before, .lyrics-box::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 60px; pointer-events: none; z-index: 2;
+}
+.lyrics-box::before { top: 0; background: linear-gradient(to bottom, var(--paper-solid), transparent); }
+.lyrics-box::after { bottom: 0; background: linear-gradient(to top, var(--paper-solid), transparent); }
+
+.lyrics-list {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.lyric-line {
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--ink-faint);
+    padding: 12px 0;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+.lyric-line.active {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--blue);
+    opacity: 1;
+    text-shadow: 0 0 15px var(--blue-glow);
+    transform: scale(1.05);
 }
 
 .countdown-box {
@@ -681,6 +706,8 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
     .jump-item { padding:14px 18px; font-size:.82rem; }
     .jump-item .jump-label { font-size:.86rem; }
     .folia-container { height: 60vh; min-height: 400px; }
+    .lyrics-box { height: 160px; }
+    .lyric-line.active { font-size: 1.1rem; }
 }
 @media (prefers-reduced-motion: reduce) {
     .petal { animation:none !important; display:none; }
@@ -691,7 +718,6 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 </head>
 <body>
 
-<!-- 手机端设备选择弹窗 -->
 <div class="device-modal hidden" id="deviceModal">
     <div class="modal-box">
         <h3 id="devTitle">检测到移动设备</h3>
@@ -734,9 +760,15 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
         <hr class="hair">
     </div>
     <div class="pick-grid" id="pickGrid"></div>
+    
+    <!-- 新增：歌词滚动显示框 -->
+    <div class="lyrics-box" id="lyricsBox">
+        <div class="lyrics-list" id="lyricsList">
+            <div class="lyric-line active">点击上方卡片播放音乐并加载歌词</div>
+        </div>
+    </div>
 </section>
 
-<!-- Folia 专属音乐空间 -->
 <section class="section reveal" id="folia-player">
     <div class="section-head">
         <p class="eyebrow">Music Space</p>
@@ -942,25 +974,20 @@ const i18n = {
 };
 
 let currentLang = 'zh';
-let deviceMode = 'pc'; // pc or mobile
+let deviceMode = 'pc';
 
 /* ============================================================
    设备检测与选择
    ============================================================ */
 function checkDevice() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-    
-    // 如果之前选择过，直接应用
     const savedMode = sessionStorage.getItem('csy_device_mode');
     if (savedMode) {
         deviceMode = savedMode;
         applyDeviceMode();
         return;
     }
-
-    if (isMobile) {
-        document.getElementById('deviceModal').classList.remove('hidden');
-    }
+    if (isMobile) document.getElementById('deviceModal').classList.remove('hidden');
 }
 
 function chooseDeviceMode(mode) {
@@ -987,7 +1014,6 @@ function setLang(lang) {
     document.getElementById('langZh').classList.toggle('active', lang === 'zh');
     document.getElementById('langJa').classList.toggle('active', lang === 'ja');
     
-    // 1. 替换静态文本
     const dict = i18n[lang];
     document.getElementById('brandText').textContent = dict.brand;
     document.getElementById('btnHome').textContent = dict.btnHome;
@@ -1010,7 +1036,6 @@ function setLang(lang) {
     document.getElementById('jumpMain').textContent = dict.jumpMain;
     document.getElementById('footerCopy').textContent = dict.footerCopy;
     
-    // 弹窗
     document.getElementById('audioTitle').textContent = dict.audioTitle;
     document.getElementById('audioDesc').textContent = dict.audioDesc;
     document.getElementById('audioYes').textContent = dict.audioYes;
@@ -1021,10 +1046,7 @@ function setLang(lang) {
     document.getElementById('devBtnPc').textContent = dict.devBtnPc;
     document.getElementById('devBtnMobile').textContent = dict.devBtnMobile;
 
-    // 皮肤按钮文字
     toggleSkinTextOnly();
-
-    // 2. 重新渲染动态内容
     renderPick();
     renderVenues();
     renderBuyList();
@@ -1032,9 +1054,6 @@ function setLang(lang) {
     renderFaq();
 }
 
-/* ============================================================
-   皮肤切换
-   ============================================================ */
 function toggleSkin() {
     document.body.classList.toggle('cute');
     toggleSkinTextOnly();
@@ -1042,11 +1061,7 @@ function toggleSkin() {
 function toggleSkinTextOnly() {
     const btn = document.getElementById('skinBtn');
     const isCute = document.body.classList.contains('cute');
-    if (currentLang === 'zh') {
-        btn.textContent = isCute ? i18n.zh.skinCool : i18n.zh.skinCute;
-    } else {
-        btn.textContent = isCute ? i18n.ja.skinCool : i18n.ja.skinCute;
-    }
+    btn.textContent = isCute ? i18n[currentLang].skinCool : i18n[currentLang].skinCute;
 }
 
 /* ============================================================
@@ -1109,19 +1124,6 @@ function renderPick() {
     grid.innerHTML = html;
 }
 
-function selectPick(i) {
-    document.querySelectorAll('.pick-card').forEach(el => {
-        el.classList.toggle('active', Number(el.dataset.index) === i);
-    });
-    stopBgm();
-    bgmAllowed = false;
-    if (i < 12) {
-        playSongMp3(i);
-    } else if (isDevMode()) {
-        window.open('https://example.com/song' + (i + 1), '_blank', 'noopener');
-    }
-}
-
 function renderVenues() {
     document.getElementById('venueGrid').innerHTML = scheduleData.map(s =>
         `<div class="venue-card">
@@ -1171,6 +1173,107 @@ function renderFaq() {
 
 function toggleFaq(i) {
     document.getElementById('faq' + i).classList.toggle('open');
+}
+
+/* ============================================================
+   音乐与歌词联动逻辑 (核心修改)
+   ============================================================ */
+const songAudio = new Audio();
+songAudio.volume = 0.85;
+songAudio.preload = 'none';
+let currentLyrics = [];
+let lyricLineElements = [];
+let currentLyricIndex = -1;
+
+// 解析 LRC 格式
+function parseLRC(lrcText) {
+    const lines = lrcText.split('\n');
+    const result = [];
+    // 匹配 [00:00.00] 格式
+    const timeReg = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/; 
+    lines.forEach(line => {
+        const match = timeReg.exec(line);
+        if (match) {
+            const min = parseInt(match[1]);
+            const sec = parseInt(match[2]);
+            const ms = match[3] ? parseInt(match[3].padEnd(3, '0')) : 0;
+            const time = min * 60 + sec + ms / 1000;
+            const text = line.replace(timeReg, '').trim();
+            if (text) result.push({ time, text });
+        }
+    });
+    return result;
+}
+
+// 更新歌词滚动与高亮
+function updateLyrics() {
+    if (!currentLyrics.length) return;
+    const currTime = songAudio.currentTime;
+    let newIndex = currentLyrics.findIndex((line, i) => {
+        const nextLine = currentLyrics[i + 1];
+        return currTime >= line.time && (!nextLine || currTime < nextLine.time);
+    });
+
+    if (newIndex === -1 && currTime < currentLyrics[0].time) newIndex = 0;
+    if (newIndex === -1 && currTime > currentLyrics[currentLyrics.length - 1].time) newIndex = currentLyrics.length - 1;
+
+    if (newIndex !== currentLyricIndex && newIndex >= 0) {
+        currentLyricIndex = newIndex;
+        lyricLineElements.forEach((el, i) => el.classList.toggle('active', i === newIndex));
+        // 滚动到居中位置
+        const activeEl = lyricLineElements[newIndex];
+        const box = document.getElementById('lyricsBox');
+        if (activeEl && box) {
+            const offset = activeEl.offsetTop - box.clientHeight / 2 + activeEl.clientHeight / 2;
+            document.getElementById('lyricsList').style.transform = `translateY(-${offset}px)`;
+        }
+    }
+}
+songAudio.addEventListener('timeupdate', updateLyrics);
+
+function selectPick(i) {
+    document.querySelectorAll('.pick-card').forEach(el => {
+        el.classList.toggle('active', Number(el.dataset.index) === i);
+    });
+    stopBgm();
+    bgmAllowed = false;
+    
+    const listEl = document.getElementById('lyricsList');
+    if (i < 12) {
+        // 1. 先播音乐
+        songAudio.pause();
+        songAudio.src = (i + 1) + '.mp3';
+        songAudio.currentTime = 0;
+        songAudio.play().catch(() => {});
+
+        // 2. 读取并解析歌词
+        listEl.innerHTML = '<div class="lyric-line active">正在加载歌词...</div>';
+        listEl.style.transform = 'translateY(0)';
+        currentLyrics = [];
+        lyricLineElements = [];
+        currentLyricIndex = -1;
+
+        fetch((i + 1) + '.lrc')
+            .then(res => {
+                if (!res.ok) throw new Error('无歌词文件');
+                return res.text();
+            })
+            .then(text => {
+                currentLyrics = parseLRC(text);
+                if (currentLyrics.length > 0) {
+                    listEl.innerHTML = currentLyrics.map(l => `<div class="lyric-line">${l.text}</div>`).join('');
+                    lyricLineElements = Array.from(listEl.children);
+                } else {
+                    listEl.innerHTML = '<div class="lyric-line active">纯音乐，请欣赏</div>';
+                }
+            })
+            .catch(() => {
+                listEl.innerHTML = '<div class="lyric-line active">暂无歌词</div>';
+            });
+
+    } else if (isDevMode()) {
+        window.open('https://example.com/song' + (i + 1), '_blank', 'noopener');
+    }
 }
 
 /* ============================================================
@@ -1350,12 +1453,10 @@ window.addEventListener('DOMContentLoaded', () => {
     setInterval(tickCountdown, 1000);
     setTimeout(tryPlayBgm, 300);
 
-    // 滚动效果
     window.addEventListener('scroll', () => {
         document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
 
-    // 渐入效果
     const ob = new IntersectionObserver(entries => {
         entries.forEach(en => {
             if (en.isIntersecting) {
@@ -1368,7 +1469,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 document.getElementById('ticketModal').addEventListener('click', function(e) {
-    if (e.target === this) closeTicketModal();
+    if (e.target === e.currentTarget) closeTicketModal();
 });
 </script>
 </body>
