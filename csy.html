@@ -44,6 +44,54 @@ body {
     -webkit-font-smoothing:antialiased;
 }
 
+/* 隐藏元素的类 */
+.hidden { display: none !important; }
+
+/* 设备选择弹窗 */
+.device-modal {
+    position: fixed; inset: 0; z-index: 10000;
+    background: rgba(30,40,60,0.85);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+}
+.device-modal .modal-box {
+    background: var(--paper-solid);
+    border: 1px solid var(--line-strong);
+    border-radius: 24px;
+    padding: 36px 28px;
+    max-width: 400px; width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow);
+    animation: fadeInUp 0.5s ease;
+}
+.device-modal h3 {
+    font-family: var(--serif); font-size: 1.3rem;
+    color: var(--ink); margin-bottom: 12px;
+}
+.device-modal p {
+    font-size: 0.9rem; color: var(--ink-soft);
+    margin-bottom: 24px; line-height: 1.6;
+}
+.device-btn {
+    display: block; width: 100%;
+    padding: 14px; border-radius: 14px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    margin-bottom: 12px; border: 1px solid transparent;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+.device-btn.btn-full {
+    background: var(--blue); color: #fff;
+    box-shadow: 0 4px 15px var(--blue-glow);
+}
+.device-btn.btn-full:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--blue-glow); }
+.device-btn.btn-light {
+    background: transparent; color: var(--ink-soft);
+    border-color: var(--line-strong);
+}
+.device-btn.btn-light:hover { border-color: var(--ink-soft); color: var(--ink); }
+
 .bg-layer {
     position:fixed; inset:0; z-index:-2; pointer-events:none;
     background:
@@ -214,6 +262,24 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
     color:var(--blue); letter-spacing:.06em; line-height:1;
 }
 .pick-name { font-size:.88rem; color:var(--ink); letter-spacing:.08em; }
+
+/* Folia 嵌入框样式 */
+.folia-container {
+    width: 100%;
+    height: 75vh;
+    min-height: 600px;
+    background: #0a0e1a;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow);
+    position: relative;
+}
+.folia-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
 
 .countdown-box {
     background:var(--paper); border:1px solid var(--line);
@@ -592,6 +658,11 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 }
 .audio-no:hover { border-color:var(--blue); color:var(--blue); }
 
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width:768px) {
     .topbar-inner { padding:11px 14px; gap:8px; }
     .brand { font-size:.74rem; max-width:36vw; }
@@ -609,6 +680,7 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
     .footer-powered span { font-size:.66rem; padding:5px 12px; }
     .jump-item { padding:14px 18px; font-size:.82rem; }
     .jump-item .jump-label { font-size:.86rem; }
+    .folia-container { height: 60vh; min-height: 400px; }
 }
 @media (prefers-reduced-motion: reduce) {
     .petal { animation:none !important; display:none; }
@@ -619,45 +691,67 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 </head>
 <body>
 
+<!-- 手机端设备选择弹窗 -->
+<div class="device-modal hidden" id="deviceModal">
+    <div class="modal-box">
+        <h3 id="devTitle">检测到移动设备</h3>
+        <p id="devDesc">为了给您提供最佳体验，请选择访问模式。Folia 音乐播放器在手机上可能显示拥挤。</p>
+        <button class="device-btn btn-full" onclick="chooseDeviceMode('pc')" id="devBtnPc">访问完整版 (含音乐)</button>
+        <button class="device-btn btn-light" onclick="chooseDeviceMode('mobile')" id="devBtnMobile">访问轻量版 (无音乐)</button>
+    </div>
+</div>
+
 <div class="bg-layer"></div>
 <div class="bg-noise"></div>
 <div class="petal-layer" id="petalLayer"></div>
 
 <header class="topbar" id="topbar">
     <div class="topbar-inner">
-        <a class="brand" href="index.html">棍涛舞团---成员Show--蔡顺毅</a>
+        <a class="brand" href="index.html" id="brandText">棍涛舞团---成员Show--蔡顺毅</a>
         <div class="topbar-actions">
             <div class="lang-group">
                 <span class="lang-opt active" id="langZh" onclick="setLang('zh')">中</span>
                 <span class="lang-opt" id="langJa" onclick="setLang('ja')">日</span>
             </div>
             <button class="pill" id="skinBtn" onclick="toggleSkin()">可爱风</button>
-            <a class="pill pill-solid" href="index.html">返回主站</a>
+            <a class="pill pill-solid" href="index.html" id="btnHome">返回主站</a>
         </div>
     </div>
 </header>
 
 <section class="hero" id="home">
     <div class="hero-inner">
-        <div class="hero-badge">棍涛舞团 · 成员SHOW</div>
+        <div class="hero-badge" id="heroBadge">棍涛舞团 · 成员SHOW</div>
         <h1 class="hero-title"><em>蔡顺毅</em></h1>
-        <p class="hero-subtitle">点播 · 多场地巡演 · 购票与校验</p>
+        <p class="hero-subtitle" id="heroSub">点播 · 多场地巡演 · 购票与校验</p>
     </div>
 </section>
 
 <section class="section reveal" id="pick">
     <div class="section-head">
         <p class="eyebrow">Pick</p>
-        <h2 class="sec-title">点播</h2>
+        <h2 class="sec-title" id="titlePick">点播</h2>
         <hr class="hair">
     </div>
     <div class="pick-grid" id="pickGrid"></div>
 </section>
 
+<!-- Folia 专属音乐空间 -->
+<section class="section reveal" id="folia-player">
+    <div class="section-head">
+        <p class="eyebrow">Music Space</p>
+        <h2 class="sec-title" id="titleFolia">Folia 专属音乐空间</h2>
+        <hr class="hair">
+    </div>
+    <div class="folia-container">
+        <iframe src="https://music.guntaodance.cc.cd" allow="autoplay; fullscreen"></iframe>
+    </div>
+</section>
+
 <section class="section reveal">
     <div class="section-head">
         <p class="eyebrow">Countdown</p>
-        <h2 class="sec-title">下一场演出倒计时</h2>
+        <h2 class="sec-title" id="titleCountdown">下一场演出倒计时</h2>
         <hr class="hair">
     </div>
     <div class="countdown-box">
@@ -675,7 +769,7 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 <section class="section reveal">
     <div class="section-head">
         <p class="eyebrow">Venues</p>
-        <h2 class="sec-title">多场地演出</h2>
+        <h2 class="sec-title" id="titleVenues">多场地演出</h2>
         <hr class="hair">
     </div>
     <div class="venue-grid" id="venueGrid"></div>
@@ -684,7 +778,7 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 <section class="section reveal">
     <div class="section-head">
         <p class="eyebrow">Tickets</p>
-        <h2 class="sec-title">购票</h2>
+        <h2 class="sec-title" id="titleTickets">购票</h2>
         <hr class="hair">
     </div>
     <div class="buy-list" id="buyList"></div>
@@ -693,12 +787,12 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 <section class="section reveal">
     <div class="section-head">
         <p class="eyebrow">Verify</p>
-        <h2 class="sec-title">校验门票</h2>
+        <h2 class="sec-title" id="titleVerify">校验门票</h2>
         <hr class="hair">
     </div>
     <div class="verify-box">
         <input class="verify-input" type="text" id="verifyInput" placeholder="请输入校验码">
-        <button class="verify-btn" onclick="verifyTicket()">核 对</button>
+        <button class="verify-btn" onclick="verifyTicket()" id="btnVerify">核 对</button>
         <div class="verify-result" id="verifyResult"></div>
     </div>
 </section>
@@ -706,7 +800,7 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 <section class="section reveal">
     <div class="section-head">
         <p class="eyebrow">Gallery</p>
-        <h2 class="sec-title">现场相册</h2>
+        <h2 class="sec-title" id="titleGallery">现场相册</h2>
         <hr class="hair">
     </div>
     <div class="gallery-grid" id="galleryGrid"></div>
@@ -715,7 +809,7 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 <section class="section reveal">
     <div class="section-head">
         <p class="eyebrow">Notice</p>
-        <h2 class="sec-title">公告栏</h2>
+        <h2 class="sec-title" id="titleNotice">公告栏</h2>
         <hr class="hair">
     </div>
     <div class="notice-list" id="noticeList"></div>
@@ -724,20 +818,20 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 <section class="section reveal">
     <div class="section-head">
         <p class="eyebrow">Quick Links</p>
-        <h2 class="sec-title">快速跳转</h2>
+        <h2 class="sec-title" id="titleQuick">快速跳转</h2>
         <hr class="hair">
     </div>
     <div class="jump-list" id="jumpList">
         <a class="jump-item" href="https://funthing.me" target="_blank" rel="noopener" onclick="return handleJump(event)">
-            <span class="jump-label">前往导航页</span>
+            <span class="jump-label" id="jumpNav">前往导航页</span>
             <span class="jump-arrow">→</span>
         </a>
         <a class="jump-item" href="https://zhfld.dpdns.org" target="_blank" rel="noopener" onclick="return handleJump(event)">
-            <span class="jump-label">前往国际卤蛋贸易有限公司</span>
+            <span class="jump-label" id="jumpTrade">前往国际卤蛋贸易有限公司</span>
             <span class="jump-arrow">→</span>
         </a>
         <a class="jump-item" href="https://guntaodance.cc.cd" target="_blank" rel="noopener" onclick="return handleJump(event)">
-            <span class="jump-label">前往主页</span>
+            <span class="jump-label" id="jumpMain">前往主页</span>
             <span class="jump-arrow">→</span>
         </a>
     </div>
@@ -746,7 +840,7 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 <section class="section reveal">
     <div class="section-head">
         <p class="eyebrow">FAQ</p>
-        <h2 class="sec-title">常见问题</h2>
+        <h2 class="sec-title" id="titleFaq">常见问题</h2>
         <hr class="hair">
     </div>
     <div id="faqList"></div>
@@ -759,7 +853,7 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
         <span>Power by Cloudflare</span>
         <span>File From 126</span>
     </div>
-    <p class="footer-copy">棍涛舞团---成员Show--蔡顺毅</p>
+    <p class="footer-copy" id="footerCopy">棍涛舞团---成员Show--蔡顺毅</p>
     <p class="footer-copyright">© 2026 棍涛舞团 Gun Tao Troupe</p>
 </footer>
 
@@ -772,11 +866,11 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 
 <div class="modal-overlay" id="audioModal">
     <div class="modal-dialog" style="max-width:420px;text-align:center;">
-        <h3 class="modal-title">需要您的允许</h3>
-        <p class="audio-modal-text">浏览器拦截了自动播放。点击下方按钮，允许播放音乐。</p>
+        <h3 class="modal-title" id="audioTitle">需要您的允许</h3>
+        <p class="audio-modal-text" id="audioDesc">浏览器拦截了自动播放。点击下方按钮，允许播放音乐。</p>
         <div class="audio-modal-actions">
-            <button class="audio-yes" onclick="confirmAudio()">允许播放</button>
-            <button class="audio-no" onclick="closeAudioModal()">暂不播放</button>
+            <button class="audio-yes" onclick="confirmAudio()" id="audioYes">允许播放</button>
+            <button class="audio-no" onclick="closeAudioModal()" id="audioNo">暂不播放</button>
         </div>
     </div>
 </div>
@@ -789,6 +883,175 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
 </div>
 
 <script>
+/* ============================================================
+   多语言字典 (中/日)
+   ============================================================ */
+const i18n = {
+    zh: {
+        brand: '棍涛舞团---成员Show--蔡顺毅',
+        skinCute: '可爱风', skinCool: '清冷风',
+        btnHome: '返回主站',
+        heroBadge: '棍涛舞团 · 成员SHOW',
+        heroSub: '点播 · 多场地巡演 · 购票与校验',
+        titlePick: '点播',
+        titleFolia: 'Folia 专属音乐空间',
+        titleCountdown: '下一场演出倒计时',
+        titleVenues: '多场地演出',
+        titleTickets: '购票',
+        titleVerify: '校验门票',
+        titleGallery: '现场相册',
+        titleNotice: '公告栏',
+        titleQuick: '快速跳转',
+        titleFaq: '常见问题',
+        btnVerify: '核 对',
+        inputPlaceholder: '请输入校验码',
+        buyTicket: '购票', soldOut: '售罄',
+        jumpNav: '前往导航页', jumpTrade: '前往国际卤蛋贸易有限公司', jumpMain: '前往主页',
+        footerCopy: '棍涛舞团---成员Show--蔡顺毅',
+        audioTitle: '需要您的允许', audioDesc: '浏览器拦截了自动播放。点击下方按钮，允许播放音乐。', audioYes: '允许播放', audioNo: '暂不播放',
+        devTitle: '检测到移动设备', devDesc: '为了给您提供最佳体验，请选择访问模式。Folia 音乐播放器在手机上可能显示拥挤。', devBtnPc: '访问完整版 (含音乐)', devBtnMobile: '访问轻量版 (无音乐)',
+        priceNormal: '普通票', pricePremium: '高级票', priceVip: 'VIP看台', amount: '数量：',
+        payNotice: '此支付选项不会扣取您一分钱，仅供项目展示'
+    },
+    ja: {
+        brand: 'Gun Tao Troupe---メンバーSHOW--Cai Shunyi',
+        skinCute: 'かわいい風', skinCool: 'クール風',
+        btnHome: 'メインサイトへ',
+        heroBadge: 'Gun Tao Troupe · メンバーSHOW',
+        heroSub: 'リクエスト · 多会場ツアー · チケット購入と認証',
+        titlePick: 'リクエスト',
+        titleFolia: 'Folia 専用音楽スペース',
+        titleCountdown: '次の公演までのカウントダウン',
+        titleVenues: '多会場公演',
+        titleTickets: 'チケット購入',
+        titleVerify: 'チケット認証',
+        titleGallery: 'ライブフォト',
+        titleNotice: 'お知らせ',
+        titleQuick: 'クイックリンク',
+        titleFaq: 'よくある質問',
+        btnVerify: '認 証',
+        inputPlaceholder: '認証コードを入力',
+        buyTicket: '購入', soldOut: '完売',
+        jumpNav: 'ナビページへ', jumpTrade: '国際味付け卵貿易株式会社へ', jumpMain: 'メインサイトへ',
+        footerCopy: 'Gun Tao Troupe---メンバーSHOW--Cai Shunyi',
+        audioTitle: '許可が必要です', audioDesc: 'ブラウザが自動再生をブロックしました。下のボタンをクリックして音楽の再生を許可してください。', audioYes: '再生を許可', audioNo: '後で',
+        devTitle: 'モバイルデバイスを検出', devDesc: '最高の体験を提供するため、アクセスモードを選択してください。Folia プレーヤーはスマートフォンでは窮屈に表示される場合があります。', devBtnPc: 'フルバージョン (音楽あり)', devBtnMobile: 'ライトバージョン (音楽なし)',
+        priceNormal: '一般チケット', pricePremium: 'プレミアムチケット', priceVip: 'VIPスタンド', amount: '数量：',
+        payNotice: 'この支払いオプションは1円も請求しません。デモ用です。'
+    }
+};
+
+let currentLang = 'zh';
+let deviceMode = 'pc'; // pc or mobile
+
+/* ============================================================
+   设备检测与选择
+   ============================================================ */
+function checkDevice() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    
+    // 如果之前选择过，直接应用
+    const savedMode = sessionStorage.getItem('csy_device_mode');
+    if (savedMode) {
+        deviceMode = savedMode;
+        applyDeviceMode();
+        return;
+    }
+
+    if (isMobile) {
+        document.getElementById('deviceModal').classList.remove('hidden');
+    }
+}
+
+function chooseDeviceMode(mode) {
+    deviceMode = mode;
+    sessionStorage.setItem('csy_device_mode', mode);
+    document.getElementById('deviceModal').classList.add('hidden');
+    applyDeviceMode();
+}
+
+function applyDeviceMode() {
+    const foliaSection = document.getElementById('folia-player');
+    if (deviceMode === 'mobile') {
+        foliaSection.classList.add('hidden');
+    } else {
+        foliaSection.classList.remove('hidden');
+    }
+}
+
+/* ============================================================
+   多语言渲染逻辑
+   ============================================================ */
+function setLang(lang) {
+    currentLang = lang;
+    document.getElementById('langZh').classList.toggle('active', lang === 'zh');
+    document.getElementById('langJa').classList.toggle('active', lang === 'ja');
+    
+    // 1. 替换静态文本
+    const dict = i18n[lang];
+    document.getElementById('brandText').textContent = dict.brand;
+    document.getElementById('btnHome').textContent = dict.btnHome;
+    document.getElementById('heroBadge').textContent = dict.heroBadge;
+    document.getElementById('heroSub').textContent = dict.heroSub;
+    document.getElementById('titlePick').textContent = dict.titlePick;
+    document.getElementById('titleFolia').textContent = dict.titleFolia;
+    document.getElementById('titleCountdown').textContent = dict.titleCountdown;
+    document.getElementById('titleVenues').textContent = dict.titleVenues;
+    document.getElementById('titleTickets').textContent = dict.titleTickets;
+    document.getElementById('titleVerify').textContent = dict.titleVerify;
+    document.getElementById('titleGallery').textContent = dict.titleGallery;
+    document.getElementById('titleNotice').textContent = dict.titleNotice;
+    document.getElementById('titleQuick').textContent = dict.titleQuick;
+    document.getElementById('titleFaq').textContent = dict.titleFaq;
+    document.getElementById('btnVerify').textContent = dict.btnVerify;
+    document.getElementById('verifyInput').placeholder = dict.inputPlaceholder;
+    document.getElementById('jumpNav').textContent = dict.jumpNav;
+    document.getElementById('jumpTrade').textContent = dict.jumpTrade;
+    document.getElementById('jumpMain').textContent = dict.jumpMain;
+    document.getElementById('footerCopy').textContent = dict.footerCopy;
+    
+    // 弹窗
+    document.getElementById('audioTitle').textContent = dict.audioTitle;
+    document.getElementById('audioDesc').textContent = dict.audioDesc;
+    document.getElementById('audioYes').textContent = dict.audioYes;
+    document.getElementById('audioNo').textContent = dict.audioNo;
+    
+    document.getElementById('devTitle').textContent = dict.devTitle;
+    document.getElementById('devDesc').textContent = dict.devDesc;
+    document.getElementById('devBtnPc').textContent = dict.devBtnPc;
+    document.getElementById('devBtnMobile').textContent = dict.devBtnMobile;
+
+    // 皮肤按钮文字
+    toggleSkinTextOnly();
+
+    // 2. 重新渲染动态内容
+    renderPick();
+    renderVenues();
+    renderBuyList();
+    renderNotice();
+    renderFaq();
+}
+
+/* ============================================================
+   皮肤切换
+   ============================================================ */
+function toggleSkin() {
+    document.body.classList.toggle('cute');
+    toggleSkinTextOnly();
+}
+function toggleSkinTextOnly() {
+    const btn = document.getElementById('skinBtn');
+    const isCute = document.body.classList.contains('cute');
+    if (currentLang === 'zh') {
+        btn.textContent = isCute ? i18n.zh.skinCool : i18n.zh.skinCute;
+    } else {
+        btn.textContent = isCute ? i18n.ja.skinCool : i18n.ja.skinCute;
+    }
+}
+
+/* ============================================================
+   数据定义
+   ============================================================ */
 const scheduleData = [
     { id:'shanghai2025', date:'2026-10-03', time:'', city:'广州', venue:'广东第二师范学院附属南沙珠江中学', currency:'CNY', rate:1, symbol:'¥' },
     { id:'tokyo2025', date:'2026-11-02', time:'', city:'东京', venue:'国立代々木競技場', currency:'JPY', rate:20, symbol:'JP¥' },
@@ -800,9 +1063,11 @@ const scheduleData = [
 ];
 
 const PRICES = { normal:4600, premium:5300, vip:15300 };
-const TYPE_LABEL = { normal:'普通票', premium:'高级票', vip:'VIP看台' };
+const TYPE_LABEL = { 
+    zh: { normal:'普通票', premium:'高级票', vip:'VIP看台' },
+    ja: { normal:'一般チケット', premium:'プレミアムチケット', vip:'VIPスタンド' }
+};
 
-/* ============ 曲名（15 个，改这里换曲名） ============ */
 const SONG_NAMES = [
     '海屿你',  '朋友的酒',  '红色高跟鞋',  '雨爱',  '忘情牛肉面',
     '你若三冬',  '花海',  '爱情讯息',  '甲乙丙丁',  '心墙',
@@ -810,100 +1075,29 @@ const SONG_NAMES = [
 ];
 
 const noticeData = [
-    { date:'2026-10-06', text:'908午休一展歌喉迷晕全场观众。' },
-    { date:'2026-10-08', text:'课间再次施展歌喉，观众自发为其鼓掌' },
-    { date:'2026-10-11', text:'连夜赶版为CSY创作了此网站' }
+    { date:'2026-10-06', textZh:'908午休一展歌喉迷晕全场观众。', textJa:'908の昼休みに歌声を披露し、観客を魅了しました。' },
+    { date:'2026-10-08', textZh:'课间再次施展歌喉，观众自发为其鼓掌', textJa:'休み時間に再び歌声を披露し、観客から自然と拍手が送られました。' },
+    { date:'2026-10-11', textZh:'连夜赶版为CSY创作了此网站', textJa:'夜を徹してCSYのためにこのウェブサイトを作成しました。' }
 ];
 
 const faqData = [
-    { q:'如何购票？', a:'在购票栏目点击按钮，选择票种和数量后付款即可获得校验码。' },
-    { q:'校验码如何兑换座位？', a:'在校验门票区域输入校验码，系统将显示座位号及演出信息。' },
-    { q:'校验码可以转让吗？', a:'可以，但每个校验码仅能核验一次，核验后即失效。' },
-    { q:'退票政策是什么？', a:'演出前0.7S可免费退票，7天内收取200%手续费。' }
+    { qZh:'如何购票？', aZh:'在购票栏目点击按钮，选择票种和数量后付款即可获得校验码。', qJa:'チケットの購入方法は？', aJa:'「チケット購入」セクションでボタンをクリックし、種類と数量を選択して支払うと認証コードが発行されます。' },
+    { qZh:'校验码如何兑换座位？', aZh:'在校验门票区域输入校验码，系统将显示座位号及演出信息。', qJa:'認証コードで座席を引き換えるには？', aJa:'「チケット認証」セクションで認証コードを入力すると、座席番号と公演情報が表示されます。' },
+    { qZh:'校验码可以转让吗？', aZh:'可以，但每个校验码仅能核验一次，核验后即失效。', qJa:'認証コードは譲渡できますか？', aJa:'可能ですが、各コードは1回のみ認証可能で、認証後は無効になります。' },
+    { qZh:'退票政策是什么？', aZh:'演出前0.7S可免费退票，7天内收取200%手续费。', qJa:'払い戻しポリシーは？', aJa:'公演の0.7秒前までは無料で払い戻し可能ですが、7日以内は200%の手数料がかかります。' }
 ];
 
-/* ============ 开发者模式 ============ */
-const DEV_KEY = 'csy_dev_mode';
-const DEV_CODE = 'betatext';        // 解锁：BetaText
-const NO_DEV_CODE = 'nobeta';       // 关闭：NoBeta
-
-function isDevMode() {
-    return localStorage.getItem(DEV_KEY) === '1';
-}
-function unlockDevMode() {
-    localStorage.setItem(DEV_KEY, '1');
-}
-function lockDevMode() {
-    localStorage.removeItem(DEV_KEY);
-}
-function devTip() {
-    alert('请联系管理员输入调试代码以其用测试功能');
-}
-
-/* ============ 背景音乐 start.mp3 ============ */
-const bgm = new Audio();
-bgm.src = 'start.mp3';
-bgm.loop = false;
-bgm.volume = 0.8;
-bgm.preload = 'auto';
-
-let bgmAllowed = false;
-
-function tryPlayBgm() {
-    if (bgmAllowed) return;
-    const p = bgm.play();
-    if (p && p.catch) {
-        p.then(() => { bgmAllowed = true; })
-         .catch(() => { openAudioModal(); });
-    } else {
-        bgmAllowed = true;
-    }
-}
-function stopBgm() {
-    try { bgm.pause(); bgm.currentTime = 0; } catch (e) {}
-}
-function openAudioModal() {
-    document.getElementById('audioModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-function closeAudioModal() {
-    document.getElementById('audioModal').classList.remove('active');
-    document.body.style.overflow = '';
-}
-function confirmAudio() {
-    document.getElementById('audioModal').classList.remove('active');
-    document.body.style.overflow = '';
-    const p = bgm.play();
-    if (p && p.catch) {
-        p.then(() => { bgmAllowed = true; }).catch(() => {});
-    } else {
-        bgmAllowed = true;
-    }
-}
-
-/* ============ 歌曲播放 ============ */
-const songAudio = new Audio();
-songAudio.volume = 0.85;
-songAudio.preload = 'none';
-
-function playSongMp3(i) {
-    songAudio.pause();
-    songAudio.src = (i + 1) + '.mp3';
-    songAudio.currentTime = 0;
-    const p = songAudio.play();
-    if (p && p.catch) p.catch(() => {});
-}
-
-/* ============ 点播 ============ */
-const PICK_UNLOCKED = 15;
-const PICK_LOCKED = 12;
-const LOCAL_MP3_MAX = 12;
-let pickedIndex = null;
+/* ============================================================
+   渲染逻辑
+   ============================================================ */
+function isDevMode() { return localStorage.getItem('csy_dev_mode') === '1'; }
+function unlockDevMode() { localStorage.setItem('csy_dev_mode', '1'); }
+function lockDevMode() { localStorage.removeItem('csy_dev_mode'); }
 
 function renderPick() {
     const grid = document.getElementById('pickGrid');
     if (!grid) return;
-    const count = isDevMode() ? PICK_UNLOCKED : PICK_LOCKED;
+    const count = isDevMode() ? 15 : 12;
     let html = '';
     for (let i = 0; i < count; i++) {
         const name = SONG_NAMES[i] || ('曲目' + (i + 1));
@@ -916,321 +1110,16 @@ function renderPick() {
 }
 
 function selectPick(i) {
-    pickedIndex = i;
     document.querySelectorAll('.pick-card').forEach(el => {
         el.classList.toggle('active', Number(el.dataset.index) === i);
     });
     stopBgm();
     bgmAllowed = false;
-
-    if (i < LOCAL_MP3_MAX) {
+    if (i < 12) {
         playSongMp3(i);
-        return;
-    }
-
-    if (isDevMode()) {
+    } else if (isDevMode()) {
         window.open('https://example.com/song' + (i + 1), '_blank', 'noopener');
     }
-}
-
-/* ============ 快速跳转 ============ */
-function handleJump(e) {
-    if (!isDevMode()) {
-        e.preventDefault();
-        devTip();
-        return false;
-    }
-    return true;
-}
-
-/* ============ 购票 / 校验 ============ */
-function getStore() { return JSON.parse(localStorage.getItem('troupe_tickets') || '{}'); }
-function saveStore(s) { localStorage.setItem('troupe_tickets', JSON.stringify(s)); }
-function getOrders() { return JSON.parse(localStorage.getItem('troupe_orders') || '[]'); }
-function saveOrders(o) { localStorage.setItem('troupe_orders', JSON.stringify(o)); }
-function initStore() {
-    let s = getStore();
-    scheduleData.forEach(sh => { if (!s[sh.id]) s[sh.id] = { normal:80, premium:80, vip:80 }; });
-    saveStore(s);
-}
-function genSeat() {
-    return String.fromCharCode(65 + Math.floor(Math.random()*26)) +
-           String(Math.floor(Math.random()*999)+1).padStart(3,'0');
-}
-function genCode(id) {
-    return 'GT-' + id.substring(0,4).toUpperCase() + '-' +
-           Math.random().toString(36).substring(2,8).toUpperCase();
-}
-
-let selectedShowId = null;
-let ticketTimer = null;
-let payTimer = null;
-
-function openTicketModal(showId) {
-    selectedShowId = showId;
-    const sh = scheduleData.find(s => s.id === showId);
-    if (!sh) return;
-    const store = getStore();
-    const tck = store[showId] || { normal:0, premium:0, vip:0 };
-    document.getElementById('ticketContent').innerHTML = `
-        <h3 class="modal-title">${sh.city}</h3>
-        <p class="modal-sub">${sh.venue} · ${sh.date}</p>
-        <div class="ticket-opt" data-type="normal" onclick="selTicket('normal')">
-            <div><div class="ticket-opt-name">普通票</div><div class="ticket-opt-left">剩余 ${tck.normal}</div></div>
-            <div class="ticket-opt-price">¥4600</div>
-        </div>
-        <div class="ticket-opt" data-type="premium" onclick="selTicket('premium')">
-            <div><div class="ticket-opt-name">高级票</div><div class="ticket-opt-left">剩余 ${tck.premium}</div></div>
-            <div class="ticket-opt-price">¥5300</div>
-        </div>
-        <div class="ticket-opt" data-type="vip" onclick="selTicket('vip')">
-            <div><div class="ticket-opt-name">VIP看台</div><div class="ticket-opt-left">剩余 ${tck.vip}</div></div>
-            <div class="ticket-opt-price">¥15300</div>
-        </div>
-        <div class="ticket-qty">
-            <label>数量：</label>
-            <input type="number" id="ticketQty" min="1" value="1">
-        </div>
-        <button class="verify-btn" style="margin-top:18px;" onclick="startPay()">立即付款</button>
-        <p class="ticket-notice">此支付选项不会扣取您一分钱，仅供项目展示</p>
-        <div class="pay-log" id="payLog"></div>
-    `;
-    document.getElementById('ticketModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-function selTicket(type) {
-    document.querySelectorAll('.ticket-opt').forEach(e => e.classList.remove('selected'));
-    const el = document.querySelector(`[data-type="${type}"]`);
-    if (el) el.classList.add('selected');
-}
-function startPay() {
-    const sel = document.querySelector('.ticket-opt.selected');
-    if (!sel) return alert('请选择票种');
-    const type = sel.dataset.type;
-    const qty = parseInt(document.getElementById('ticketQty').value);
-    if (isNaN(qty) || qty < 1) return alert('数量至少 1');
-    if (!isDevMode() && qty > 5) return alert('数量 1-5（开发者模式可解除上限）');
-
-    const store = getStore();
-    if (qty > (store[selectedShowId]?.[type] ?? 0)) return alert('余票不足');
-
-    const log = document.getElementById('payLog');
-    log.innerHTML = '';
-    const steps = [
-        '🔗 连接支付网关…',
-        '🔐 验证支付环境…',
-        '📤 雕毛还想买票？',
-        '⏳ 等待确认…',
-        '✅ 生物识别支付授权成功！自动贷款1000万条内裤'
-    ];
-    let i = 0;
-    if (payTimer) clearInterval(payTimer);
-    payTimer = setInterval(() => {
-        if (i < steps.length) { log.innerHTML += steps[i] + '<br>'; i++; }
-        else {
-            clearInterval(payTimer); payTimer = null;
-            finalizePay(type, qty);
-        }
-    }, 460);
-}
-function finalizePay(type, qty) {
-    const total = PRICES[type] * qty;
-    const store = getStore();
-    store[selectedShowId][type] -= qty;
-    saveStore(store);
-
-    const orders = getOrders();
-    const code = genCode(selectedShowId);
-    const seats = [];
-    for (let i = 0; i < qty; i++) seats.push(genSeat());
-    orders.push({ code, showId:selectedShowId, type, seats, validated:false });
-    saveOrders(orders);
-
-    const sh = scheduleData.find(s => s.id === selectedShowId);
-    document.getElementById('payLog').innerHTML = `
-        <p class="pay-ok">🎉 支付成功！</p>
-        <p>总金额：¥${total}（≈ ${sh.symbol}${(total * sh.rate).toFixed(2)}）</p>
-        <p style="margin-top:8px;">校验码：</p>
-        <p class="code-big">${code}</p>
-        <button class="copy-btn" onclick="copyCode('${code}')">📋 复制校验码</button>
-        <p class="ticket-notice" style="margin-top:14px;">请到「校验门票」处输入校验码获取座位</p>
-    `;
-    renderBuyList();
-
-    if (ticketTimer) clearTimeout(ticketTimer);
-    ticketTimer = setTimeout(closeTicketModal, 30000);
-}
-function copyCode(code) {
-    navigator.clipboard.writeText(code).then(closeTicketModal).catch(closeTicketModal);
-}
-function closeTicketModal() {
-    document.getElementById('ticketModal').classList.remove('active');
-    document.body.style.overflow = '';
-    if (ticketTimer) { clearTimeout(ticketTimer); ticketTimer = null; }
-    if (payTimer) { clearInterval(payTimer); payTimer = null; }
-}
-document.getElementById('ticketModal').addEventListener('click', function(e){
-    if (e.target === this) closeTicketModal();
-});
-
-function verifyTicket() {
-    const raw = document.getElementById('verifyInput').value.trim();
-    const res = document.getElementById('verifyResult');
-
-    if (raw.toLowerCase() === DEV_CODE) {
-        unlockDevMode();
-        res.innerHTML = '<p class="dev">欢迎回来 DehongYuan 调试模式已解锁</p>';
-        document.getElementById('verifyInput').value = '';
-        setTimeout(() => { location.reload(); }, 1500);
-        return;
-    }
-
-    if (raw.toLowerCase() === NO_DEV_CODE) {
-        lockDevMode();
-        res.innerHTML = '<p class="warn">调试模式已关闭</p>';
-        document.getElementById('verifyInput').value = '';
-        setTimeout(() => { location.reload(); }, 1500);
-        return;
-    }
-
-    if (raw.toUpperCase() === 'CSY') {
-        res.innerHTML = '';
-        openImgModal('CSY.JPG', '输入 CSY 触发的专属票图');
-        return;
-    }
-
-    const orders = getOrders();
-    const order = orders.find(o => o.code === raw);
-    if (!order) { res.innerHTML = '<p class="err">无效校验码</p>'; return; }
-    if (order.validated) { res.innerHTML = '<p class="warn">此校验码已被使用</p>'; return; }
-
-    const show = scheduleData.find(s => s.id === order.showId);
-    if (!show) { res.innerHTML = '<p class="err">演出信息错误</p>'; return; }
-
-    order.validated = true;
-    saveOrders(orders);
-
-    const dataUrl = generateTicketDataUrl(order, show);
-    const fileName = 'ticket-' + order.code + '.png';
-    const seatsHtml = order.seats.map(s => `<span style="color:var(--pink);">${s}</span>`).join('、');
-
-    res.innerHTML = `
-        <p class="ok">✅ 校验成功 · 一切信息皆为虚构，仅供展示</p>
-        <p>场馆：${show.venue}（${show.city}）</p>
-        <p>日期：${show.date} 时间：${show.time || '11:20PM'}</p>
-        <p>座位号：${seatsHtml}</p>
-        <p>票种：${TYPE_LABEL[order.type] || order.type} × ${order.seats.length} 张</p>
-        <div class="ticket-stub">
-            <img src="${dataUrl}" alt="ticket stub">
-            <div class="stub-actions">
-                <a href="${dataUrl}" download="${fileName}">下载票根</a>
-                <button onclick="openImgModal('${dataUrl}', '长按或右键可保存图片')">放大查看</button>
-            </div>
-        </div>
-    `;
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
-}
-function generateTicketDataUrl(order, show) {
-    const W = 820, H = 420;
-    const canvas = document.createElement('canvas');
-    canvas.width = W; canvas.height = H;
-    const ctx = canvas.getContext('2d');
-
-    const bg = ctx.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0, '#eef3fb');
-    bg.addColorStop(1, '#d6e2f4');
-    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-
-    const rg = ctx.createRadialGradient(W*0.15, H*0.2, 10, W*0.15, H*0.2, 420);
-    rg.addColorStop(0, 'rgba(95,143,208,0.24)');
-    rg.addColorStop(1, 'rgba(95,143,208,0)');
-    ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
-
-    const rg2 = ctx.createRadialGradient(W*0.9, H*0.9, 10, W*0.9, H*0.9, 420);
-    rg2.addColorStop(0, 'rgba(154,134,200,0.20)');
-    rg2.addColorStop(1, 'rgba(154,134,200,0)');
-    ctx.fillStyle = rg2; ctx.fillRect(0, 0, W, H);
-
-    ctx.strokeStyle = 'rgba(95,143,208,0.55)';
-    ctx.lineWidth = 2;
-    roundRect(ctx, 16, 16, W-32, H-32, 18);
-    ctx.stroke();
-
-    ctx.save();
-    ctx.setLineDash([6, 8]);
-    ctx.strokeStyle = 'rgba(95,143,208,0.35)';
-    ctx.beginPath();
-    ctx.moveTo(W*0.66, 16);
-    ctx.lineTo(W*0.66, H-16);
-    ctx.stroke();
-    ctx.restore();
-
-    ctx.fillStyle = '#2b3346';
-    ctx.font = 'bold 32px "Songti SC","STSong","Microsoft YaHei",serif';
-    ctx.fillText('棍涛舞团-csy个人Show', 48, 84);
-    ctx.font = '600 15px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.fillStyle = '#5f8fd0';
-    ctx.fillText('Guntao - csy - show', 48, 112);
-
-    const left = 48;
-    let y = 170;
-    const line = (label, value) => {
-        ctx.font = '600 14px "PingFang SC","Microsoft YaHei",sans-serif';
-        ctx.fillStyle = '#7f93b5';
-        ctx.fillText(label, left, y);
-        ctx.font = 'bold 19px "Songti SC","STSong","Microsoft YaHei",serif';
-        ctx.fillStyle = '#2b3346';
-        const shortVenue = value.length > 14 ? value.substring(0, 14) + '…' : value;
-        ctx.fillText(shortVenue, left + 84, y);
-        y += 40;
-    };
-    line('场馆', show.venue);
-    line('城市', show.city);
-    line('日期', show.date + (show.time ? ' ' + show.time : ''));
-    line('座位', order.seats.join('、'));
-    line('票种', (TYPE_LABEL[order.type] || order.type) + ' × ' + order.seats.length);
-
-    const rx = W*0.66 + 40;
-    ctx.font = '600 14px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.fillStyle = '#7f93b5';
-    ctx.fillText('校验码', rx, 84);
-
-    ctx.font = 'bold 20px "Courier New",monospace';
-    ctx.fillStyle = '#5f8fd0';
-    ctx.fillText(order.code, rx, 116);
-
-    const qs = 120, qx = rx, qy = 156;
-    ctx.fillStyle = 'rgba(43,51,70,0.85)';
-    for (let i = 0; i < 12; i++) {
-        for (let j = 0; j < 12; j++) {
-            const ch = order.code.charCodeAt((i*3 + j*5) % order.code.length);
-            const seed = (i*31 + j*17 + ch) % 3;
-            if (seed !== 0) ctx.fillRect(qx + i*(qs/12), qy + j*(qs/12), qs/12 - 1.5, qs/12 - 1.5);
-        }
-    }
-    ctx.fillStyle = '#eef3fb';
-    ctx.fillRect(qx, qy, qs/4, qs/4);
-    ctx.fillRect(qx + qs*3/4, qy, qs/4, qs/4);
-    ctx.fillRect(qx, qy + qs*3/4, qs/4, qs/4);
-    ctx.fillStyle = '#2b3346';
-    ctx.fillRect(qx+4, qy+4, qs/4-8, qs/4-8);
-    ctx.fillRect(qx + qs*3/4 + 4, qy+4, qs/4-8, qs/4-8);
-    ctx.fillRect(qx+4, qy + qs*3/4 + 4, qs/4-8, qs/4-8);
-
-    ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.fillStyle = '#5f7396';
-    ctx.fillText('仅供展示 · 非真实票务凭证', 48, H - 36);
-
-    return canvas.toDataURL('image/png');
 }
 
 function renderVenues() {
@@ -1242,10 +1131,11 @@ function renderVenues() {
          </div>`
     ).join('');
 }
+
 function renderBuyList() {
-    const store = getStore();
+    const store = JSON.parse(localStorage.getItem('troupe_tickets') || '{}');
     document.getElementById('buyList').innerHTML = scheduleData.map(s => {
-        const t = store[s.id] || { normal:0, premium:0, vip:0 };
+        const t = store[s.id] || { normal:80, premium:80, vip:80 };
         const soldOut = (t.normal + t.premium + t.vip) <= 0;
         return `<div class="buy-row">
             <div class="buy-info">
@@ -1255,69 +1145,175 @@ function renderBuyList() {
             <button class="buy-btn ${soldOut ? 'sold-out' : ''}"
                     ${soldOut ? 'disabled' : ''}
                     onclick="openTicketModal('${s.id}')">
-                ${soldOut ? '售罄' : '购票'}
+                ${soldOut ? i18n[currentLang].soldOut : i18n[currentLang].buyTicket}
             </button>
         </div>`;
     }).join('');
 }
-function renderGallery() {
-    document.getElementById('galleryGrid').innerHTML =
-        Array.from({ length:6 }, (_, i) =>
-            `<div class="gallery-item">
-                <img src="jc${i+1}.jpg" alt="Gallery ${i+1}"
-                     loading="lazy" decoding="async"
-                     onerror="this.style.display='none'">
-             </div>`
-        ).join('');
-}
+
 function renderNotice() {
     document.getElementById('noticeList').innerHTML = noticeData.map(n =>
         `<div class="notice-item">
             <div class="notice-date">${n.date}</div>
-            <div>${n.text}</div>
+            <div>${currentLang === 'zh' ? n.textZh : n.textJa}</div>
          </div>`
     ).join('');
 }
+
 function renderFaq() {
     document.getElementById('faqList').innerHTML = faqData.map((f, i) =>
         `<div class="faq-item" id="faq${i}">
-            <div class="faq-q" onclick="toggleFaq(${i})">${f.q}</div>
-            <div class="faq-a">${f.a}</div>
+            <div class="faq-q" onclick="toggleFaq(${i})">${currentLang === 'zh' ? f.qZh : f.qJa}</div>
+            <div class="faq-a">${currentLang === 'zh' ? f.aZh : f.aJa}</div>
          </div>`
     ).join('');
 }
+
 function toggleFaq(i) {
-    const el = document.getElementById('faq' + i);
-    if (!el) return;
-    el.classList.toggle('open');
+    document.getElementById('faq' + i).classList.toggle('open');
 }
 
-function getNextShow() {
-    const now = new Date();
-    const future = scheduleData
-        .filter(s => new Date(s.date + 'T23:59:59') > now)
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-    return future[0] || null;
+/* ============================================================
+   购票逻辑
+   ============================================================ */
+function openTicketModal(showId) {
+    const sh = scheduleData.find(s => s.id === showId);
+    if (!sh) return;
+    const store = JSON.parse(localStorage.getItem('troupe_tickets') || '{}');
+    const tck = store[showId] || { normal:80, premium:80, vip:80 };
+    
+    const dict = i18n[currentLang];
+    const typeLabel = TYPE_LABEL[currentLang];
+    
+    document.getElementById('ticketContent').innerHTML = `
+        <h3 class="modal-title">${sh.city}</h3>
+        <p class="modal-sub">${sh.venue} · ${sh.date}</p>
+        <div class="ticket-opt" data-type="normal" onclick="selTicket('normal')">
+            <div><div class="ticket-opt-name">${typeLabel.normal}</div><div class="ticket-opt-left">残り ${tck.normal}</div></div>
+            <div class="ticket-opt-price">¥4600</div>
+        </div>
+        <div class="ticket-opt" data-type="premium" onclick="selTicket('premium')">
+            <div><div class="ticket-opt-name">${typeLabel.premium}</div><div class="ticket-opt-left">残り ${tck.premium}</div></div>
+            <div class="ticket-opt-price">¥5300</div>
+        </div>
+        <div class="ticket-opt" data-type="vip" onclick="selTicket('vip')">
+            <div><div class="ticket-opt-name">${typeLabel.vip}</div><div class="ticket-opt-left">残り ${tck.vip}</div></div>
+            <div class="ticket-opt-price">¥15300</div>
+        </div>
+        <div class="ticket-qty">
+            <label>${dict.amount}</label>
+            <input type="number" id="ticketQty" min="1" value="1">
+        </div>
+        <button class="verify-btn" style="margin-top:18px;" onclick="startPay()">${dict.buyTicket}</button>
+        <p class="ticket-notice">${dict.payNotice}</p>
+        <div class="pay-log" id="payLog"></div>
+    `;
+    document.getElementById('ticketModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
+
+function selTicket(type) {
+    document.querySelectorAll('.ticket-opt').forEach(e => e.classList.remove('selected'));
+    document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+}
+
+function startPay() {
+    const sel = document.querySelector('.ticket-opt.selected');
+    if (!sel) return;
+    const type = sel.dataset.type;
+    const qty = parseInt(document.getElementById('ticketQty').value);
+    const showId = scheduleData.find(s => s.city === document.querySelector('.modal-title').textContent).id;
+    
+    const store = JSON.parse(localStorage.getItem('troupe_tickets') || '{}');
+    if (!store[showId]) store[showId] = { normal:80, premium:80, vip:80 };
+    if (qty > store[showId][type]) return alert('余票不足');
+
+    const log = document.getElementById('payLog');
+    log.innerHTML = '';
+    const steps = currentLang === 'zh' ? 
+        ['🔗 连接支付网关…', '🔐 验证支付环境…', '📤 雕毛还想买票？', '⏳ 等待确认…', '✅ 成功！自动贷款1000万条内裤'] : 
+        ['🔗 ゲートウェイ接続中…', '🔐 環境確認中…', '📤 チケットを購入しますか？', '⏳ 確認待ち…', '✅ 成功！自動的に1000万枚のパンツをローンします'];
+    
+    let i = 0;
+    const timer = setInterval(() => {
+        if (i < steps.length) { log.innerHTML += steps[i] + '<br>'; i++; }
+        else {
+            clearInterval(timer);
+            store[showId][type] -= qty;
+            localStorage.setItem('troupe_tickets', JSON.stringify(store));
+            
+            const code = 'GT-' + showId.substring(0,4).toUpperCase() + '-' + Math.random().toString(36).substring(2,8).toUpperCase();
+            const orders = JSON.parse(localStorage.getItem('troupe_orders') || '[]');
+            orders.push({ code, showId, type, seats: ['A' + Math.floor(Math.random()*100)], validated: false });
+            localStorage.setItem('troupe_orders', JSON.stringify(orders));
+
+            log.innerHTML = `<p class="pay-ok">🎉 Success!</p><p>認証コード: ${code}</p>`;
+            renderBuyList();
+        }
+    }, 400);
+}
+
+function closeTicketModal() {
+    document.getElementById('ticketModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+/* ============================================================
+   校验逻辑
+   ============================================================ */
+function verifyTicket() {
+    const raw = document.getElementById('verifyInput').value.trim();
+    const res = document.getElementById('verifyResult');
+    
+    if (raw.toLowerCase() === 'betatext') {
+        unlockDevMode();
+        res.innerHTML = '<p class="dev">欢迎回来 DehongYuan 调试模式已解锁</p>';
+        setTimeout(() => location.reload(), 1500);
+        return;
+    }
+    if (raw.toLowerCase() === 'nobeta') {
+        lockDevMode();
+        res.innerHTML = '<p class="warn">调试模式已关闭</p>';
+        setTimeout(() => location.reload(), 1500);
+        return;
+    }
+    if (raw.toUpperCase() === 'CSY') {
+        res.innerHTML = '<p>CSY.JPG 已触发 (图片略)</p>';
+        return;
+    }
+
+    const orders = JSON.parse(localStorage.getItem('troupe_orders') || '[]');
+    const order = orders.find(o => o.code === raw);
+    if (!order) { res.innerHTML = '<p class="err">Invalid Code</p>'; return; }
+    if (order.validated) { res.innerHTML = '<p class="warn">Code Used</p>'; return; }
+
+    order.validated = true;
+    localStorage.setItem('troupe_orders', JSON.stringify(orders));
+    res.innerHTML = `<p class="ok">✅ 认证成功！<br>座席: ${order.seats.join(', ')}</p>`;
+}
+
+/* ============================================================
+   倒计时 & 其他动画
+   ============================================================ */
 function tickCountdown() {
-    const next = getNextShow();
-    const grid = document.getElementById('cdGrid');
+    const future = scheduleData
+        .filter(s => new Date(s.date + 'T23:59:59') > new Date())
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+    const next = future[0];
     const target = document.getElementById('cdTarget');
+    
     if (!next) {
-        grid.style.display = 'none';
+        document.getElementById('cdGrid').style.display = 'none';
         target.innerHTML = '<span class="countdown-ended">暂无未来演出</span>';
         return;
     }
-    grid.style.display = '';
+    document.getElementById('cdGrid').style.display = '';
     const t = new Date(next.date + 'T23:59:59') - new Date();
-    if (t <= 0) {
-        target.innerHTML = '<span class="countdown-ended">已开演</span>';
-        return;
-    }
     const d = Math.floor(t / 86400000);
     const h = Math.floor(t % 86400000 / 3600000);
     const m = Math.floor(t % 3600000 / 60000);
     const s = Math.floor(t % 60000 / 1000);
+    
     document.getElementById('cdD').textContent = d;
     document.getElementById('cdH').textContent = String(h).padStart(2, '0');
     document.getElementById('cdM').textContent = String(m).padStart(2, '0');
@@ -1325,80 +1321,41 @@ function tickCountdown() {
     target.textContent = `${next.city} · ${next.venue} · ${next.date}`;
 }
 
-function openImgModal(src, hint) {
-    document.getElementById('imgModalContent').innerHTML =
-        `<img src="${src}" alt="ticket">` +
-        (hint ? `<p style="text-align:center;color:var(--ink-faint);font-size:.76rem;margin-top:10px;">${hint}</p>` : '');
-    document.getElementById('imgModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-function closeImgModal() {
-    document.getElementById('imgModal').classList.remove('active');
-    document.body.style.overflow = '';
-}
-document.getElementById('imgModal').addEventListener('click', function(e){
-    if (e.target === this) closeImgModal();
-});
+/* ============================================================
+   背景音乐 & 初始化
+   ============================================================ */
+const bgm = new Audio();
+bgm.src = 'start.mp3';
+bgm.loop = false;
+let bgmAllowed = false;
 
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-        closeTicketModal();
-        closeImgModal();
-        closeAudioModal();
-    }
-});
-
-function toggleSkin() {
-    document.body.classList.toggle('cute');
-    const btn = document.getElementById('skinBtn');
-    btn.textContent = document.body.classList.contains('cute') ? '清冷风' : '可爱风';
+function tryPlayBgm() {
+    if (bgmAllowed) return;
+    bgm.play().then(() => { bgmAllowed = true; }).catch(() => {
+        document.getElementById('audioModal').classList.add('active');
+    });
 }
-
-function setLang(lang) {
-    document.getElementById('langZh').classList.toggle('active', lang === 'zh');
-    document.getElementById('langJa').classList.toggle('active', lang === 'ja');
+function stopBgm() { bgm.pause(); bgm.currentTime = 0; }
+function confirmAudio() {
+    document.getElementById('audioModal').classList.remove('active');
+    bgm.play().then(() => { bgmAllowed = true; }).catch(() => {});
 }
+function closeAudioModal() { document.getElementById('audioModal').classList.remove('active'); }
 
-(function () {
-    const bar = document.getElementById('topbar');
-    let ticking = false, last = false;
+// 初始化
+window.addEventListener('DOMContentLoaded', () => {
+    checkDevice();
+    setLang('zh');
+    tickCountdown();
+    setInterval(tickCountdown, 1000);
+    setTimeout(tryPlayBgm, 300);
+
+    // 滚动效果
     window.addEventListener('scroll', () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => {
-            const should = window.scrollY > 40;
-            if (should !== last) { bar.classList.toggle('scrolled', should); last = should; }
-            ticking = false;
-        });
+        document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
-})();
 
-(function () {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const layer = document.getElementById('petalLayer');
-    const isMobile = window.matchMedia('(max-width:768px)').matches;
-    const count = isMobile ? 5 : 8;
-    const frag = document.createDocumentFragment();
-    for (let i = 0; i < count; i++) {
-        const p = document.createElement('span');
-        p.className = 'petal';
-        const size = 6 + Math.random() * 9;
-        p.style.width = size + 'px';
-        p.style.height = size * 0.85 + 'px';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.animationDuration = (18 + Math.random() * 16) + 's';
-        p.style.animationDelay = (-Math.random() * 28) + 's';
-        frag.appendChild(p);
-    }
-    layer.appendChild(frag);
-})();
-
-(function () {
-    const els = document.querySelectorAll('.reveal');
-    if (!('IntersectionObserver' in window)) {
-        els.forEach(e => e.classList.add('visible'));
-        return;
-    }
+    // 渐入效果
     const ob = new IntersectionObserver(entries => {
         entries.forEach(en => {
             if (en.isIntersecting) {
@@ -1406,22 +1363,13 @@ function setLang(lang) {
                 ob.unobserve(en.target);
             }
         });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-    els.forEach(e => ob.observe(e));
-})();
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => ob.observe(el));
+});
 
-(function init() {
-    initStore();
-    renderPick();
-    renderVenues();
-    renderBuyList();
-    renderGallery();
-    renderNotice();
-    renderFaq();
-    tickCountdown();
-    setInterval(tickCountdown, 1000);
-    setTimeout(() => { tryPlayBgm(); }, 300);
-})();
+document.getElementById('ticketModal').addEventListener('click', function(e) {
+    if (e.target === this) closeTicketModal();
+});
 </script>
 </body>
 </html>
