@@ -785,15 +785,14 @@ let currentLang = 'zh';
 let deviceMode = 'pc';
 
 /* ============================================================
-   云端同步配置（Cloudflare Workers + KV）
+   云端同步配置（Cloudflare Pages Functions + KV）
    ------------------------------------------------------------
-   部署 Worker 后（部署方法见仓库根目录 worker.js 顶部注释），
-   把下面的空字符串改成你自己的 Worker 地址（不带结尾斜杠），例如：
-   const API_BASE = 'https://guntaodance-api.你的账号.workers.dev';
-   留空 '' 表示尚未部署后端，页面自动退回"仅本地保存"模式，
-   所有功能照常可用，只是留言/应援数据不跨设备共享。
+   API 跑在网站同域名下的 /api/ 路径（functions/ 目录），
+   由 Cloudflare Pages 随 GitHub 自动部署，国内可直连。
+   后台 KV 绑定已在 Pages 项目设置中配置。
+   若 API 不可达，页面自动退回"仅本地保存"模式，功能照常可用。
    ============================================================ */
-const API_BASE = 'https://guntaodance-api.yuandehong62.workers.dev';
+const API_BASE = 'https://guntaodance.cc.cd';
 
 /* ============================================================
    设备检测与选择
