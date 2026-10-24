@@ -793,7 +793,7 @@ let deviceMode = 'pc';
    留空 '' 表示尚未部署后端，页面自动退回"仅本地保存"模式，
    所有功能照常可用，只是留言/应援数据不跨设备共享。
    ============================================================ */
-const API_BASE = '';
+const API_BASE = 'https://guntaodance-api.yuandehong62.workers.dev';
 
 /* ============================================================
    设备检测与选择
@@ -1215,7 +1215,12 @@ async function fetchMessages() {
         if (!res.ok) return;
         const data = await res.json();
         if (data && data.ok && Array.isArray(data.messages)) {
-            csyMessages = data.messages.slice().reverse(); // 服务器新→旧，转为旧→新
+            const server = data.messages.slice().reverse(); // 服务器新→旧，转为旧→新
+            // 合并：保留本地有、服务器暂时还没同步的留言（如刚提交、KV尚未生效的）
+            const serverKeys = {};
+            server.forEach(m => { serverKeys[m.time + '|' + m.text] = true; });
+            const onlyLocal = csyMessages.filter(m => !serverKeys[m.time + '|' + m.text]);
+            csyMessages = server.concat(onlyLocal);
             saveLocalMessages();
             renderMessages();
         }
