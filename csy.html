@@ -303,6 +303,84 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
     background: none; border: none;
 }
 
+/* ===== 新增：点播搜索与筛选 ===== */
+.pick-tools { display:flex; gap:12px; justify-content:center; align-items:center; margin-bottom:18px; flex-wrap:wrap; }
+.pick-search { width:min(320px, 100%); padding:10px 18px; border-radius:999px; border:1px solid var(--line-strong); background:rgba(255,255,255,0.7); color:var(--ink); font-family:var(--sans); font-size:.82rem; letter-spacing:.05em; outline:none; transition:border-color .3s ease, box-shadow .3s ease; }
+.pick-search:focus { border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-glow); }
+.pick-search::placeholder { color:var(--ink-faint); }
+.fav-mark { position:absolute; top:8px; right:10px; z-index:2; font-size:.95rem; color:var(--ink-faint); cursor:pointer; transition:transform .3s ease; user-select:none; }
+.fav-mark.on { color:#e0608f; text-shadow:0 0 10px rgba(224,96,143,.5); }
+.fav-mark:hover { transform:scale(1.35); }
+
+/* ===== 新增：播放器控制栏 ===== */
+.player-bar { margin-top:20px; background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:18px 22px; box-shadow:var(--shadow-soft); }
+.pb-row1 { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.pb-title { font-family:var(--serif); font-size:1rem; letter-spacing:.06em; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.pb-fav { font-size:1.25rem; cursor:pointer; user-select:none; transition:transform .3s ease; flex-shrink:0; }
+.pb-fav:hover { transform:scale(1.25); }
+.pb-row2 { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.pb-btn { width:38px; height:38px; border-radius:50%; border:1px solid var(--line-strong); background:rgba(255,255,255,0.6); color:var(--ink); cursor:pointer; font-size:.95rem; display:flex; align-items:center; justify-content:center; transition:all .3s ease; }
+.pb-btn:hover { border-color:var(--blue); color:var(--blue); box-shadow:0 0 14px var(--blue-glow); }
+.pb-btn.pb-play { width:46px; height:46px; background:var(--blue); border-color:var(--blue); color:#fff; font-size:1.05rem; }
+.pb-btn.pb-play:hover { color:#fff; }
+.pb-time { font-family:'Courier New', monospace; font-size:.74rem; color:var(--ink-faint); min-width:36px; text-align:center; }
+.pb-seek { flex:1 1 130px; min-width:110px; }
+.pb-vol { font-size:.85rem; }
+.pb-vol-range { width:80px; }
+input[type=range] { accent-color:var(--blue); cursor:pointer; }
+
+/* ===== 新增：场地卡选中态 ===== */
+.venue-card { cursor:pointer; position:relative; }
+.venue-card.selected { border-color:var(--blue); box-shadow:0 0 22px var(--blue-glow); background:rgba(95,143,208,0.08); }
+.venue-card.selected::after { content:'⏱'; position:absolute; top:14px; right:16px; font-size:1rem; }
+
+/* ===== 新增：倒计时重置 ===== */
+.cd-reset { margin-top:14px; }
+
+/* ===== 新增：我的订单入口 ===== */
+.orders-entry { text-align:center; margin-top:20px; }
+.order-list { display:flex; flex-direction:column; gap:12px; }
+.order-item { border:1px solid var(--line); border-radius:14px; padding:14px 16px; text-align:left; }
+.order-code { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; font-family:'Courier New', monospace; font-size:.82rem; color:var(--blue); letter-spacing:.06em; word-break:break-all; }
+.order-info { font-size:.76rem; color:var(--ink-soft); margin-top:6px; line-height:1.8; }
+.order-status.ok { color:var(--blue); font-weight:600; }
+.order-status.used { color:#c9a04a; font-weight:600; }
+.orders-empty { text-align:center; color:var(--ink-faint); padding:26px 0; font-size:.86rem; }
+
+/* ===== 新增：留言板 ===== */
+.msg-box { max-width:640px; margin:0 auto; }
+.msg-form { background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:22px; box-shadow:var(--shadow-soft); }
+.msg-input { width:100%; padding:11px 14px; border-radius:12px; border:1px solid var(--line-strong); background:rgba(255,255,255,0.7); color:var(--ink); font-family:var(--sans); font-size:.84rem; outline:none; margin-bottom:12px; transition:border-color .3s ease, box-shadow .3s ease; resize:vertical; }
+.msg-input:focus { border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-glow); }
+.msg-input::placeholder { color:var(--ink-faint); }
+.msg-name-input { max-width:220px; }
+.msg-list { display:flex; flex-direction:column; gap:12px; margin-top:20px; }
+.msg-item { background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:14px 18px; text-align:left; }
+.msg-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; }
+.msg-name { font-size:.82rem; font-weight:700; color:var(--blue); letter-spacing:.05em; }
+.msg-time { font-size:.68rem; color:var(--ink-faint); letter-spacing:.06em; }
+.msg-text { font-size:.86rem; color:var(--ink-soft); line-height:1.8; word-break:break-word; white-space:pre-wrap; }
+.msg-empty { text-align:center; color:var(--ink-faint); font-size:.84rem; padding:16px 0; }
+
+/* ===== 新增：应援墙 ===== */
+.support-wall { text-align:center; position:relative; padding:36px 16px; background:var(--paper); border:1px solid var(--line); border-radius:24px; box-shadow:var(--shadow-soft); overflow:hidden; min-height:190px; }
+.support-heart-btn { font-family:var(--sans); font-size:1rem; font-weight:700; letter-spacing:.14em; padding:14px 34px; border-radius:999px; border:none; background:linear-gradient(135deg, #f8a8c8, #e0608f); color:#fff; cursor:pointer; box-shadow:0 8px 24px rgba(224,96,143,.35); transition:all .3s ease; position:relative; z-index:2; }
+.support-heart-btn:hover { transform:translateY(-3px) scale(1.03); box-shadow:0 12px 34px rgba(224,96,143,.5); }
+.support-heart { display:inline-block; margin-right:8px; animation:heartbeat 1.2s ease infinite; }
+@keyframes heartbeat { 0%,100% { transform:scale(1); } 25% { transform:scale(1.25); } 40% { transform:scale(1); } 60% { transform:scale(1.18); } }
+.support-count { margin-top:18px; font-size:.82rem; letter-spacing:.14em; color:var(--ink-soft); position:relative; z-index:2; }
+.heart-fly { position:absolute; bottom:36px; font-size:1.4rem; pointer-events:none; z-index:1; animation:heartUp 1.6s ease-out forwards; }
+@keyframes heartUp { 0% { transform:translateY(0) scale(.6); opacity:0; } 15% { opacity:1; } 100% { transform:translateY(-150px) scale(1.15); opacity:0; } }
+
+/* ===== 新增：阅读进度 & 回到顶部 ===== */
+.scroll-progress { position:fixed; top:0; left:0; height:3px; width:0; background:linear-gradient(90deg, var(--blue), var(--violet), var(--pink)); z-index:1001; }
+.back-top { position:fixed; left:30px; bottom:30px; z-index:999; width:46px; height:46px; border-radius:50%; border:1px solid var(--line-strong); background:rgba(255,255,255,0.85); backdrop-filter:blur(6px); color:var(--blue); font-size:1.2rem; cursor:pointer; opacity:0; pointer-events:none; transform:translateY(12px); transition:all .4s ease; box-shadow:var(--shadow-soft); }
+.back-top.show { opacity:1; pointer-events:auto; transform:translateY(0); }
+.back-top:hover { background:var(--blue); color:#fff; box-shadow:0 0 20px var(--blue-glow); }
+
+/* ===== 新增：相册空态文字 ===== */
+.gallery-empty-text { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:2; font-size:.7rem; letter-spacing:.16em; color:var(--ink-faint); }
+
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width:768px) {
@@ -324,6 +402,11 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
     .jump-item .jump-label { font-size:.86rem; }
     .folia-container { height: 60vh; min-height: 400px; }
     .secret-btn { height: 44px; padding: 0 16px; font-size: 0.85rem; letter-spacing: 1px; bottom: 20px; right: 20px; }
+    .pb-row2 { gap:8px; }
+    .pb-seek { min-width:90px; }
+    .pb-vol-range { width:60px; }
+    .back-top { left:16px; bottom:20px; width:40px; height:40px; font-size:1rem; }
+    .support-heart-btn { padding:12px 22px; font-size:.88rem; }
 }
 @media (prefers-reduced-motion: reduce) {
     .petal { animation:none !important; display:none; }
@@ -375,12 +458,35 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
         <h2 class="sec-title" id="titlePick">点播</h2>
         <hr class="hair">
     </div>
+    <div class="pick-tools">
+        <input type="text" class="pick-search" id="pickSearch" placeholder="搜索歌名…" oninput="filterPick(this.value)">
+        <button class="pill" id="favFilterBtn" onclick="toggleFavFilter()">只看收藏</button>
+    </div>
     <div class="pick-grid" id="pickGrid"></div>
     
     <!-- 歌词滚动显示框 -->
     <div class="lyrics-box" id="lyricsBox">
         <div class="lyrics-list" id="lyricsList">
             <div class="lyric-line active">点击上方卡片播放音乐并加载歌词</div>
+        </div>
+    </div>
+
+    <!-- 播放器控制栏 -->
+    <div class="player-bar">
+        <div class="pb-row1">
+            <span class="pb-title" id="pbTitle">未选择歌曲</span>
+            <span class="pb-fav" id="pbFav" onclick="toggleFavCurrent()" title="收藏">🤍</span>
+        </div>
+        <div class="pb-row2">
+            <button class="pb-btn" onclick="playPrev()" title="上一首">⏮</button>
+            <button class="pb-btn pb-play" id="pbPlayBtn" onclick="togglePlay()" title="播放/暂停">▶</button>
+            <button class="pb-btn" onclick="playNext()" title="下一首">⏭</button>
+            <button class="pb-btn" onclick="playRandom()" title="随机播放">🔀</button>
+            <span class="pb-time" id="pbTime">0:00</span>
+            <input type="range" class="pb-seek" id="pbSeek" min="0" max="1000" value="0" title="进度">
+            <span class="pb-time" id="pbDur">0:00</span>
+            <span class="pb-vol">🔈</span>
+            <input type="range" class="pb-vol-range" id="pbVol" min="0" max="100" value="85" title="音量">
         </div>
     </div>
 </section>
@@ -419,6 +525,7 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
             <div class="cd-cell"><div class="cd-num" id="cdS">--</div><div class="cd-lab">SEC</div></div>
         </div>
         <p class="countdown-target" id="cdTarget"></p>
+        <button class="pill cd-reset hidden" id="cdReset" onclick="resetCdTarget()">恢复自动选择</button>
     </div>
 </section>
 
@@ -438,6 +545,7 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
         <hr class="hair">
     </div>
     <div class="buy-list" id="buyList"></div>
+    <div class="orders-entry"><button class="pill" id="btnOrders" onclick="openOrders()">我的订单</button></div>
 </section>
 
 <section class="section reveal">
@@ -506,6 +614,34 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
     <div id="faqList"></div>
 </section>
 
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">Message</p>
+        <h2 class="sec-title" id="titleMessage">留言板</h2>
+        <hr class="hair">
+    </div>
+    <div class="msg-box">
+        <div class="msg-form">
+            <input type="text" class="msg-input msg-name-input" id="msgName" maxlength="16" placeholder="昵称">
+            <textarea class="msg-input" id="msgText" maxlength="200" placeholder="留言内容（友善发言哦）"></textarea>
+            <button class="verify-btn" id="msgSubmitBtn" onclick="submitMsg()">发布留言</button>
+        </div>
+        <div class="msg-list" id="msgList"></div>
+    </div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
+        <p class="eyebrow">Support</p>
+        <h2 class="sec-title" id="titleSupport">应援墙</h2>
+        <hr class="hair">
+    </div>
+    <div class="support-wall" id="supportWall">
+        <button class="support-heart-btn" onclick="addSupport()"><span class="support-heart">❤️</span><span id="supportBtnText">为蔡顺毅应援</span></button>
+        <p class="support-count" id="supportCountText">❤️ 累计应援 0</p>
+    </div>
+</section>
+
 <footer class="footer reveal">
     <div class="footer-powered">
         <span>Power by DeepSeek</span>
@@ -516,6 +652,16 @@ body.cute .topbar { background:rgba(255,245,251,0.78); }
     <p class="footer-copy" id="footerCopy">棍涛舞团---成员Show--蔡顺毅</p>
     <p class="footer-copyright">© 2026 棍涛舞团 Gun Tao Troupe</p>
 </footer>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<button class="back-top" id="backTop" onclick="scrollToTop()" title="回到顶部">↑</button>
+
+<div class="modal-overlay" id="ordersModal">
+    <div class="modal-dialog">
+        <button class="modal-close" onclick="closeOrders()">✕</button>
+        <div id="ordersContent"></div>
+    </div>
+</div>
 
 <!-- ===== 悬浮大彩蛋模块（带文字） ===== -->
 <button class="secret-btn" onclick="openSecret()" title="点我看看？">
@@ -582,7 +728,16 @@ const i18n = {
         devTitle: '检测到移动设备', devDesc: '为了给您提供最佳体验，请选择访问模式。', devBtnPc: '访问完整版', devBtnMobile: '访问轻量版 (无音乐)',
         priceNormal: '普通票', pricePremium: '高级票', priceVip: 'VIP看台', amount: '数量：',
         payNotice: '此支付选项不会扣取您一分钱，仅供项目展示',
-        secretBtn: 'Welcome To North Korea'
+        secretBtn: 'Welcome To North Korea',
+        searchPlaceholder: '搜索歌名…',
+        favFilterOn: '只看收藏', favFilterOff: '显示全部',
+        noSong: '未选择歌曲', nowPlaying: '正在播放',
+        titleOrders: '我的订单', ordersSub: '购票后自动生成校验码，核验后即失效。', ordersEmpty: '暂无订单，快去购票吧！',
+        orderStatusUsed: '已校验', orderStatusNew: '未校验', copyCode: '复制', copied: '已复制 ✓', seatLabel: '座席',
+        titleMessage: '留言板', msgName: '昵称', msgText: '留言内容（友善发言哦）', msgSubmit: '发布留言', msgEmpty: '还没有留言，来抢沙发！', msgAnon: '匿名',
+        titleSupport: '应援墙', supportBtn: '为蔡顺毅应援', supportCount: '累计应援',
+        cdCustom: '已锁定此场次 · 点击其他场地卡片可切换', cdReset: '恢复自动选择', cdEnded: '演出已开始', noFuture: '暂无未来演出',
+        galleryEmpty: '照片筹备中'
     },
     ja: {
         brand: 'Gun Tao Troupe---メンバーSHOW--Cai Shunyi',
@@ -609,7 +764,16 @@ const i18n = {
         devTitle: 'モバイルデバイスを検出', devDesc: '最高の体験を提供するため、アクセスモードを選択してください。', devBtnPc: 'フルバージョン', devBtnMobile: 'ライトバージョン (音楽なし)',
         priceNormal: '一般チケット', pricePremium: 'プレミアムチケット', priceVip: 'VIPスタンド', amount: '数量：',
         payNotice: 'この支払いオプションは1円も請求しません。デモ用です。',
-        secretBtn: '隠し彩蛋'
+        secretBtn: '隠し彩蛋',
+        searchPlaceholder: '曲名を検索…',
+        favFilterOn: 'お気に入りのみ', favFilterOff: 'すべて表示',
+        noSong: '曲が未選択', nowPlaying: '再生中',
+        titleOrders: 'マイチケット', ordersSub: '購入すると認証コードが発行され、認証後は無効になります。', ordersEmpty: '注文はまだありません。チケットを購入しよう！',
+        orderStatusUsed: '認証済み', orderStatusNew: '未認証', copyCode: 'コピー', copied: 'コピー済み ✓', seatLabel: '座席',
+        titleMessage: '掲示板', msgName: 'ニックネーム', msgText: 'メッセージ（優しくね）', msgSubmit: '投稿する', msgEmpty: 'まだコメントがありません。一番乗りを！', msgAnon: '名無しさん',
+        titleSupport: '応援の壁', supportBtn: '蔡順毅を応援', supportCount: '累計応援',
+        cdCustom: 'この会場にロック中 · 他をクリックで切替', cdReset: '自動選択に戻す', cdEnded: '公演は開始しました', noFuture: '今後の公演はありません',
+        galleryEmpty: '写真準備中'
     }
 };
 
@@ -709,6 +873,17 @@ function setLang(lang) {
     document.getElementById('devBtnPc').textContent = dict.devBtnPc;
     document.getElementById('devBtnMobile').textContent = dict.devBtnMobile;
 
+    document.getElementById('btnOrders').textContent = dict.titleOrders;
+    document.getElementById('cdReset').textContent = dict.cdReset;
+    document.getElementById('pickSearch').placeholder = dict.searchPlaceholder;
+    document.getElementById('titleMessage').textContent = dict.titleMessage;
+    document.getElementById('titleSupport').textContent = dict.titleSupport;
+    document.getElementById('msgName').placeholder = dict.msgName;
+    document.getElementById('msgText').placeholder = dict.msgText;
+    document.getElementById('msgSubmitBtn').textContent = dict.msgSubmit;
+    document.getElementById('supportBtnText').textContent = dict.supportBtn;
+    if (!songAudio.src) document.getElementById('pbTitle').textContent = dict.noSong;
+
     toggleSkinTextOnly();
     renderPick();
     renderVenues();
@@ -776,20 +951,29 @@ function renderPick() {
     const grid = document.getElementById('pickGrid');
     if (!grid) return;
     const count = isDevMode() ? 15 : 12;
+    const favs = getFavs();
     let html = '';
     for (let i = 0; i < count; i++) {
         const name = SONG_NAMES[i] || ('曲目' + (i + 1));
+        const fav = favs.includes(i);
         html += `<div class="pick-card" data-index="${i}" onclick="selectPick(${i})">
+                    <span class="fav-mark ${fav ? 'on' : ''}" onclick="toggleFavFromCard(event, ${i})">${fav ? '♥' : '♡'}</span>
                     <div class="pick-num">${String(i + 1).padStart(2, '0')}</div>
                     <div class="pick-name">${name}</div>
                  </div>`;
     }
     grid.innerHTML = html;
+    const activeEl = grid.querySelector('.pick-card[data-index="' + currentIndex + '"]');
+    if (activeEl) activeEl.classList.add('active');
+    syncFavFilterBtn();
+    applyPickFilter();
+    updateFavBtn();
 }
 
 function renderVenues() {
-    document.getElementById('venueGrid').innerHTML = scheduleData.map(s =>
-        `<div class="venue-card">
+    const cdIdx = localStorage.getItem('csy_cd_target');
+    document.getElementById('venueGrid').innerHTML = scheduleData.map((s, i) =>
+        `<div class="venue-card ${cdIdx !== null && parseInt(cdIdx) === i ? 'selected' : ''}" onclick="selectCdTarget(${i})" title="点击切换倒计时">
             <div class="venue-city">${s.city}</div>
             <div class="venue-name">${s.venue}</div>
             <div class="venue-date">${s.date}</div>
@@ -836,6 +1020,221 @@ function renderFaq() {
 
 function toggleFaq(i) {
     document.getElementById('faq' + i).classList.toggle('open');
+}
+
+/* ============================================================
+   收藏与搜索
+   ============================================================ */
+function getFavs() {
+    try { return JSON.parse(localStorage.getItem('csy_favs') || '[]'); } catch (e) { return []; }
+}
+let pickSearchTerm = '';
+let pickFavOnly = false;
+
+function toggleFav(i) {
+    const favs = getFavs();
+    const pos = favs.indexOf(i);
+    if (pos >= 0) favs.splice(pos, 1); else favs.push(i);
+    localStorage.setItem('csy_favs', JSON.stringify(favs));
+    renderPick();
+}
+function toggleFavFromCard(e, i) { e.stopPropagation(); toggleFav(i); }
+function toggleFavCurrent() { toggleFav(currentIndex); }
+function updateFavBtn() {
+    const el = document.getElementById('pbFav');
+    if (!el) return;
+    el.textContent = getFavs().includes(currentIndex) ? '❤️' : '🤍';
+}
+function filterPick(v) {
+    pickSearchTerm = (v || '').trim().toLowerCase();
+    applyPickFilter();
+}
+function toggleFavFilter() {
+    pickFavOnly = !pickFavOnly;
+    syncFavFilterBtn();
+    applyPickFilter();
+}
+function syncFavFilterBtn() {
+    const btn = document.getElementById('favFilterBtn');
+    if (!btn) return;
+    btn.classList.toggle('pill-solid', pickFavOnly);
+    btn.textContent = pickFavOnly ? i18n[currentLang].favFilterOff : i18n[currentLang].favFilterOn;
+}
+function applyPickFilter() {
+    const favs = getFavs();
+    document.querySelectorAll('#pickGrid .pick-card').forEach(card => {
+        const i = parseInt(card.dataset.index);
+        const name = (SONG_NAMES[i] || '').toLowerCase();
+        const okSearch = !pickSearchTerm || name.includes(pickSearchTerm);
+        const okFav = !pickFavOnly || favs.includes(i);
+        card.style.display = (okSearch && okFav) ? '' : 'none';
+    });
+}
+
+/* ============================================================
+   现场相册
+   ============================================================ */
+const galleryData = [
+    { src: 'CSY.JPG' },
+    { src: 'start.jpg' }
+];
+function renderGallery() {
+    const grid = document.getElementById('galleryGrid');
+    if (!grid) return;
+    if (!galleryData.length) {
+        grid.innerHTML = '<div class="gallery-item"><div class="gallery-empty-text">' + i18n[currentLang].galleryEmpty + '</div></div>';
+        return;
+    }
+    grid.innerHTML = galleryData.map(g =>
+        `<div class="gallery-item" onclick="openImg('${g.src}')"><img src="${g.src}" alt="photo" loading="lazy"></div>`
+    ).join('');
+}
+function openImg(src) {
+    document.getElementById('imgModalContent').innerHTML = '<img src="' + src + '" alt="photo">';
+    document.getElementById('imgModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeImgModal() {
+    document.getElementById('imgModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+/* ============================================================
+   我的订单
+   ============================================================ */
+function openOrders() {
+    const dict = i18n[currentLang];
+    const typeLabel = TYPE_LABEL[currentLang];
+    const orders = JSON.parse(localStorage.getItem('troupe_orders') || '[]');
+    let html = '<h3 class="modal-title">' + dict.titleOrders + '</h3><p class="modal-sub">' + dict.ordersSub + '</p>';
+    if (!orders.length) {
+        html += '<p class="orders-empty">' + dict.ordersEmpty + '</p>';
+    } else {
+        html += '<div class="order-list">' + orders.map(o => {
+            const sh = scheduleData.find(s => s.id === o.showId) || { city: '-', venue: '-', date: '-' };
+            const label = typeLabel[o.type] || o.type;
+            return `<div class="order-item">
+                <div class="order-code"><span>${o.code}</span>
+                    <button class="copy-btn" onclick="copyText('${o.code}', this)">${dict.copyCode}</button></div>
+                <div class="order-info">${sh.city} · ${sh.venue} · ${sh.date}<br>${label} · ${dict.seatLabel}: ${o.seats.join(', ')} · 
+                    <span class="order-status ${o.validated ? 'used' : 'ok'}">${o.validated ? dict.orderStatusUsed : dict.orderStatusNew}</span></div>
+            </div>`;
+        }).join('') + '</div>';
+    }
+    document.getElementById('ordersContent').innerHTML = html;
+    document.getElementById('ordersModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeOrders() {
+    document.getElementById('ordersModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+/* ============================================================
+   通用工具：复制 & 转义 & 回到顶部
+   ============================================================ */
+function copyText(txt, btn) {
+    const done = () => {
+        if (!btn) return;
+        const old = btn.textContent;
+        btn.textContent = i18n[currentLang].copied;
+        setTimeout(() => { btn.textContent = old; }, 1500);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(txt).then(done).catch(() => fallbackCopy(txt, done));
+    } else {
+        fallbackCopy(txt, done);
+    }
+}
+function fallbackCopy(txt, done) {
+    const ta = document.createElement('textarea');
+    ta.value = txt;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    document.body.removeChild(ta);
+}
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============================================================
+   留言板
+   ============================================================ */
+function renderMessages() {
+    const list = document.getElementById('msgList');
+    if (!list) return;
+    const dict = i18n[currentLang];
+    const msgs = JSON.parse(localStorage.getItem('csy_messages') || '[]');
+    if (!msgs.length) {
+        list.innerHTML = '<div class="msg-empty">' + dict.msgEmpty + '</div>';
+        return;
+    }
+    list.innerHTML = msgs.slice().reverse().map(m =>
+        `<div class="msg-item">
+            <div class="msg-head"><span class="msg-name">${escapeHtml(m.name)}</span><span class="msg-time">${escapeHtml(m.time)}</span></div>
+            <div class="msg-text">${escapeHtml(m.text)}</div>
+         </div>`
+    ).join('');
+}
+function submitMsg() {
+    const nameEl = document.getElementById('msgName');
+    const textEl = document.getElementById('msgText');
+    const dict = i18n[currentLang];
+    const name = nameEl.value.trim() || dict.msgAnon;
+    const text = textEl.value.trim();
+    if (!text) { textEl.focus(); return; }
+    const msgs = JSON.parse(localStorage.getItem('csy_messages') || '[]');
+    msgs.push({ name, text, time: new Date().toLocaleString('zh-CN', { hour12: false }) });
+    if (msgs.length > 60) msgs.shift();
+    localStorage.setItem('csy_messages', JSON.stringify(msgs));
+    nameEl.value = '';
+    textEl.value = '';
+    renderMessages();
+}
+
+/* ============================================================
+   应援墙
+   ============================================================ */
+function updateSupportText() {
+    const n = parseInt(localStorage.getItem('csy_support') || '0');
+    document.getElementById('supportCountText').textContent = '❤️ ' + i18n[currentLang].supportCount + ' ' + n;
+}
+function addSupport() {
+    let n = parseInt(localStorage.getItem('csy_support') || '0') + 1;
+    localStorage.setItem('csy_support', String(n));
+    updateSupportText();
+    const wall = document.getElementById('supportWall');
+    for (let k = 0; k < 3; k++) {
+        const h = document.createElement('span');
+        h.className = 'heart-fly';
+        h.textContent = ['❤️', '💖', '💕'][Math.floor(Math.random() * 3)];
+        h.style.left = (8 + Math.random() * 84) + '%';
+        h.style.animationDelay = (k * 0.12) + 's';
+        wall.appendChild(h);
+        setTimeout(() => h.remove(), 2200);
+    }
+}
+
+/* ============================================================
+   倒计时目标切换
+   ============================================================ */
+function selectCdTarget(i) {
+    const saved = localStorage.getItem('csy_cd_target');
+    if (saved !== null && parseInt(saved) === i) localStorage.removeItem('csy_cd_target');
+    else localStorage.setItem('csy_cd_target', String(i));
+    renderVenues();
+    tickCountdown();
+}
+function resetCdTarget() {
+    localStorage.removeItem('csy_cd_target');
+    renderVenues();
+    tickCountdown();
 }
 
 /* ============================================================
@@ -905,7 +1304,14 @@ function loadAndPlay(index) {
     stopBgm();
     
     songAudio.src = (index + 1) + '.mp3';
-    songAudio.play().catch(() => {});
+    songAudio.play().catch(() => {
+        document.getElementById('audioModal').classList.add('active');
+    });
+
+    const dict = i18n[currentLang];
+    const titleEl = document.getElementById('pbTitle');
+    if (titleEl) titleEl.textContent = dict.nowPlaying + ' · ' + String(index + 1).padStart(2, '0') + ' · ' + (SONG_NAMES[index] || '');
+    updateFavBtn();
 
     // 加载歌词
     const listEl = document.getElementById('lyricsList');
@@ -938,11 +1344,71 @@ function selectPick(i) {
     loadAndPlay(i);
 }
 
-function playNext() {
-    let next = currentIndex + 1;
-    if (next >= 12) next = 0;
-    loadAndPlay(next);
+/* ============================================================
+   播放器控制栏逻辑
+   ============================================================ */
+function visibleIndices() {
+    return Array.from(document.querySelectorAll('#pickGrid .pick-card'))
+        .filter(el => el.style.display !== 'none')
+        .map(el => parseInt(el.dataset.index));
 }
+function playAdjacent(dir) {
+    const idxs = visibleIndices();
+    if (!idxs.length) return;
+    let pos = idxs.indexOf(currentIndex);
+    if (pos === -1) pos = dir === 1 ? -1 : idxs.length;
+    const nextPos = (pos + dir + idxs.length) % idxs.length;
+    loadAndPlay(idxs[nextPos]);
+}
+function playNext() { playAdjacent(1); }
+function playPrev() { playAdjacent(-1); }
+function playRandom() {
+    const idxs = visibleIndices();
+    if (!idxs.length) return;
+    loadAndPlay(idxs[Math.floor(Math.random() * idxs.length)]);
+}
+function togglePlay() {
+    if (!songAudio.src) {
+        const idxs = visibleIndices();
+        if (idxs.length) loadAndPlay(idxs[0]);
+    } else if (songAudio.paused) {
+        songAudio.play().catch(() => {
+            document.getElementById('audioModal').classList.add('active');
+        });
+    } else {
+        songAudio.pause();
+    }
+}
+function fmtTime(s) {
+    if (!isFinite(s) || s < 0) s = 0;
+    s = Math.floor(s);
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+
+const pbSeek = document.getElementById('pbSeek');
+let isSeeking = false;
+if (pbSeek) {
+    pbSeek.addEventListener('pointerdown', () => { isSeeking = true; });
+    pbSeek.addEventListener('pointerup', () => { isSeeking = false; });
+    pbSeek.addEventListener('input', () => {
+        if (songAudio.duration) songAudio.currentTime = (pbSeek.value / 1000) * songAudio.duration;
+    });
+}
+const pbVol = document.getElementById('pbVol');
+if (pbVol) {
+    pbVol.addEventListener('input', (e) => { songAudio.volume = e.target.value / 100; });
+}
+songAudio.addEventListener('play', () => { document.getElementById('pbPlayBtn').textContent = '⏸'; });
+songAudio.addEventListener('pause', () => { document.getElementById('pbPlayBtn').textContent = '▶'; });
+songAudio.addEventListener('loadedmetadata', () => {
+    document.getElementById('pbDur').textContent = fmtTime(songAudio.duration);
+});
+songAudio.addEventListener('timeupdate', () => {
+    if (!isSeeking && songAudio.duration) {
+        document.getElementById('pbSeek').value = Math.round((songAudio.currentTime / songAudio.duration) * 1000);
+    }
+    document.getElementById('pbTime').textContent = fmtTime(songAudio.currentTime);
+});
 
 /* ============================================================
    大彩蛋逻辑（修复版：彻底停止其他音乐）
@@ -1043,7 +1509,11 @@ function startPay() {
             orders.push({ code, showId, type, seats: ['A' + Math.floor(Math.random()*100)], validated: false });
             localStorage.setItem('troupe_orders', JSON.stringify(orders));
 
-            log.innerHTML = `<p class="pay-ok">🎉 Success!</p><p>認証コード: ${code}</p>`;
+            log.innerHTML = `<p class="pay-ok">🎉 Success!</p><p>認証コード: ${code}</p>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
+                    <button class="copy-btn" onclick="copyText('${code}', this)">${i18n[currentLang].copyCode}</button>
+                    <button class="copy-btn" onclick="closeTicketModal(); openOrders();">${i18n[currentLang].titleOrders}</button>
+                </div>`;
             renderBuyList();
         }
     }, 400);
@@ -1092,19 +1562,37 @@ function verifyTicket() {
    倒计时 & 其他动画
    ============================================================ */
 function tickCountdown() {
-    const future = scheduleData
-        .filter(s => new Date(s.date + 'T23:59:59') > new Date())
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-    const next = future[0];
+    const dict = i18n[currentLang];
     const target = document.getElementById('cdTarget');
-    
+    const grid = document.getElementById('cdGrid');
+    const resetBtn = document.getElementById('cdReset');
+    let next = null, isCustom = false;
+
+    const customRaw = localStorage.getItem('csy_cd_target');
+    if (customRaw !== null) {
+        isCustom = true;
+        next = scheduleData[parseInt(customRaw)] || null;
+    }
     if (!next) {
-        document.getElementById('cdGrid').style.display = 'none';
-        target.innerHTML = '<span class="countdown-ended">暂无未来演出</span>';
+        next = scheduleData
+            .filter(s => new Date(s.date + 'T23:59:59') > new Date())
+            .sort((a, b) => new Date(a.date) - new Date(b.date))[0] || null;
+    }
+    if (resetBtn) resetBtn.classList.toggle('hidden', !isCustom);
+
+    if (!next) {
+        grid.style.display = 'none';
+        target.innerHTML = '<span class="countdown-ended">' + dict.noFuture + '</span>';
         return;
     }
-    document.getElementById('cdGrid').style.display = '';
     const t = new Date(next.date + 'T23:59:59') - new Date();
+    const info = `${next.city} · ${next.venue} · ${next.date}` + (isCustom ? ' · ' + dict.cdCustom : '');
+    if (t <= 0) {
+        grid.style.display = 'none';
+        target.innerHTML = '<span class="countdown-ended">' + dict.cdEnded + '</span><br>' + info;
+        return;
+    }
+    grid.style.display = '';
     const d = Math.floor(t / 86400000);
     const h = Math.floor(t % 86400000 / 3600000);
     const m = Math.floor(t % 3600000 / 60000);
@@ -1114,7 +1602,7 @@ function tickCountdown() {
     document.getElementById('cdH').textContent = String(h).padStart(2, '0');
     document.getElementById('cdM').textContent = String(m).padStart(2, '0');
     document.getElementById('cdS').textContent = String(s).padStart(2, '0');
-    target.textContent = `${next.city} · ${next.venue} · ${next.date}`;
+    target.textContent = info;
 }
 
 /* ============================================================
@@ -1134,6 +1622,7 @@ function tryPlayBgm() {
 function stopBgm() { bgm.pause(); bgm.currentTime = 0; }
 function confirmAudio() {
     document.getElementById('audioModal').classList.remove('active');
+    if (songAudio.src) songAudio.play().catch(() => {});
     bgm.play().then(() => { bgmAllowed = true; }).catch(() => {});
 }
 function closeAudioModal() { document.getElementById('audioModal').classList.remove('active'); }
@@ -1142,12 +1631,17 @@ function closeAudioModal() { document.getElementById('audioModal').classList.rem
 window.addEventListener('DOMContentLoaded', () => {
     checkDevice();
     setLang('zh');
+    renderGallery();
     tickCountdown();
     setInterval(tickCountdown, 1000);
     setTimeout(tryPlayBgm, 300);
 
     window.addEventListener('scroll', () => {
-        document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 40);
+        const y = window.scrollY;
+        document.getElementById('topbar').classList.toggle('scrolled', y > 40);
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        document.getElementById('scrollProgress').style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
+        document.getElementById('backTop').classList.toggle('show', y > 600);
     }, { passive: true });
 
     const ob = new IntersectionObserver(entries => {
@@ -1163,6 +1657,26 @@ window.addEventListener('DOMContentLoaded', () => {
 
 document.getElementById('ticketModal').addEventListener('click', function(e) {
     if (e.target === e.currentTarget) closeTicketModal();
+});
+document.getElementById('ordersModal').addEventListener('click', function(e) {
+    if (e.target === e.currentTarget) closeOrders();
+});
+document.getElementById('imgModal').addEventListener('click', function(e) {
+    if (e.target === e.currentTarget) closeImgModal();
+});
+
+/* ============================================================
+   键盘快捷键：空格=播放/暂停，←/→=切歌，S=随机
+   ============================================================ */
+document.addEventListener('keydown', (e) => {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea') return;
+    if (document.querySelector('.modal-overlay.active') || document.querySelector('.secret-modal.active')) return;
+    if (document.querySelector('.device-modal:not(.hidden)')) return;
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+    else if (e.code === 'ArrowRight') { playNext(); }
+    else if (e.code === 'ArrowLeft') { playPrev(); }
+    else if (e.code === 'KeyS') { playRandom(); }
 });
 </script>
 </body>
