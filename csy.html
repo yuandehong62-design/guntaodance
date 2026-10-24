@@ -362,6 +362,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
 .msg-text { font-size:.86rem; color:var(--ink-soft); line-height:1.8; word-break:break-word; white-space:pre-wrap; }
 .msg-empty { text-align:center; color:var(--ink-faint); font-size:.84rem; padding:16px 0; }
 .msg-cloud-hint { text-align:center; font-size:.68rem; letter-spacing:.08em; color:var(--ink-faint); margin-top:10px; }
+.msg-meta { font-size:.68rem; color:var(--ink-faint); letter-spacing:.05em; margin-top:6px; }
 
 /* ===== 新增：应援墙 ===== */
 .support-wall { text-align:center; position:relative; padding:36px 16px; background:var(--paper); border:1px solid var(--line); border-radius:24px; box-shadow:var(--shadow-soft); overflow:hidden; min-height:190px; }
@@ -541,6 +542,23 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
 
 <section class="section reveal">
     <div class="section-head">
+        <p class="eyebrow">Message</p>
+        <h2 class="sec-title" id="titleMessage">留言板</h2>
+        <hr class="hair">
+    </div>
+    <div class="msg-box">
+        <div class="msg-form">
+            <input type="text" class="msg-input msg-name-input" id="msgName" maxlength="16" placeholder="昵称">
+            <textarea class="msg-input" id="msgText" maxlength="200" placeholder="留言内容（友善发言哦）"></textarea>
+            <button class="verify-btn" id="msgSubmitBtn" onclick="submitMsg()">发布留言</button>
+            <p class="msg-cloud-hint hidden" id="msgCloudHint">留言会同步到云端，全网可见</p>
+        </div>
+        <div class="msg-list" id="msgList"></div>
+    </div>
+</section>
+
+<section class="section reveal">
+    <div class="section-head">
         <p class="eyebrow">Tickets</p>
         <h2 class="sec-title" id="titleTickets">购票</h2>
         <hr class="hair">
@@ -613,23 +631,6 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
         <hr class="hair">
     </div>
     <div id="faqList"></div>
-</section>
-
-<section class="section reveal">
-    <div class="section-head">
-        <p class="eyebrow">Message</p>
-        <h2 class="sec-title" id="titleMessage">留言板</h2>
-        <hr class="hair">
-    </div>
-    <div class="msg-box">
-        <div class="msg-form">
-            <input type="text" class="msg-input msg-name-input" id="msgName" maxlength="16" placeholder="昵称">
-            <textarea class="msg-input" id="msgText" maxlength="200" placeholder="留言内容（友善发言哦）"></textarea>
-            <button class="verify-btn" id="msgSubmitBtn" onclick="submitMsg()">发布留言</button>
-            <p class="msg-cloud-hint hidden" id="msgCloudHint">留言会同步到云端，全网可见</p>
-        </div>
-        <div class="msg-list" id="msgList"></div>
-    </div>
 </section>
 
 <section class="section reveal">
@@ -740,7 +741,8 @@ const i18n = {
         titleSupport: '应援墙', supportBtn: '为蔡顺毅应援', supportCount: '累计应援',
         cdCustom: '已锁定此场次 · 点击其他场地卡片可切换', cdReset: '恢复自动选择', cdEnded: '演出已开始', noFuture: '暂无未来演出',
         galleryEmpty: '照片筹备中',
-        playBlocked: '播放被浏览器拦截，点击 ▶ 按钮重试'
+        playBlocked: '播放被浏览器拦截，点击 ▶ 按钮重试',
+        devIos: '📱 iPhone/iPad', devAndroid: '📱 Android', devWindows: '💻 Windows', devMac: '💻 Mac', devLinux: '💻 Linux', devUnknown: '🌐 未知设备'
     },
     ja: {
         brand: 'Gun Tao Troupe---メンバーSHOW--Cai Shunyi',
@@ -777,7 +779,8 @@ const i18n = {
         titleSupport: '応援の壁', supportBtn: '蔡順毅を応援', supportCount: '累計応援',
         cdCustom: 'この会場にロック中 · 他をクリックで切替', cdReset: '自動選択に戻す', cdEnded: '公演は開始しました', noFuture: '今後の公演はありません',
         galleryEmpty: '写真準備中',
-        playBlocked: '再生がブロックされました。▶ボタンで再試行してください'
+        playBlocked: '再生がブロックされました。▶ボタンで再試行してください',
+        devIos: '📱 iPhone/iPad', devAndroid: '📱 Android', devWindows: '💻 Windows', devMac: '💻 Mac', devLinux: '💻 Linux', devUnknown: '🌐 不明なデバイス'
     }
 };
 
@@ -1192,6 +1195,26 @@ function fmtMsgTime(t) {
     try { return new Date(t).toLocaleString('zh-CN', { hour12: false }); }
     catch (e) { return String(t); }
 }
+function deviceCodeOf(ua) {
+    ua = String(ua || '');
+    if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
+    if (/Android/i.test(ua)) return 'android';
+    if (/Windows/i.test(ua)) return 'windows';
+    if (/Macintosh|Mac OS X/i.test(ua)) return 'mac';
+    if (/Linux/i.test(ua)) return 'linux';
+    return 'unknown';
+}
+function deviceLabel(code) {
+    const key = { ios: 'devIos', android: 'devAndroid', windows: 'devWindows', mac: 'devMac', linux: 'devLinux', unknown: 'devUnknown' }[code] || 'devUnknown';
+    return i18n[currentLang][key];
+}
+function buildMsgMeta(m) {
+    const parts = [];
+    if (m.device) parts.push(deviceLabel(m.device));
+    if (m.ip) parts.push('IP ' + m.ip);
+    if (!parts.length) return '';
+    return '<div class="msg-meta">' + escapeHtml(parts.join(' · ')) + '</div>';
+}
 function renderMessages() {
     const list = document.getElementById('msgList');
     if (!list) return;
@@ -1204,6 +1227,7 @@ function renderMessages() {
         `<div class="msg-item">
             <div class="msg-head"><span class="msg-name">${escapeHtml(m.name)}</span><span class="msg-time">${escapeHtml(fmtMsgTime(m.time))}</span></div>
             <div class="msg-text">${escapeHtml(m.text)}</div>
+            ${buildMsgMeta(m)}
          </div>`
     ).join('');
 }
@@ -1233,7 +1257,7 @@ async function submitMsg() {
     const text = textEl.value.trim();
     if (!text) { textEl.focus(); return; }
 
-    const msg = { name, text, time: new Date().toISOString() };
+    const msg = { name, text, time: new Date().toISOString(), device: deviceCodeOf(navigator.userAgent) };
     csyMessages.push(msg);
     if (csyMessages.length > 100) csyMessages.shift();
     saveLocalMessages();

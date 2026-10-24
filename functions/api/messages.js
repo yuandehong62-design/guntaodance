@@ -1,6 +1,7 @@
 /* 棍涛舞团 · 留言 API（Cloudflare Pages Functions）
    路由: /api/messages
-   KV 绑定: MESSAGES（项目设置 → Functions → KV 命名空间绑定） */
+   KV 绑定: MESSAGES（项目设置 → Functions → KV 命名空间绑定）
+   每条留言记录：昵称/内容/时间/设备类型/大致IP（末位脱敏） */
 
 const MAX_MESSAGES = 100; // 服务器最多保留的留言条数
 
@@ -15,6 +16,30 @@ function json(data, status = 200) {
     status,
     headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS_HEADERS },
   });
+}
+
+/* 设备类型识别（存代码，前端按语言显示名称） */
+function deviceFromUA(ua) {
+  ua = String(ua || '');
+  if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
+  if (/Android/i.test(ua)) return 'android';
+  if (/Windows/i.test(ua)) return 'windows';
+  if (/Macintosh|Mac OS X/i.test(ua)) return 'mac';
+  if (/Linux/i.test(ua)) return 'linux';
+  return 'unknown';
+}
+
+/* 大致IP：IPv4 隐藏最后一段，IPv6 只保留前两组 */
+function maskIp(ip) {
+  ip = String(ip || '').trim();
+  if (!ip) return '';
+  if (ip.includes(':')) {
+    const parts = ip.split(':').filter(Boolean);
+    return parts.slice(0, 2).join(':') + '::…';
+  }
+  const parts = ip.split('.');
+  if (parts.length === 4) return parts.slice(0, 3).join('.') + '.x';
+  return ip;
 }
 
 export async function onRequest(context) {
@@ -45,7 +70,13 @@ export async function onRequest(context) {
     const text = String(body.text || '').trim().slice(0, 200);
     if (!text) return json({ ok: false, error: 'empty message' }, 400);
 
-    const message = { name, text, time: new Date().toISOString() };
+    const message = {
+      name,
+      text,
+      time: new Date().toISOString(),
+      device: deviceFromUA(request.headers.get('User-Agent')),
+      ip: maskIp(request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For')),
+    };
     const key = 'msg:' + Date.now() + ':' + Math.random().toString(36).slice(2, 8);
     await MESSAGES.put(key, JSON.stringify(message));
 
