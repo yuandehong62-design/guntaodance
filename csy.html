@@ -737,7 +737,8 @@ const i18n = {
         titleMessage: '留言板', msgName: '昵称', msgText: '留言内容（友善发言哦）', msgSubmit: '发布留言', msgEmpty: '还没有留言，来抢沙发！', msgAnon: '匿名',
         titleSupport: '应援墙', supportBtn: '为蔡顺毅应援', supportCount: '累计应援',
         cdCustom: '已锁定此场次 · 点击其他场地卡片可切换', cdReset: '恢复自动选择', cdEnded: '演出已开始', noFuture: '暂无未来演出',
-        galleryEmpty: '照片筹备中'
+        galleryEmpty: '照片筹备中',
+        playBlocked: '播放被浏览器拦截，点击 ▶ 按钮重试'
     },
     ja: {
         brand: 'Gun Tao Troupe---メンバーSHOW--Cai Shunyi',
@@ -773,7 +774,8 @@ const i18n = {
         titleMessage: '掲示板', msgName: 'ニックネーム', msgText: 'メッセージ（優しくね）', msgSubmit: '投稿する', msgEmpty: 'まだコメントがありません。一番乗りを！', msgAnon: '名無しさん',
         titleSupport: '応援の壁', supportBtn: '蔡順毅を応援', supportCount: '累計応援',
         cdCustom: 'この会場にロック中 · 他をクリックで切替', cdReset: '自動選択に戻す', cdEnded: '公演は開始しました', noFuture: '今後の公演はありません',
-        galleryEmpty: '写真準備中'
+        galleryEmpty: '写真準備中',
+        playBlocked: '再生がブロックされました。▶ボタンで再試行してください'
     }
 };
 
@@ -1304,9 +1306,7 @@ function loadAndPlay(index) {
     stopBgm();
     
     songAudio.src = (index + 1) + '.mp3';
-    songAudio.play().catch(() => {
-        document.getElementById('audioModal').classList.add('active');
-    });
+    songAudio.play().catch(() => showPlayHint());
 
     const dict = i18n[currentLang];
     const titleEl = document.getElementById('pbTitle');
@@ -1372,12 +1372,14 @@ function togglePlay() {
         const idxs = visibleIndices();
         if (idxs.length) loadAndPlay(idxs[0]);
     } else if (songAudio.paused) {
-        songAudio.play().catch(() => {
-            document.getElementById('audioModal').classList.add('active');
-        });
+        songAudio.play().catch(() => showPlayHint());
     } else {
         songAudio.pause();
     }
+}
+function showPlayHint() {
+    const el = document.getElementById('pbTitle');
+    if (el) el.textContent = i18n[currentLang].playBlocked;
 }
 function fmtTime(s) {
     if (!isFinite(s) || s < 0) s = 0;
@@ -1388,8 +1390,13 @@ function fmtTime(s) {
 const pbSeek = document.getElementById('pbSeek');
 let isSeeking = false;
 if (pbSeek) {
-    pbSeek.addEventListener('pointerdown', () => { isSeeking = true; });
-    pbSeek.addEventListener('pointerup', () => { isSeeking = false; });
+    if (window.PointerEvent) {
+        pbSeek.addEventListener('pointerdown', () => { isSeeking = true; });
+        pbSeek.addEventListener('pointerup', () => { isSeeking = false; });
+    } else {
+        pbSeek.addEventListener('mousedown', () => { isSeeking = true; });
+        pbSeek.addEventListener('mouseup', () => { isSeeking = false; });
+    }
     pbSeek.addEventListener('input', () => {
         if (songAudio.duration) songAudio.currentTime = (pbSeek.value / 1000) * songAudio.duration;
     });
@@ -1409,6 +1416,7 @@ songAudio.addEventListener('timeupdate', () => {
     }
     document.getElementById('pbTime').textContent = fmtTime(songAudio.currentTime);
 });
+songAudio.addEventListener('error', () => showPlayHint());
 
 /* ============================================================
    大彩蛋逻辑（修复版：彻底停止其他音乐）
@@ -1615,23 +1623,32 @@ let bgmAllowed = false;
 
 function tryPlayBgm() {
     if (bgmAllowed) return;
+    if (sessionStorage.getItem('csy_bgm_declined') === '1') return;
     bgm.play().then(() => { bgmAllowed = true; }).catch(() => {
-        document.getElementById('audioModal').classList.add('active');
+        if (!sessionStorage.getItem('csy_bgm_prompted')) {
+            sessionStorage.setItem('csy_bgm_prompted', '1');
+            document.getElementById('audioModal').classList.add('active');
+        }
     });
 }
 function stopBgm() { bgm.pause(); bgm.currentTime = 0; }
 function confirmAudio() {
     document.getElementById('audioModal').classList.remove('active');
-    if (songAudio.src) songAudio.play().catch(() => {});
+    if (songAudio.src) songAudio.play().then(() => {}).catch(() => showPlayHint());
     bgm.play().then(() => { bgmAllowed = true; }).catch(() => {});
 }
-function closeAudioModal() { document.getElementById('audioModal').classList.remove('active'); }
+function closeAudioModal() {
+    sessionStorage.setItem('csy_bgm_declined', '1');
+    document.getElementById('audioModal').classList.remove('active');
+}
 
 // 初始化
 window.addEventListener('DOMContentLoaded', () => {
     checkDevice();
     setLang('zh');
     renderGallery();
+    renderMessages();
+    updateSupportText();
     tickCountdown();
     setInterval(tickCountdown, 1000);
     setTimeout(tryPlayBgm, 300);
@@ -1657,6 +1674,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 document.getElementById('ticketModal').addEventListener('click', function(e) {
     if (e.target === e.currentTarget) closeTicketModal();
+});
+document.getElementById('audioModal').addEventListener('click', function(e) {
+    if (e.target === e.currentTarget) closeAudioModal();
 });
 document.getElementById('ordersModal').addEventListener('click', function(e) {
     if (e.target === e.currentTarget) closeOrders();
