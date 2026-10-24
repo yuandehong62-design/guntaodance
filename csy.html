@@ -361,6 +361,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
 .msg-time { font-size:.68rem; color:var(--ink-faint); letter-spacing:.06em; }
 .msg-text { font-size:.86rem; color:var(--ink-soft); line-height:1.8; word-break:break-word; white-space:pre-wrap; }
 .msg-empty { text-align:center; color:var(--ink-faint); font-size:.84rem; padding:16px 0; }
+.msg-cloud-hint { text-align:center; font-size:.68rem; letter-spacing:.08em; color:var(--ink-faint); margin-top:10px; }
 
 /* ===== 新增：应援墙 ===== */
 .support-wall { text-align:center; position:relative; padding:36px 16px; background:var(--paper); border:1px solid var(--line); border-radius:24px; box-shadow:var(--shadow-soft); overflow:hidden; min-height:190px; }
@@ -625,6 +626,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
             <input type="text" class="msg-input msg-name-input" id="msgName" maxlength="16" placeholder="昵称">
             <textarea class="msg-input" id="msgText" maxlength="200" placeholder="留言内容（友善发言哦）"></textarea>
             <button class="verify-btn" id="msgSubmitBtn" onclick="submitMsg()">发布留言</button>
+            <p class="msg-cloud-hint hidden" id="msgCloudHint">留言会同步到云端，全网可见</p>
         </div>
         <div class="msg-list" id="msgList"></div>
     </div>
@@ -734,7 +736,7 @@ const i18n = {
         noSong: '未选择歌曲', nowPlaying: '正在播放',
         titleOrders: '我的订单', ordersSub: '购票后自动生成校验码，核验后即失效。', ordersEmpty: '暂无订单，快去购票吧！',
         orderStatusUsed: '已校验', orderStatusNew: '未校验', copyCode: '复制', copied: '已复制 ✓', seatLabel: '座席',
-        titleMessage: '留言板', msgName: '昵称', msgText: '留言内容（友善发言哦）', msgSubmit: '发布留言', msgEmpty: '还没有留言，来抢沙发！', msgAnon: '匿名',
+        titleMessage: '留言板', msgName: '昵称', msgText: '留言内容（友善发言哦）', msgSubmit: '发布留言', msgEmpty: '还没有留言，来抢沙发！', msgAnon: '匿名', msgCloudHint: '留言会同步到云端，全网可见',
         titleSupport: '应援墙', supportBtn: '为蔡顺毅应援', supportCount: '累计应援',
         cdCustom: '已锁定此场次 · 点击其他场地卡片可切换', cdReset: '恢复自动选择', cdEnded: '演出已开始', noFuture: '暂无未来演出',
         galleryEmpty: '照片筹备中',
@@ -771,7 +773,7 @@ const i18n = {
         noSong: '曲が未選択', nowPlaying: '再生中',
         titleOrders: 'マイチケット', ordersSub: '購入すると認証コードが発行され、認証後は無効になります。', ordersEmpty: '注文はまだありません。チケットを購入しよう！',
         orderStatusUsed: '認証済み', orderStatusNew: '未認証', copyCode: 'コピー', copied: 'コピー済み ✓', seatLabel: '座席',
-        titleMessage: '掲示板', msgName: 'ニックネーム', msgText: 'メッセージ（優しくね）', msgSubmit: '投稿する', msgEmpty: 'まだコメントがありません。一番乗りを！', msgAnon: '名無しさん',
+        titleMessage: '掲示板', msgName: 'ニックネーム', msgText: 'メッセージ（優しくね）', msgSubmit: '投稿する', msgEmpty: 'まだコメントがありません。一番乗りを！', msgAnon: '名無しさん', msgCloudHint: 'メッセージはクラウドに同期されます',
         titleSupport: '応援の壁', supportBtn: '蔡順毅を応援', supportCount: '累計応援',
         cdCustom: 'この会場にロック中 · 他をクリックで切替', cdReset: '自動選択に戻す', cdEnded: '公演は開始しました', noFuture: '今後の公演はありません',
         galleryEmpty: '写真準備中',
@@ -781,6 +783,17 @@ const i18n = {
 
 let currentLang = 'zh';
 let deviceMode = 'pc';
+
+/* ============================================================
+   云端同步配置（Cloudflare Workers + KV）
+   ------------------------------------------------------------
+   部署 Worker 后（部署方法见仓库根目录 worker.js 顶部注释），
+   把下面的空字符串改成你自己的 Worker 地址（不带结尾斜杠），例如：
+   const API_BASE = 'https://guntaodance-api.你的账号.workers.dev';
+   留空 '' 表示尚未部署后端，页面自动退回"仅本地保存"模式，
+   所有功能照常可用，只是留言/应援数据不跨设备共享。
+   ============================================================ */
+const API_BASE = '';
 
 /* ============================================================
    设备检测与选择
@@ -883,6 +896,7 @@ function setLang(lang) {
     document.getElementById('msgName').placeholder = dict.msgName;
     document.getElementById('msgText').placeholder = dict.msgText;
     document.getElementById('msgSubmitBtn').textContent = dict.msgSubmit;
+    document.getElementById('msgCloudHint').textContent = dict.msgCloudHint;
     document.getElementById('supportBtnText').textContent = dict.supportBtn;
     if (!songAudio.src) document.getElementById('pbTitle').textContent = dict.noSong;
 
@@ -892,6 +906,8 @@ function setLang(lang) {
     renderBuyList();
     renderNotice();
     renderFaq();
+    renderMessages();
+    updateSupportText();
 }
 
 function toggleSkin() {
@@ -1166,51 +1182,98 @@ function scrollToTop() {
 }
 
 /* ============================================================
-   留言板
+   留言板（云端优先，本地兜底）
    ============================================================ */
+let csyMessages = [];      // 内存状态：最旧在前
+function saveLocalMessages() {
+    try { localStorage.setItem('csy_messages', JSON.stringify(csyMessages)); } catch (e) {}
+}
+function fmtMsgTime(t) {
+    if (!t) return '';
+    try { return new Date(t).toLocaleString('zh-CN', { hour12: false }); }
+    catch (e) { return String(t); }
+}
 function renderMessages() {
     const list = document.getElementById('msgList');
     if (!list) return;
     const dict = i18n[currentLang];
-    const msgs = JSON.parse(localStorage.getItem('csy_messages') || '[]');
-    if (!msgs.length) {
+    if (!csyMessages.length) {
         list.innerHTML = '<div class="msg-empty">' + dict.msgEmpty + '</div>';
         return;
     }
-    list.innerHTML = msgs.slice().reverse().map(m =>
+    list.innerHTML = csyMessages.slice().reverse().map(m =>
         `<div class="msg-item">
-            <div class="msg-head"><span class="msg-name">${escapeHtml(m.name)}</span><span class="msg-time">${escapeHtml(m.time)}</span></div>
+            <div class="msg-head"><span class="msg-name">${escapeHtml(m.name)}</span><span class="msg-time">${escapeHtml(fmtMsgTime(m.time))}</span></div>
             <div class="msg-text">${escapeHtml(m.text)}</div>
          </div>`
     ).join('');
 }
-function submitMsg() {
+async function fetchMessages() {
+    if (!API_BASE) return;
+    try {
+        const res = await fetch(API_BASE + '/api/messages');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.ok && Array.isArray(data.messages)) {
+            csyMessages = data.messages.slice().reverse(); // 服务器新→旧，转为旧→新
+            saveLocalMessages();
+            renderMessages();
+        }
+    } catch (e) { /* 服务器不可达：继续用本地数据 */ }
+}
+async function submitMsg() {
     const nameEl = document.getElementById('msgName');
     const textEl = document.getElementById('msgText');
     const dict = i18n[currentLang];
     const name = nameEl.value.trim() || dict.msgAnon;
     const text = textEl.value.trim();
     if (!text) { textEl.focus(); return; }
-    const msgs = JSON.parse(localStorage.getItem('csy_messages') || '[]');
-    msgs.push({ name, text, time: new Date().toLocaleString('zh-CN', { hour12: false }) });
-    if (msgs.length > 60) msgs.shift();
-    localStorage.setItem('csy_messages', JSON.stringify(msgs));
+
+    const msg = { name, text, time: new Date().toISOString() };
+    csyMessages.push(msg);
+    if (csyMessages.length > 100) csyMessages.shift();
+    saveLocalMessages();
+    renderMessages();
     nameEl.value = '';
     textEl.value = '';
-    renderMessages();
+
+    if (API_BASE) {
+        try {
+            const res = await fetch(API_BASE + '/api/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, text })
+            });
+            if (res.ok) await fetchMessages();
+        } catch (e) { /* 上传失败：留言仍保留在本地 */ }
+    }
 }
 
 /* ============================================================
-   应援墙
+   应援墙（云端优先，本地兜底）
    ============================================================ */
+let csySupportCount = 0;
 function updateSupportText() {
-    const n = parseInt(localStorage.getItem('csy_support') || '0');
-    document.getElementById('supportCountText').textContent = '❤️ ' + i18n[currentLang].supportCount + ' ' + n;
+    document.getElementById('supportCountText').textContent = '❤️ ' + i18n[currentLang].supportCount + ' ' + csySupportCount;
 }
-function addSupport() {
-    let n = parseInt(localStorage.getItem('csy_support') || '0') + 1;
-    localStorage.setItem('csy_support', String(n));
+async function fetchSupport() {
+    if (!API_BASE) return;
+    try {
+        const res = await fetch(API_BASE + '/api/support');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.ok) {
+            csySupportCount = parseInt(data.count) || 0;
+            localStorage.setItem('csy_support', String(csySupportCount));
+            updateSupportText();
+        }
+    } catch (e) { /* 保持本地计数 */ }
+}
+async function addSupport() {
+    csySupportCount += 1;
+    localStorage.setItem('csy_support', String(csySupportCount));
     updateSupportText();
+
     const wall = document.getElementById('supportWall');
     for (let k = 0; k < 3; k++) {
         const h = document.createElement('span');
@@ -1220,6 +1283,19 @@ function addSupport() {
         h.style.animationDelay = (k * 0.12) + 's';
         wall.appendChild(h);
         setTimeout(() => h.remove(), 2200);
+    }
+
+    if (API_BASE) {
+        try {
+            const res = await fetch(API_BASE + '/api/support', { method: 'POST' });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data && data.ok) {
+                csySupportCount = parseInt(data.count) || csySupportCount;
+                localStorage.setItem('csy_support', String(csySupportCount));
+                updateSupportText();
+            }
+        } catch (e) { /* 上传失败：本地计数仍保留 */ }
     }
 }
 
@@ -1645,10 +1721,15 @@ function closeAudioModal() {
 // 初始化
 window.addEventListener('DOMContentLoaded', () => {
     checkDevice();
+    try { csyMessages = JSON.parse(localStorage.getItem('csy_messages') || '[]'); } catch (e) { csyMessages = []; }
+    csySupportCount = parseInt(localStorage.getItem('csy_support') || '0');
     setLang('zh');
     renderGallery();
+    if (API_BASE) document.getElementById('msgCloudHint').classList.remove('hidden');
     renderMessages();
     updateSupportText();
+    fetchMessages();
+    fetchSupport();
     tickCountdown();
     setInterval(tickCountdown, 1000);
     setTimeout(tryPlayBgm, 300);
