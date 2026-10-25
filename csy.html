@@ -363,6 +363,14 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
 .msg-empty { text-align:center; color:var(--ink-faint); font-size:.84rem; padding:16px 0; }
 .msg-cloud-hint { text-align:center; font-size:.68rem; letter-spacing:.08em; color:var(--ink-faint); margin-top:10px; }
 .msg-meta { font-size:.68rem; color:var(--ink-faint); letter-spacing:.05em; margin-top:6px; }
+/* 朝鲜语全屏彩蛋 */
+.korea-full { position:fixed; inset:0; z-index:20000; background:#1a0000; display:none; align-items:center; justify-content:center; overflow:hidden; }
+.korea-full.active { display:flex; }
+.korea-text { font-family:"KaiTi","SimHei",var(--serif); font-size:clamp(3rem,14vw,11rem); font-weight:900; color:#ff2d2d; letter-spacing:.12em; text-shadow:0 0 40px rgba(255,0,0,.8),0 0 80px rgba(255,0,0,.5); animation:kPulse 1s ease-in-out infinite alternate; }
+.korea-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none; }
+.korea-full.show-img .korea-text { display:none; }
+.korea-full.show-img .korea-img { display:block; }
+@keyframes kPulse { from { transform:scale(1); } to { transform:scale(1.08); } }
 
 /* ===== 新增：应援墙 ===== */
 .support-wall { text-align:center; position:relative; padding:36px 16px; background:var(--paper); border:1px solid var(--line); border-radius:24px; box-shadow:var(--shadow-soft); overflow:hidden; min-height:190px; }
@@ -439,6 +447,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
             <div class="lang-group">
                 <span class="lang-opt active" id="langZh" onclick="setLang('zh')">中</span>
                 <span class="lang-opt" id="langJa" onclick="setLang('ja')">日</span>
+                <span class="lang-opt" id="langKo" onclick="setLang('ko')">조</span>
             </div>
             <button class="pill" id="skinBtn" onclick="toggleSkin()">可爱风</button>
             <a class="pill pill-solid" href="index.html" id="btnHome">返回主站</a>
@@ -673,7 +682,12 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
 </button>
 <div class="secret-modal" id="secretModal">
     <button class="secret-close" onclick="closeSecret()">✕</button>
-    <img src="start.JPG" class="secret-img" alt="Secret">
+    <img src="start.jpg" class="secret-img" alt="Secret">
+</div>
+<!-- 朝鲜语全屏彩蛋 -->
+<div class="korea-full" id="koreaFull">
+    <div class="korea-text" id="koreaText">조선인민 만세!</div>
+    <img src="start.jpg" class="korea-img" id="koreaImg" alt="Korea">
 </div>
 
 <div class="modal-overlay" id="ticketModal">
@@ -781,6 +795,44 @@ const i18n = {
         galleryEmpty: '写真準備中',
         playBlocked: '再生がブロックされました。▶ボタンで再試行してください',
         devIos: '📱 iPhone/iPad', devAndroid: '📱 Android', devWindows: '💻 Windows', devMac: '💻 Mac', devLinux: '💻 Linux', devUnknown: '🌐 不明なデバイス'
+    },
+    ko: {
+        brand: '군타오 무용단---멤버SHOW--차이순이',
+        skinCute: '귀여운风', skinCool: '깔끔한风',
+        btnHome: '메인 사이트로',
+        heroBadge: '군타오 무용단 · 멤버SHOW',
+        heroSub: '신청곡 · 다지역 순회 · 티켓 구매와 인증',
+        titlePick: '신청곡',
+        titleFolia: 'Folia 전용 음악 공간',
+        titleCountdown: '다음 공연까지 카운트다운',
+        titleVenues: '다지역 공연',
+        titleTickets: '티켓 구매',
+        titleVerify: '티켓 인증',
+        titleGallery: '현장 사진',
+        titleNotice: '공지사항',
+        titleQuick: '바로가기',
+        titleFaq: '자주 묻는 질문',
+        btnVerify: '인 증',
+        inputPlaceholder: '인증 코드를 입력하세요',
+        buyTicket: '구매', soldOut: '매진',
+        jumpFolia: 'Folia 음악 공간으로', jumpNav: '네비 페이지로', jumpTrade: '국제 훈제계란 무역 유한회사로', jumpMain: '메인 사이트로',
+        footerCopy: '군타오 무용단---멤버SHOW--차이순이',
+        audioTitle: '허가가 필요합니다', audioDesc: '브라우저가 자동 재생을 차단했습니다. 아래 버튼을 클릭하여 음악 재생을 허용하세요.', audioYes: '재생 허용', audioNo: '나중에',
+        devTitle: '모바일 기기가 감지되었습니다', devDesc: '최상의 경험을 위해 접속 모드를 선택하세요.', devBtnPc: '전체 버전', devBtnMobile: '라이트 버전 (음악 없음)',
+        priceNormal: '일반 티켓', pricePremium: '프리미엄 티켓', priceVip: 'VIP 스탠드', amount: '수량：',
+        payNotice: '이 결제 옵션은 1원도 청구하지 않습니다. 데모용입니다.',
+        secretBtn: 'Welcome To North Korea',
+        searchPlaceholder: '곡명 검색…',
+        favFilterOn: '즐겨찾기만', favFilterOff: '전체 보기',
+        noSong: '곡이 선택되지 않음', nowPlaying: '재생 중',
+        titleOrders: '내 티켓', ordersSub: '구매하면 인증 코드가 발급되며, 인증 후 무효가 됩니다.', ordersEmpty: '주문이 없습니다. 티켓을 구매해 보세요!',
+        orderStatusUsed: '인증됨', orderStatusNew: '미인증', copyCode: '복사', copied: '복사됨 ✓', seatLabel: '좌석',
+        titleMessage: '게시판', msgName: '닉네임', msgText: '메시지 (친절하게 작성해 주세요)', msgSubmit: '게시하기', msgEmpty: '아직 댓글이 없습니다. 첫 번째가 되어 보세요!', msgAnon: '익명', msgCloudHint: '메시지는 클라우드에 동기화됩니다',
+        titleSupport: '응원의 벽', supportBtn: '차이순이 응원하기', supportCount: '누적 응원',
+        cdCustom: '이 공연장에 고정됨 · 다른 곳 클릭 시 전환', cdReset: '자동 선택으로 복귀', cdEnded: '공연이 시작되었습니다', noFuture: '향후 공연이 없습니다',
+        galleryEmpty: '사진 준비 중',
+        playBlocked: '재생이 차단되었습니다. ▶ 버튼으로 다시 시도하세요',
+        devIos: '📱 iPhone/iPad', devAndroid: '📱 Android', devWindows: '💻 Windows', devMac: '💻 Mac', devLinux: '💻 Linux', devUnknown: '🌐 알 수 없는 기기'
     }
 };
 
@@ -852,8 +904,11 @@ function toggleFoliaFullscreen() {
    ============================================================ */
 function setLang(lang) {
     currentLang = lang;
+    if (lang === 'ko') { playKoreaEasterEgg(); }
     document.getElementById('langZh').classList.toggle('active', lang === 'zh');
     document.getElementById('langJa').classList.toggle('active', lang === 'ja');
+    document.getElementById('langKo').classList.toggle('active', lang === 'ko');
+    if (lang === 'ko') { document.getElementById('langZh').classList.remove('active'); document.getElementById('langJa').classList.remove('active'); }
     
     const dict = i18n[lang];
     document.getElementById('brandText').textContent = dict.brand;
@@ -1549,6 +1604,26 @@ function closeSecret() {
 }
 
 /* ============================================================
+   朝鲜语全屏彩蛋：点击"조"后
+   0-3s 全屏"조선인민 만세!"，同时播放 funmusic.mp3 (10s)
+   3-10s 全屏 start.jpg
+   10s 全部结束
+   ============================================================ */
+function playKoreaEasterEgg() {
+    const box = document.getElementById('koreaFull');
+    songAudio.pause(); bgm.pause(); secretAudio.pause();
+    secretAudio.volume = 1.0; secretAudio.currentTime = 0;
+    secretAudio.play().catch(e => console.log('彩蛋音乐播放失败'));
+    box.classList.remove('show-img');
+    box.classList.add('active');
+    setTimeout(() => { box.classList.add('show-img'); }, 3000);
+    setTimeout(() => {
+        box.classList.remove('active', 'show-img');
+        secretAudio.pause(); secretAudio.currentTime = 0;
+    }, 10000);
+}
+
+/* ============================================================
    购票逻辑
    ============================================================ */
 function openTicketModal(showId) {
@@ -1800,7 +1875,7 @@ document.getElementById('imgModal').addEventListener('click', function(e) {
 document.addEventListener('keydown', (e) => {
     const tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea') return;
-    if (document.querySelector('.modal-overlay.active') || document.querySelector('.secret-modal.active')) return;
+    if (document.querySelector('.modal-overlay.active') || document.querySelector('.secret-modal.active') || document.getElementById('koreaFull').classList.contains('active')) return;
     if (document.querySelector('.device-modal:not(.hidden)')) return;
     if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
     else if (e.code === 'ArrowRight') { playNext(); }
