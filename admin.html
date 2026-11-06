@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>管理后台 · 棍涛舞团</title>
+<style>
+  :root{
+    --bg:#0f1117; --card:#191c26; --card2:#20242f; --line:#2c3140;
+    --txt:#e8eaf0; --sub:#9aa2b4; --acc:#ff7b3d; --acc2:#4da3ff;
+    --ok:#3ddc84; --bad:#ff5d5d; --warn:#ffc94d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+  .hidden{display:none!important}
+
+  /* 登录 */
+  #loginBox{max-width:360px;margin:12vh auto;padding:32px 28px;background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center}
+  #loginBox h1{font-size:22px;margin-bottom:6px}
+  #loginBox p{color:var(--sub);font-size:13px;margin-bottom:22px}
+  #loginBox input{width:100%;padding:12px 14px;background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:15px;outline:none;text-align:center;letter-spacing:2px}
+  #loginBox input:focus{border-color:var(--acc)}
+  #loginBox button{margin-top:14px;width:100%;padding:12px;background:var(--acc);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer}
+  #loginBox button:hover{opacity:.9}
+  #loginMsg{color:var(--bad);font-size:13px;margin-top:12px;min-height:18px;white-space:pre-line}
+
+  /* 布局 */
+  header{display:flex;align-items:center;gap:16px;padding:14px 20px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  header h1{font-size:18px}
+  .tabs{display:flex;gap:8px;margin-left:8px}
+  .tab{padding:8px 16px;background:var(--card2);border:1px solid var(--line);border-radius:20px;color:var(--sub);cursor:pointer;font-size:14px}
+  .tab.active{background:var(--acc);border-color:var(--acc);color:#fff}
+  .spacer{flex:1}
+  .btn{padding:8px 14px;background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--txt);cursor:pointer;font-size:13px}
+  .btn:hover{border-color:var(--acc)}
+  .btn.danger{color:var(--bad)}
+  .btn.danger:hover{border-color:var(--bad)}
+  main{max-width:1100px;margin:0 auto;padding:20px}
+  .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .count{color:var(--sub);font-size:13px}
+
+  /* 留言 */
+  .msg{display:flex;flex-direction:column;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+  .msg .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .msg .name{font-weight:600}
+  .badge{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--card2);color:var(--sub);border:1px solid var(--line)}
+  .msg .time{color:var(--sub);font-size:12px}
+  .msg .text{color:var(--txt);line-height:1.6;word-break:break-word;white-space:pre-wrap}
+  .msg .ops{display:flex;gap:8px}
+
+  /* 文件 */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+  .file{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+  .file .thumb{height:130px;background:var(--card2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .file .thumb img{width:100%;height:100%;object-fit:cover}
+  .file .thumb .ic{font-size:40px}
+  .file .info{padding:10px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .file .fname{font-size:13px;word-break:break-all;line-height:1.4}
+  .file .meta{color:var(--sub);font-size:11px}
+  .file .ops{display:flex;gap:6px;padding:0 12px 12px}
+  .file .ops .btn{flex:1;text-align:center;padding:6px 4px;font-size:12px}
+
+  #toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#2a2f3d;border:1px solid var(--line);color:var(--txt);padding:12px 22px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:99;max-width:90vw}
+  #toast.show{opacity:1}
+  #toast.ok{border-color:var(--ok);color:var(--ok)}
+  #toast.err{border-color:var(--bad);color:var(--bad)}
+  .empty{color:var(--sub);text-align:center;padding:40px 0;font-size:14px}
+  .loading{color:var(--sub);text-align:center;padding:40px 0}
+</style>
+</head>
+<body>
+
+<div id="loginBox">
+  <h1>🔐 管理后台</h1>
+  <p>棍涛舞团留言 · 投稿墙内容管理</p>
+  <input type="password" id="pwdInput" placeholder="输入管理密码" autocomplete="current-password">
+  <button id="loginBtn">登 录</button>
+  <div id="loginMsg"></div>
+</div>
+
+<div id="app" class="hidden">
+  <header>
+    <h1>🎛️ 管理后台</h1>
+    <div class="tabs">
+      <button class="tab active" data-tab="msg">💬 留言管理</button>
+      <button class="tab" data-tab="file">🖼️ 投稿墙管理</button>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="refreshBtn">🔄 刷新</button>
+    <button class="btn danger" id="logoutBtn">退出</button>
+  </header>
+  <main>
+    <div class="toolbar"><span class="count" id="countLine"></span></div>
+    <div id="msgPanel"></div>
+    <div id="filePanel" class="hidden"></div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = '/api/admin';
+let pwd = localStorage.getItem('admin_pwd') || '';
+let currentTab = 'msg';
+
+const $ = s => document.querySelector(s);
+const deviceLabels = { ios:'🍎 苹果', android:'🤖 安卓', windows:'🪟 Windows', mac:'💻 Mac', linux:'🐧 Linux', unknown:'❓ 未知' };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function toast(text, type){
+  const t = $('#toast');
+  t.textContent = text;
+  t.className = 'show ' + (type || '');
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function fmtTime(t){
+  if (!t) return '';
+  const d = new Date(t);
+  if (isNaN(d)) return '';
+  const p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+}
+function fmtSize(b){
+  if (!b && b !== 0) return '';
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+
+async function api(action, extra){
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Admin-Password': pwd },
+    body: JSON.stringify(Object.assign({ action }, extra || {}))
+  });
+  let data = null;
+  try { data = await res.json(); } catch(e){}
+  if (res.status === 401) {
+    localStorage.removeItem('admin_pwd');
+    showLogin('密码错误，请重新输入');
+    throw new Error('unauthorized');
+  }
+  if (res.status === 503 && data && data.setup) {
+    localStorage.removeItem('admin_pwd');
+    showLogin(data.error);
+    throw new Error('setup');
+  }
+  if (!res.ok) throw new Error((data && data.error) || ('HTTP ' + res.status));
+  return data;
+}
+
+function showLogin(msg){
+  $('#app').classList.add('hidden');
+  $('#loginBox').classList.remove('hidden');
+  $('#loginMsg').textContent = msg || '';
+  $('#pwdInput').value = '';
+}
+
+/* ---- 登录 ---- */
+async function tryLogin(){
+  const v = $('#pwdInput').value.trim();
+  if (!v) return;
+  pwd = v;
+  try {
+    await api('ping');
+    localStorage.setItem('admin_pwd', pwd);
+    $('#loginBox').classList.add('hidden');
+    $('#app').classList.remove('hidden');
+    $('#loginMsg').textContent = '';
+    refresh();
+  } catch(e){ /* 错误信息已由 api() 处理 */ }
+}
+$('#loginBtn').onclick = tryLogin;
+$('#pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+
+/* ---- 标签页 ---- */
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTab = btn.dataset.tab;
+    $('#msgPanel').classList.toggle('hidden', currentTab !== 'msg');
+    $('#filePanel').classList.toggle('hidden', currentTab !== 'file');
+    refresh();
+  };
+});
+
+$('#refreshBtn').onclick = refresh;
+$('#logoutBtn').onclick = () => { localStorage.removeItem('admin_pwd'); showLogin(); };
+
+async function refresh(){
+  $('#countLine').textContent = '';
+  if (currentTab === 'msg') await loadMessages();
+  else await loadFiles();
+}
+
+/* ---- 留言管理 ---- */
+async function loadMessages(){
+  const p = $('#msgPanel');
+  p.innerHTML = '<div class="loading">加载中…</div>';
+  try {
+    const d = await api('listMessages');
+    const msgs = d.messages || [];
+    $('#countLine').textContent = '共 ' + msgs.length + ' 条留言';
+    if (!msgs.length) { p.innerHTML = '<div class="empty">暂无留言</div>'; return; }
+    p.innerHTML = msgs.map(m => {
+      const device = deviceLabels[m.device] || m.device || '';
+      const ip = m.ip ? ('<span class="badge">IP ' + esc(m.ip) + '</span>') : '';
+      const dev = device ? ('<span class="badge">' + esc(device) + '</span>') : '';
+      return '<div class="msg">'
+        + '<div class="head"><span class="name">' + esc(m.name) + '</span>' + dev + ip
+        + '<span class="time">' + esc(fmtTime(m.time)) + '</span></div>'
+        + '<div class="text">' + esc(m.text) + '</div>'
+        + '<div class="ops">'
+        + '<button class="btn" data-op="rename" data-key="' + esc(m.key) + '" data-name="' + esc(m.name) + '">✏️ 改昵称</button>'
+        + '<button class="btn" data-op="edit" data-key="' + esc(m.key) + '" data-text="' + esc(m.text) + '">📝 改内容</button>'
+        + '<button class="btn danger" data-op="del" data-key="' + esc(m.key) + '" data-name="' + esc(m.name) + '">🗑️ 删除</button>'
+        + '</div></div>';
+    }).join('');
+    p.querySelectorAll('[data-op]').forEach(btn => {
+      btn.onclick = () => msgOp(btn);
+    });
+  } catch(e){
+    p.innerHTML = '<div class="empty">加载失败：' + esc(e.message) + '</div>';
+  }
+}
+
+async function msgOp(btn){
+  const op = btn.dataset.op, key = btn.dataset.key;
+  try {
+    if (op === 'rename') {
+      const name = prompt('把「' + btn.dataset.name + '」改名为：', btn.dataset.name);
+      if (name === null) return;
+      await api('editMessage', { key, name });
+      toast('昵称已修改', 'ok');
+    } else if (op === 'edit') {
+      const text = prompt('修改留言内容：', btn.dataset.text);
+      if (text === null) return;
+      await api('editMessage', { key, text });
+      toast('内容已修改', 'ok');
+    } else if (op === 'del') {
+      if (!confirm('确定删除「' + btn.dataset.name + '」的这条留言吗？删除后不可恢复。')) return;
+      await api('deleteMessage', { key });
+      toast('留言已删除', 'ok');
+    }
+    loadMessages();
+  } catch(e){
+    toast('操作失败：' + e.message, 'err');
+  }
+}
+
+/* ---- 投稿墙管理 ---- */
+async function loadFiles(){
+  const p = $('#filePanel');
+  p.innerHTML = '<div class="loading">加载中…</div>';
+  try {
+    const d = await api('listFiles');
+    const items = d.items || [];
+    $('#countLine').textContent = '共 ' + items.length + ' 个文件';
+    if (!items.length) { p.innerHTML = '<div class="empty">投稿墙暂无文件</div>'; return; }
+    p.innerHTML = '<div class="grid">' + items.map(f => {
+      const isImg = /^image\//.test(f.mimeType || '');
+      const thumb = isImg
+        ? '<img src="' + esc(f.url) + '" loading="lazy" alt="">'
+        : '<div class="ic">📄</div>';
+      return '<div class="file">'
+        + '<div class="thumb">' + thumb + '</div>'
+        + '<div class="info">'
+        + '<div class="fname">' + esc(f.key) + '</div>'
+        + '<div class="meta">' + esc(fmtSize(f.size)) + ' · ' + esc(fmtTime(f.putTime / 10000)) + '</div>'
+        + '</div>'
+        + '<div class="ops">'
+        + '<button class="btn" data-op="rename" data-key="' + esc(f.key) + '">✏️ 改名</button>'
+        + '<a class="btn" href="' + esc(f.url) + '" target="_blank" style="text-decoration:none">👁️ 查看</a>'
+        + '<button class="btn danger" data-op="del" data-key="' + esc(f.key) + '">🗑️ 删除</button>'
+        + '</div></div>';
+    }).join('') + '</div>';
+    p.querySelectorAll('[data-op]').forEach(btn => {
+      btn.onclick = () => fileOp(btn);
+    });
+  } catch(e){
+    p.innerHTML = '<div class="empty">加载失败：' + esc(e.message) + '</div>';
+  }
+}
+
+async function fileOp(btn){
+  const op = btn.dataset.op, key = btn.dataset.key;
+  try {
+    if (op === 'rename') {
+      const ext = key.includes('.') ? key.slice(key.lastIndexOf('.')) : '';
+      const base = ext ? key.slice(0, key.lastIndexOf('.')) : key;
+      const nk = prompt('把「' + key + '」改名为（会自动保留扩展名' + ext + '）：', base);
+      if (nk === null) return;
+      const newKey = (nk + ext).replace(/\s+/g, '_');
+      if (!/^[A-Za-z0-9_.\-]{1,200}$/.test(newKey)) {
+        toast('文件名只能包含字母、数字、下划线、点和短横线', 'err');
+        return;
+      }
+      await api('renameFile', { key, newKey });
+      toast('已改名为「' + newKey + '」', 'ok');
+    } else if (op === 'del') {
+      if (!confirm('确定删除「' + key + '」吗？投稿墙和所有人的浏览都会立即看不到它，且不可恢复。')) return;
+      await api('deleteFile', { key });
+      toast('文件已删除', 'ok');
+    }
+    loadFiles();
+  } catch(e){
+    toast('操作失败：' + e.message, 'err');
+  }
+}
+
+/* ---- 启动 ---- */
+if (pwd) {
+  api('ping').then(() => {
+    $('#loginBox').classList.add('hidden');
+    $('#app').classList.remove('hidden');
+    refresh();
+  }).catch(() => { /* api() 已处理 401/503 */ });
+} else {
+  $('#pwdInput').focus();
+}
+</script>
+</body>
+</html>
