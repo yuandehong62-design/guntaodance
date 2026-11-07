@@ -944,7 +944,10 @@ let deviceMode = 'pc';
    后台 KV 绑定已在 Pages 项目设置中配置。
    若 API 不可达，页面自动退回"仅本地保存"模式，功能照常可用。
    ============================================================ */
-const API_BASE = 'https://guntaodance.cc.cd';
+/* 空字符串 = 同源请求：页面从哪个域名打开就在哪个域名调 API
+   （guntaodance.cc.cd / guntaodance.pages.dev 都能正常工作，也不会跨域） */
+const API_BASE = '';
+const CLOUD_ENABLED = true; // 云端留言/应援是否启用
 
 /* ============================================================
    设备检测与选择
@@ -1781,7 +1784,7 @@ function renderMessages() {
 async function fetchMessages() {
     msgLoadState = 'loading';
     renderMessages();
-    if (!API_BASE) { msgLoadState = 'fail'; renderMessages(); return; }
+    if (!CLOUD_ENABLED) { msgLoadState = 'fail'; renderMessages(); return; }
     try {
         const res = await fetch(API_BASE + '/api/messages?_=' + Date.now(), { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -1804,7 +1807,7 @@ async function submitMsg() {
     const name = nameEl.value.trim() || dict.msgAnon;
     const text = textEl.value.trim();
     if (!text) { textEl.focus(); return; }
-    if (!API_BASE) { alert('云端服务未配置，暂时无法发布留言'); return; }
+    if (!CLOUD_ENABLED) { alert('云端服务未配置，暂时无法发布留言'); return; }
 
     const btn = document.getElementById('msgSubmitBtn');
     if (btn) { btn.disabled = true; btn.textContent = '发布中…'; }
@@ -1833,7 +1836,7 @@ function updateSupportText() {
     document.getElementById('supportCountText').textContent = '❤️ ' + i18n[currentLang].supportCount + ' ' + csySupportCount;
 }
 async function fetchSupport() {
-    if (!API_BASE) return;
+    if (!CLOUD_ENABLED) return;
     try {
         const res = await fetch(API_BASE + '/api/support');
         if (!res.ok) return;
@@ -1861,7 +1864,7 @@ async function addSupport() {
         setTimeout(() => h.remove(), 2200);
     }
 
-    if (API_BASE) {
+    if (CLOUD_ENABLED) {
         try {
             const res = await fetch(API_BASE + '/api/support', { method: 'POST' });
             if (!res.ok) return;
@@ -2324,7 +2327,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initViz();
     renderGallery();
-    if (API_BASE) document.getElementById('msgCloudHint').classList.remove('hidden');
+    if (CLOUD_ENABLED) document.getElementById('msgCloudHint').classList.remove('hidden');
     renderMessages();
     updateSupportText();
     fetchMessages();
