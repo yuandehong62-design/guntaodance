@@ -1104,7 +1104,8 @@ const SONG_NAMES = [
     'NIGHT DANCER', '悬溺', 'Letting Go', '红色高跟鞋', '青衣',
     'バケモノの唄', '怪咖', '琵琶曲', '如果可以', '花海',
     '无人之岛', '其实', '心墙', '离开我的依赖', '把回忆拼好给你',
-    '第57次取消发送', '爱情讯息', '雨爱', '海屿你'
+    '第57次取消发送', '爱情讯息', '雨爱', '海屿你',
+    '3Strikes(苹果进行曲)', 'Die for you', 'Ticking Away', 'Wake'
 ];
 const SONG_ARTISTS = [
     '', '', '', '', '',
@@ -1114,8 +1115,97 @@ const SONG_ARTISTS = [
     'imase', '葛东琪', '蔡健雅', '蔡健雅', '尘ah.',
     'Shino', '薛之谦', '郑浩Z-Hao', 'DJ大大怪', '粉白噪音',
     '任然', '薛之谦', '郭静', '王艳薇', '王贰浪',
-    '菲菲公主', '郭静', '杨丞琳', '马也_Crabbit'
+    '菲菲公主', '郭静', '杨丞琳', '马也_Crabbit',
+    '', '', '', ''
 ];
+
+/* ============================================================
+   运行时歌单（可在后台「音乐管理」里增删改序）
+   ------------------------------------------------------------
+   后台把歌单存到云端（/api/music）。拉到云端歌单就用云端的，
+   拉不到就退回下面这套内置曲目，保证页面永远不会空。
+   type: 'repo'  = 站点根目录里的文件（如 13.mp3）
+         'qiniu' = 七牛云对象，播放走 /api/music-file 同域代理
+   ============================================================ */
+let MUSIC_LIST = null;
+const MUSIC_CACHE_KEY = 'csy_music_cache';
+
+function builtinTracks() {
+    return SONG_NAMES.map((name, i) => ({
+        id: 'repo-' + (i + 1),
+        name: name,
+        artist: SONG_ARTISTS[i] || '',
+        src: (i + 1) + '.mp3',
+        type: 'repo',
+        lrc: (i + 1) + '.lrc'
+    }));
+}
+function currentTracks() {
+    return (MUSIC_LIST && MUSIC_LIST.length) ? MUSIC_LIST : builtinTracks();
+}
+function trackCount() { return currentTracks().length; }
+function trackAt(i) {
+    const list = currentTracks();
+    return (i >= 0 && i < list.length) ? list[i] : null;
+}
+function trackName(i) {
+    const t = trackAt(i);
+    return (t && t.name) ? t.name : ('曲目' + (i + 1));
+}
+function trackArtist(i) {
+    const t = trackAt(i);
+    return (t && t.artist) ? t.artist : '';
+}
+function trackId(i) {
+    const t = trackAt(i);
+    return (t && t.id) ? t.id : ('repo-' + (i + 1));
+}
+function trackSrc(i) {
+    const t = trackAt(i);
+    if (!t) return (i + 1) + '.mp3';
+    if (t.type === 'qiniu') return API_BASE + '/api/music-file?key=' + encodeURIComponent(t.src);
+    return t.src || ((i + 1) + '.mp3');
+}
+function trackLrc(i) {
+    const t = trackAt(i);
+    if (!t) return (i + 1) + '.lrc';
+    if (t.lrc) return t.lrc;
+    return t.type === 'qiniu' ? '' : ((i + 1) + '.lrc');
+}
+function indexOfTrackId(id) {
+    const list = currentTracks();
+    for (let i = 0; i < list.length; i++) {
+        if (trackId(i) === id) return i;
+    }
+    return -1;
+}
+
+async function fetchMusicList() {
+    if (!CLOUD_ENABLED) return;
+    // 先用上次缓存的歌单渲染，避免首屏闪一下内置歌单
+    try {
+        const cached = JSON.parse(localStorage.getItem(MUSIC_CACHE_KEY) || 'null');
+        if (cached && Array.isArray(cached.tracks) && cached.tracks.length) {
+            MUSIC_LIST = cached.tracks;
+            renderPick();
+        }
+    } catch (e) {}
+    try {
+        const res = await fetch(API_BASE + '/api/music?_=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.ok && Array.isArray(data.tracks) && data.tracks.length) {
+            MUSIC_LIST = data.tracks;
+            try {
+                localStorage.setItem(MUSIC_CACHE_KEY, JSON.stringify({ tracks: data.tracks, at: Date.now() }));
+            } catch (e) {}
+            renderPick();
+            const activeEl = document.querySelector('#pickGrid .pick-card[data-index="' + currentIndex + '"]');
+            if (activeEl) activeEl.classList.add('active');
+            updateFavBtn();
+        }
+    } catch (e) { /* 云端不可用时继续用内置曲目 */ }
+}
 
 const noticeData = [
     { date:'2026-10-06', textZh:'908午休一展歌喉迷晕全场观众。', textJa:'908の昼休みに歌声を披露し、観客を魅了しました。' },
@@ -1140,12 +1230,12 @@ function lockDevMode() { localStorage.removeItem('csy_dev_mode'); }
 function renderPick() {
     const grid = document.getElementById('pickGrid');
     if (!grid) return;
-    const count = SONG_NAMES.length;
+    const count = trackCount();
     const favs = getFavs();
     let html = '';
     for (let i = 0; i < count; i++) {
-        const name = SONG_NAMES[i] || ('曲目' + (i + 1));
-        const fav = favs.includes(i);
+        const name = trackName(i);
+        const fav = favs.includes(trackId(i));
         html += `<div class="pick-card" data-index="${i}" onclick="selectPick(${i})">
                     <span class="fav-mark ${fav ? 'on' : ''}" onclick="toggleFavFromCard(event, ${i})">${fav ? '♥' : '♡'}</span>
                     <div class="pick-num">${String(i + 1).padStart(2, '0')}</div>
@@ -1235,15 +1325,29 @@ function toggleFaq(i) {
    收藏与搜索
    ============================================================ */
 function getFavs() {
-    try { return JSON.parse(localStorage.getItem('csy_favs') || '[]'); } catch (e) { return []; }
+    let raw;
+    try { raw = JSON.parse(localStorage.getItem('csy_favs') || '[]'); } catch (e) { return []; }
+    if (!Array.isArray(raw)) return [];
+    // 老版本存的是数字下标，歌单重排后会错位 —— 迁成曲目 id
+    const out = [], seen = {};
+    let migrated = false;
+    raw.forEach(v => {
+        let id;
+        if (typeof v === 'number') { id = 'repo-' + (v + 1); migrated = true; }
+        else id = String(v);
+        if (id && !seen[id]) { seen[id] = 1; out.push(id); }
+    });
+    if (migrated) { try { localStorage.setItem('csy_favs', JSON.stringify(out)); } catch (e) {} }
+    return out;
 }
 let pickSearchTerm = '';
 let pickFavOnly = false;
 
 function toggleFav(i) {
     const favs = getFavs();
-    const pos = favs.indexOf(i);
-    if (pos >= 0) favs.splice(pos, 1); else favs.push(i);
+    const id = trackId(i);
+    const pos = favs.indexOf(id);
+    if (pos >= 0) favs.splice(pos, 1); else favs.push(id);
     localStorage.setItem('csy_favs', JSON.stringify(favs));
     renderPick();
 }
@@ -1252,7 +1356,7 @@ function toggleFavCurrent() { toggleFav(currentIndex); }
 function updateFavBtn() {
     const el = document.getElementById('pbFav');
     if (!el) return;
-    el.textContent = getFavs().includes(currentIndex) ? '❤️' : '🤍';
+    el.textContent = getFavs().includes(trackId(currentIndex)) ? '❤️' : '🤍';
 }
 function filterPick(v) {
     pickSearchTerm = (v || '').trim().toLowerCase();
@@ -1273,9 +1377,9 @@ function applyPickFilter() {
     const favs = getFavs();
     document.querySelectorAll('#pickGrid .pick-card').forEach(card => {
         const i = parseInt(card.dataset.index);
-        const name = (SONG_NAMES[i] || '').toLowerCase();
+        const name = (trackName(i) || '').toLowerCase();
         const okSearch = !pickSearchTerm || name.includes(pickSearchTerm);
-        const okFav = !pickFavOnly || favs.includes(i);
+        const okFav = !pickFavOnly || favs.includes(trackId(i));
         card.style.display = (okSearch && okFav) ? '' : 'none';
     });
 }
@@ -1511,6 +1615,7 @@ function saveResume() {
     if (!songAudio.currentTime || songAudio.duration < 20) return;
     try {
         localStorage.setItem(RESUME_KEY, JSON.stringify({
+            id: trackId(currentIndex),
             i: currentIndex,
             t: Math.floor(songAudio.currentTime),
             at: Date.now()
@@ -1520,15 +1625,23 @@ function saveResume() {
 function loadResume() {
     let r = null;
     try { r = JSON.parse(localStorage.getItem(RESUME_KEY) || 'null'); } catch (e) { return null; }
-    if (!r || typeof r.i !== 'number' || !r.t) return null;
+    if (!r || !r.t) return null;
     if (Date.now() - (r.at || 0) > 86400000 * 7) return null;
     if (r.t < 8) return null;
+    // 优先按曲目 id 定位（歌单重排/删除后仍能找到同一首）
+    if (r.id) {
+        const pos = indexOfTrackId(r.id);
+        if (pos === -1) return null; // 这首歌已被删掉
+        r.i = pos;
+    } else if (typeof r.i !== 'number') {
+        return null;
+    }
     return r;
 }
 function showResumeBar() {
     const r = loadResume();
     if (!r) return;
-    const name = SONG_NAMES[r.i] || ('曲目' + (r.i + 1));
+    const name = trackName(r.i);
     const el = document.getElementById('resumeText');
     if (el) el.textContent = '上次听到「' + name + '」' + fmtTime(r.t) + '，继续？';
     resumePending = r;
@@ -1641,8 +1754,8 @@ function downloadIcs(idx) {
 let cmdkOpen = false, cmdkItems = [], cmdkSel = 0;
 function cmdkCommands() {
     const list = [];
-    for (let i = 0; i < SONG_NAMES.length; i++) {
-        const name = SONG_NAMES[i] || ('曲目' + (i + 1));
+    for (let i = 0; i < trackCount(); i++) {
+        const name = trackName(i);
         if (name === '暂未添加') continue;
         list.push({ icon: '🎵', text: '播放 · ' + name, hint: '歌曲', run: () => selectPick(i) });
     }
@@ -1993,14 +2106,14 @@ function loadAndPlay(index) {
     
     stopBgm();
     
-    songAudio.src = (index + 1) + '.mp3';
+    songAudio.src = trackSrc(index);
     songAudio.play().catch(() => showPlayHint());
 
     const dict = i18n[currentLang];
     const titleEl = document.getElementById('pbTitle');
     if (titleEl) {
-        const artist = SONG_ARTISTS[index] || '';
-        titleEl.textContent = dict.nowPlaying + ' · ' + String(index + 1).padStart(2, '0') + ' · ' + (SONG_NAMES[index] || '') + (artist ? ' · ' + artist : '');
+        const artist = trackArtist(index);
+        titleEl.textContent = dict.nowPlaying + ' · ' + String(index + 1).padStart(2, '0') + ' · ' + trackName(index) + (artist ? ' · ' + artist : '');
     }
     updateFavBtn();
 
@@ -2012,7 +2125,12 @@ function loadAndPlay(index) {
     lyricLineElements = [];
     currentLyricIndex = -1;
 
-    fetch((index + 1) + '.lrc')
+    const lrcSrc = trackLrc(index);
+    if (!lrcSrc) {
+        listEl.innerHTML = '<div class="lyric-line active">暂无歌词文件</div>';
+        return;
+    }
+    fetch(lrcSrc)
         .then(res => {
             if (!res.ok) throw new Error('无歌词');
             return res.text();
@@ -2399,6 +2517,7 @@ window.addEventListener('DOMContentLoaded', () => {
     fetchMessages();
     fetchSupport();
     fetchStock();
+    fetchMusicList();
     tickCountdown();
     setInterval(tickCountdown, 1000);
     setTimeout(tryPlayBgm, 300);
