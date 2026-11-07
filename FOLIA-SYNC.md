@@ -24,19 +24,50 @@ tVSNEUra-1xMKUcsROQsvuLIl4jRUThY
 
 ## 三、在 Folia 里怎么填
 
-1. 打开 `https://music.guntaodance.cc.cd`
-2. 进入 **设置（Settings）**
-3. 找到 **Sync server settings**（同步服务器设置）
-4. 填：
-   - **Server URL / workerBaseUrl**：`https://guntaodance.pages.dev/api/sync`
-   - **Auth token**：`tVSNEUra-1xMKUcsROQsvuLIl4jRUThY`
-5. 打开 **启用（Enabled）** 开关
-6. 点 **Test connection** / 同步测试，应显示连接成功
+### 两种进入入口
 
-> 配置会存在浏览器 localStorage 的 `folia_sync_config_v1` 里，格式：
+- **入口 A（推荐）**：按 `Ctrl + K` 打开命令面板 → 输入 `同步` 或 `云同步` → 选 **Sync server settings**
+- **入口 B**：设置页 → **选项（Options）** → 往下找 **同步 / Sync** 这一组
+
+### 填写步骤
+
+1. 打开 `https://music.guntaodance.cc.cd`
+2. 打开 **Sync server settings**（同步服务器设置）
+3. 把 **开关（Enable）** 打开 —— *只有打开后，下面两个输入框才会出现*
+4. 填：
+   - **Server URL**（输入框里的灰字提示是 `https://folia-sync.example.workers.dev`）：
+     ```
+     https://guntaodance.pages.dev/api/sync
+     ```
+   - **Auth token**（密码框）：
+     ```
+     tVSNEUra-1xMKUcsROQsvuLIl4jRUThY
+     ```
+5. 点面板里的 **Test**（测试）按钮 —— 应提示 "Sync test succeeded"
+6. 点 **Save**（保存）—— *注意：不点 Save 不会生效*
+7. 之后用这两个按钮：
+   - **Sync now**（立即同步）→ 只同步主题
+   - **Sync visual settings**（同步可视化设置）→ 同步那 44 项设置（会双向：拉取云端 + 推送本地）
+
+> 💡 填完记得 **Save**，然后建议先点 **Sync visual settings** 做第一次全量同步。
+
+> 配置存在浏览器 localStorage 的 `folia_sync_config_v1` 里，格式：
 > ```json
 > {"provider":"sync-server","enabled":true,"workerBaseUrl":"https://guntaodance.pages.dev/api/sync","authToken":"..."}
 > ```
+
+### 想验证服务器通不通？（浏览器直接打开）
+
+把下面两条地址粘到浏览器地址栏，看到 JSON 就说明服务器正常：
+
+- 健康检查：
+  `https://guntaodance.pages.dev/api/sync/health?token=tVSNEUra-1xMKUcsROQsvuLIl4jRUThY`
+  → `{"ok":true,"service":"folia-sync","schemaVersion":1,...}`
+- 当前云端状态：
+  `https://guntaodance.pages.dev/api/sync/state?token=tVSNEUra-1xMKUcsROQsvuLIl4jRUThY`
+  → `{"schemaVersion":1,"settingsUpdatedAt":...,...,"themeCount":N}`
+
+> `settingsUpdatedAt` 是 `null` 表示云端还没存过设置；同步一次后就会变成时间戳。
 
 ## 四、同步什么
 
@@ -82,18 +113,31 @@ pendolo / sonnet / tempera / lumiere）、智能节拍、URL 背景列表、首�
 
 ## 八、实测记录
 
-| 测试项 | 结果 |
-|---|---|
-| `GET /health` | ✅ `{"ok":true,"service":"folia-sync","schemaVersion":1}` |
-| `GET /state`（空） | ✅ `{"schemaVersion":1,"settingsUpdatedAt":null,"themesUpdatedAt":null,"themeCount":0}` |
-| `GET /settings`（空） | ✅ HTTP 204 |
-| `PUT /settings` → `GET /settings` | ✅ 写入读出数据一致 |
-| `POST /themes/put` ×2 | ✅ `{"ok":true,"stored":2,"themeCount":2}` |
-| `GET /themes/manifest` | ✅ 256 桶，命中桶 186 / 189，hash 正确 |
-| `POST /themes/list` | ✅ 返回 2 条，cursor=null |
-| `POST /themes/bucket` | ✅ 按桶返回对应主题 |
-| 无令牌访问 | ✅ HTTP 401 |
-| CORS 预检 OPTIONS | ✅ 204 + 完整 CORS 头 |
-| 根路径 `/api/sync` | ✅ 返回端点清单 |
+### 端到端联调（按 Folia 客户端真实逻辑复刻，17 项全通过）
+
+| 测试项 | 说明 | 结果 |
+|---|---|---|
+| 连接测试 `Rie()` | health + state 组合校验 | ✅ |
+| 读取 `/state` | 解析出 `schemaVersion/settingsUpdatedAt/themesUpdatedAt/themeCount` | ✅ |
+| 空库 `/settings` | 返回 204，客户端解析为 `null` | ✅ |
+| 推送 44 项设置 | `PUT /settings` | ✅ |
+| 回读设置 | `updatedAt` 一致、44 项逐一比对全一致 | ✅ |
+| 上传 3 个主题 | `POST /themes/put` | ✅ |
+| `themeCount` | 服务端计数正确 = 3 | ✅ |
+| `/themes/manifest` | 解析成功，`bucketCount=256` | ✅ |
+| 分桶 hash | 服务端算法与客户端 FNV-1a 逐桶比对**完全一致** | ✅ |
+| 桶内主题合计 | 3 个非空桶，合计 3 | ✅ |
+| 按桶下载 | `POST /themes/bucket` 拉到 3 条 | ✅ |
+| `themes/list` 分页 | limit=2 → 返回 2 条 + cursor=2 | ✅ |
+| 第二页 | 取到剩余 1 条 | ✅ |
+| 错误令牌 | 返回 401 | ✅ |
+| CORS 预检 | 从 `music.guntaodance.cc.cd` 跨域，OPTIONS→204，ACAO=`*` | ✅ |
+| 跨域真实请求 | 带 Origin 头 GET 各端点，均 200 + ACAO=`*` | ✅ |
+| 直连稳定性 | `guntaodance.pages.dev` 连续 5 次，5/5 成功，热身后 400~600ms | ✅ |
 
 > 测试数据已全部清除，KV 已恢复为空（`settingsUpdatedAt: null`、`themeCount: 0`）。
+
+### 已知注意事项
+
+- **KV 最终一致性**：删除/写入后各边缘节点有几秒延迟。用 API 手工清空 KV 后，立刻读 `/state` 可能还看到旧值，等 5~10 秒即可。
+- **`guntaodance.cc.cd` 不可用**：该 zone 开了 *I'm Under Attack*，跨域会 403。要用这个域名，需去 Cloudflare 把 Security Level 调回 High/Medium。
