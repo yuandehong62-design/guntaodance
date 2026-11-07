@@ -1099,7 +1099,22 @@ const TYPE_LABEL = {
 const SONG_NAMES = [
     '海屿你',  '朋友的酒',  '红色高跟鞋',  '雨爱',  '忘情牛肉面',
     '你若三冬',  '花海',  '爱情讯息',  '甲乙丙丁',  '心墙',
-    'DreamFunk', '我来同你玩纯享版', '暂未添加', '暂未添加', '暂未添加'
+    'DreamFunk', '我来同你玩纯享版',
+    '泡沫', '我走后', '特别的人', '我们俩', '越来越不懂',
+    'NIGHT DANCER', '悬溺', 'Letting Go', '红色高跟鞋', '青衣',
+    'バケモノの唄', '怪咖', '琵琶曲', '如果可以', '花海',
+    '无人之岛', '其实', '心墙', '离开我的依赖', '把回忆拼好给你',
+    '第57次取消发送', '爱情讯息', '雨爱', '海屿你'
+];
+const SONG_ARTISTS = [
+    '', '', '', '', '',
+    '', '', '', '', '',
+    '', '',
+    'G.E.M.邓紫棋', '小咪', '方大同', '郭顶', '蔡健雅',
+    'imase', '葛东琪', '蔡健雅', '蔡健雅', '尘ah.',
+    'Shino', '薛之谦', '郑浩Z-Hao', 'DJ大大怪', '粉白噪音',
+    '任然', '薛之谦', '郭静', '王艳薇', '王贰浪',
+    '菲菲公主', '郭静', '杨丞琳', '马也_Crabbit'
 ];
 
 const noticeData = [
@@ -1125,7 +1140,7 @@ function lockDevMode() { localStorage.removeItem('csy_dev_mode'); }
 function renderPick() {
     const grid = document.getElementById('pickGrid');
     if (!grid) return;
-    const count = isDevMode() ? 15 : 12;
+    const count = SONG_NAMES.length;
     const favs = getFavs();
     let html = '';
     for (let i = 0; i < count; i++) {
@@ -1157,10 +1172,28 @@ function renderVenues() {
     ).join('');
 }
 
+let csyStock = {};
+async function fetchStock() {
+    if (!CLOUD_ENABLED) return;
+    try {
+        const res = await fetch(API_BASE + '/api/stock?_=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.ok) {
+            csyStock = data.stock || {};
+            renderBuyList();
+        }
+    } catch (e) { /* 保持默认余票 */ }
+}
+function stockOf(showId) {
+    const t = csyStock[showId];
+    if (t && typeof t === 'object') return t;
+    return { normal:80, premium:80, vip:80 };
+}
+
 function renderBuyList() {
-    const store = JSON.parse(localStorage.getItem('troupe_tickets') || '{}');
     document.getElementById('buyList').innerHTML = scheduleData.map(s => {
-        const t = store[s.id] || { normal:80, premium:80, vip:80 };
+        const t = stockOf(s.id);
         const soldOut = (t.normal + t.premium + t.vip) <= 0;
         return `<div class="buy-row">
             <div class="buy-info">
@@ -1608,7 +1641,7 @@ function downloadIcs(idx) {
 let cmdkOpen = false, cmdkItems = [], cmdkSel = 0;
 function cmdkCommands() {
     const list = [];
-    for (let i = 0; i < (isDevMode() ? 15 : 12); i++) {
+    for (let i = 0; i < SONG_NAMES.length; i++) {
         const name = SONG_NAMES[i] || ('曲目' + (i + 1));
         if (name === '暂未添加') continue;
         list.push({ icon: '🎵', text: '播放 · ' + name, hint: '歌曲', run: () => selectPick(i) });
@@ -1965,7 +1998,10 @@ function loadAndPlay(index) {
 
     const dict = i18n[currentLang];
     const titleEl = document.getElementById('pbTitle');
-    if (titleEl) titleEl.textContent = dict.nowPlaying + ' · ' + String(index + 1).padStart(2, '0') + ' · ' + (SONG_NAMES[index] || '');
+    if (titleEl) {
+        const artist = SONG_ARTISTS[index] || '';
+        titleEl.textContent = dict.nowPlaying + ' · ' + String(index + 1).padStart(2, '0') + ' · ' + (SONG_NAMES[index] || '') + (artist ? ' · ' + artist : '');
+    }
     updateFavBtn();
 
     // 加载歌词
@@ -2125,8 +2161,7 @@ function playKoreaEasterEgg() {
 function openTicketModal(showId) {
     const sh = scheduleData.find(s => s.id === showId);
     if (!sh) return;
-    const store = JSON.parse(localStorage.getItem('troupe_tickets') || '{}');
-    const tck = store[showId] || { normal:80, premium:80, vip:80 };
+    const tck = stockOf(showId);
     const dict = i18n[currentLang];
     const typeLabel = TYPE_LABEL[currentLang];
     
@@ -2169,9 +2204,9 @@ function startPay() {
     const qty = parseInt(document.getElementById('ticketQty').value);
     const showId = scheduleData.find(s => s.city === document.querySelector('.modal-title').textContent).id;
     
-    const store = JSON.parse(localStorage.getItem('troupe_tickets') || '{}');
-    if (!store[showId]) store[showId] = { normal:80, premium:80, vip:80 };
-    if (qty > store[showId][type]) return alert('余票不足');
+    if (!Number.isFinite(qty) || qty < 1) return alert('数量无效');
+    const tck = stockOf(showId);
+    if (qty > tck[type]) return alert('余票不足');
 
     const log = document.getElementById('payLog');
     log.innerHTML = '';
@@ -2180,13 +2215,44 @@ function startPay() {
         ['🔗 ゲートウェイ接続中…', '🔐 環境確認中…', '📤 チケットを購入しますか？', '⏳ 確認待ち…', '✅ 成功！自動的に1000万枚のパンツをローンします'];
     
     let i = 0;
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
         if (i < steps.length) { log.innerHTML += steps[i] + '<br>'; i++; }
         else {
             clearInterval(timer);
-            store[showId][type] -= qty;
-            localStorage.setItem('troupe_tickets', JSON.stringify(store));
-            
+
+            // 云端扣减余票
+            let ok = true;
+            if (CLOUD_ENABLED) {
+                try {
+                    const res = await fetch(API_BASE + '/api/stock', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ showId, type, qty }),
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (data && data.ok) {
+                        csyStock = data.stock || csyStock;
+                    } else if (res.status === 409) {
+                        ok = false;
+                        log.innerHTML += '<p class="warn">⚠️ 云端余票不足，请刷新后重试</p>';
+                    } else {
+                        ok = false;
+                        log.innerHTML += '<p class="warn">⚠️ 支付失败，请检查网络后重试</p>';
+                    }
+                } catch (e) {
+                    ok = false;
+                    log.innerHTML += '<p class="warn">⚠️ 网络异常，未能同步余票</p>';
+                }
+            } else {
+                // 无云端时回退本地扣减
+                const store = JSON.parse(localStorage.getItem('troupe_tickets') || '{}');
+                if (!store[showId]) store[showId] = { normal:80, premium:80, vip:80 };
+                store[showId][type] -= qty;
+                localStorage.setItem('troupe_tickets', JSON.stringify(store));
+            }
+
+            if (!ok) { renderBuyList(); return; }
+
             const code = 'GT-' + showId.substring(0,4).toUpperCase() + '-' + Math.random().toString(36).substring(2,8).toUpperCase();
             const orders = JSON.parse(localStorage.getItem('troupe_orders') || '[]');
             orders.push({ code, showId, type, seats: ['A' + Math.floor(Math.random()*100)], validated: false });
@@ -2332,6 +2398,7 @@ window.addEventListener('DOMContentLoaded', () => {
     updateSupportText();
     fetchMessages();
     fetchSupport();
+    fetchStock();
     tickCountdown();
     setInterval(tickCountdown, 1000);
     setTimeout(tryPlayBgm, 300);

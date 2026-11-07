@@ -64,6 +64,8 @@ export async function onRequest(context) {
       case 'listFiles': return await listFiles(env);
       case 'renameFile': return await renameFile(env, body);
       case 'deleteFile': return await deleteFile(env, body);
+      case 'getStock': return await getStock(env);
+      case 'setStock': return await setStock(env, body);
       default: return json({ ok: false, error: '未知操作: ' + action }, 400);
     }
   } catch (err) {
@@ -103,6 +105,61 @@ async function deleteMessage(env, body) {
   if (!MSG_KEY_RE.test(key)) return json({ ok: false, error: '非法留言标识' }, 400);
   await env.MESSAGES.delete(key);
   return json({ ok: true });
+}
+
+/* ================= 余票管理（KV: COUNTERS，key ticket_stock） ================= */
+
+const TICKET_TYPES = ['normal', 'premium', 'vip'];
+const STOCK_KEY = 'ticket_stock';
+const DEFAULT_STOCK = 80;
+
+function normalizeStock(stock) {
+  const out = {};
+  if (stock && typeof stock === 'object') {
+    for (const [id, t] of Object.entries(stock)) {
+      if (!t || typeof t !== 'object') continue;
+      out[id] = {
+        normal: Math.max(0, parseInt(t.normal, 10) || 0),
+        premium: Math.max(0, parseInt(t.premium, 10) || 0),
+        vip: Math.max(0, parseInt(t.vip, 10) || 0),
+      };
+    }
+  }
+  return out;
+}
+
+async function readStock(env) {
+  let raw = null;
+  try { raw = await env.COUNTERS.get(STOCK_KEY, 'json'); } catch (e) { raw = null; }
+  return normalizeStock(raw);
+}
+
+async function getStock(env) {
+  return json({ ok: true, stock: await readStock(env), default: DEFAULT_STOCK });
+}
+
+async function setStock(env, body) {
+  const showId = String(body.showId || '').trim();
+  if (!showId) return json({ ok: false, error: '缺少场次 id' }, 400);
+  const stock = await readStock(env);
+  if (!stock[showId]) {
+    stock[showId] = { normal: DEFAULT_STOCK, premium: DEFAULT_STOCK, vip: DEFAULT_STOCK };
+  }
+
+  // 允许单独设置某票种余量，也允许整体重设
+  let changed = false;
+  for (const type of TICKET_TYPES) {
+    if (body[type] === undefined) continue;
+    let n = parseInt(body[type], 10);
+    if (!Number.isFinite(n)) return json({ ok: false, error: '余票必须是数字' }, 400);
+    n = Math.max(0, Math.min(99999, n));
+    stock[showId][type] = n;
+    changed = true;
+  }
+  if (!changed) return json({ ok: false, error: '没有要修改的票种' }, 400);
+
+  await env.COUNTERS.put(STOCK_KEY, JSON.stringify(stock));
+  return json({ ok: true, stock, show: stock[showId] });
 }
 
 /* ================= 投稿墙管理（七牛云 rs 接口） ================= */

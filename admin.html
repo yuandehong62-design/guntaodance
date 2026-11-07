@@ -67,6 +67,20 @@
   #toast.err{border-color:var(--bad);color:var(--bad)}
   .empty{color:var(--sub);text-align:center;padding:40px 0;font-size:14px}
   .loading{color:var(--sub);text-align:center;padding:40px 0}
+
+  /* 余票管理 */
+  .stock-note{color:var(--sub);font-size:13px;margin-bottom:14px}
+  .stock-row{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;flex-wrap:wrap}
+  .stock-row .city{font-weight:600;min-width:60px}
+  .stock-row .sub{color:var(--sub);font-size:12px;flex:1;min-width:140px}
+  .stock-field{display:flex;align-items:center;gap:6px}
+  .stock-field label{font-size:12px;color:var(--sub);white-space:nowrap}
+  .stock-field input{width:64px;padding:6px 8px;background:var(--card2);border:1px solid var(--line);border-radius:6px;color:var(--txt);font-size:13px;outline:none;text-align:center}
+  .stock-field input:focus{border-color:var(--acc)}
+  .stock-save{padding:8px 14px;background:var(--acc);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px}
+  .stock-save:hover{opacity:.9}
+  .stock-reset{padding:8px 12px;background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--sub);cursor:pointer;font-size:12px}
+  .stock-reset:hover{border-color:var(--warn);color:var(--warn)}
 </style>
 </head>
 <body>
@@ -85,6 +99,7 @@
     <div class="tabs">
       <button class="tab active" data-tab="msg">💬 留言管理</button>
       <button class="tab" data-tab="file">🖼️ 投稿墙管理</button>
+      <button class="tab" data-tab="stock">🎟️ 余票管理</button>
     </div>
     <div class="spacer"></div>
     <button class="btn" id="refreshBtn">🔄 刷新</button>
@@ -94,6 +109,7 @@
     <div class="toolbar"><span class="count" id="countLine"></span></div>
     <div id="msgPanel"></div>
     <div id="filePanel" class="hidden"></div>
+    <div id="stockPanel" class="hidden"></div>
   </main>
 </div>
 
@@ -184,6 +200,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     currentTab = btn.dataset.tab;
     $('#msgPanel').classList.toggle('hidden', currentTab !== 'msg');
     $('#filePanel').classList.toggle('hidden', currentTab !== 'file');
+    $('#stockPanel').classList.toggle('hidden', currentTab !== 'stock');
     refresh();
   };
 });
@@ -194,7 +211,8 @@ $('#logoutBtn').onclick = () => { localStorage.removeItem('admin_pwd'); showLogi
 async function refresh(){
   $('#countLine').textContent = '';
   if (currentTab === 'msg') await loadMessages();
-  else await loadFiles();
+  else if (currentTab === 'file') await loadFiles();
+  else await loadStock();
 }
 
 /* ---- 留言管理 ---- */
@@ -307,6 +325,70 @@ async function fileOp(btn){
       toast('文件已删除', 'ok');
     }
     loadFiles();
+  } catch(e){
+    toast('操作失败：' + e.message, 'err');
+  }
+}
+
+/* ---- 余票管理 ---- */
+const scheduleData = [
+  { id:'shanghai2025', city:'广州', venue:'广东第二师范学院附属南沙珠江中学', date:'2026-10-03' },
+  { id:'tokyo2025', city:'东京', venue:'国立代々木競技場', date:'2026-11-02' },
+  { id:'newyork2025', city:'纽约', venue:'Lincoln Center', date:'2026-11-18' },
+  { id:'london2025', city:'伦敦', venue:'Royal Albert Hall', date:'2029-11-05' },
+  { id:'berlin2025', city:'柏林', venue:'Berghain', date:'2027-08-22' },
+  { id:'shanghai2025', city:'广州', venue:'地点未知？LD家？还是学校？', date:'2027-07-03' },
+  { id:'sydney2025', city:'悉尼', venue:'Sydney Opera House', date:'2089-09-10' }
+];
+const ticketTypeLabels = { normal:'普通票', premium:'高级票', vip:'VIP看台' };
+
+async function loadStock(){
+  const p = $('#stockPanel');
+  p.innerHTML = '<div class="loading">加载中…</div>';
+  try {
+    const d = await api('getStock');
+    const stock = d.stock || {};
+    const def = d.default || 80;
+    $('#countLine').textContent = '共 ' + scheduleData.length + ' 个场次';
+    p.innerHTML = '<div class="stock-note">修改余票后点击「保存」，访客端购票页与余票实时同步（云端存储，所有访客共享）。</div>'
+      + scheduleData.map(s => {
+        const t = stock[s.id] || { normal:def, premium:def, vip:def };
+        return '<div class="stock-row" data-id="' + esc(s.id) + '">'
+          + '<div class="city">' + esc(s.city) + '</div>'
+          + '<div class="sub">' + esc(s.venue) + ' · ' + esc(s.date) + '</div>'
+          + '<div class="stock-field"><label>' + ticketTypeLabels.normal + '</label><input type="number" min="0" data-type="normal" value="' + t.normal + '"></div>'
+          + '<div class="stock-field"><label>' + ticketTypeLabels.premium + '</label><input type="number" min="0" data-type="premium" value="' + t.premium + '"></div>'
+          + '<div class="stock-field"><label>' + ticketTypeLabels.vip + '</label><input type="number" min="0" data-type="vip" value="' + t.vip + '"></div>'
+          + '<button class="stock-save" data-op="save">保存</button>'
+          + '<button class="stock-reset" data-op="reset">恢复默认</button>'
+          + '</div>';
+      }).join('');
+    p.querySelectorAll('[data-op]').forEach(btn => {
+      btn.onclick = () => stockOp(btn);
+    });
+  } catch(e){
+    p.innerHTML = '<div class="empty">加载失败：' + esc(e.message) + '</div>';
+  }
+}
+
+async function stockOp(btn){
+  const row = btn.closest('.stock-row');
+  const showId = row.dataset.id;
+  const op = btn.dataset.op;
+  try {
+    if (op === 'save') {
+      const extra = { showId };
+      row.querySelectorAll('input').forEach(inp => {
+        extra[inp.dataset.type] = parseInt(inp.value, 10);
+      });
+      await api('setStock', extra);
+      toast('余票已保存', 'ok');
+    } else if (op === 'reset') {
+      if (!confirm('把该场次余票恢复为默认 80 吗？')) return;
+      await api('setStock', { showId, normal:80, premium:80, vip:80 });
+      toast('已恢复默认', 'ok');
+    }
+    loadStock();
   } catch(e){
     toast('操作失败：' + e.message, 'err');
   }
