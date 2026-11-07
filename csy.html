@@ -423,6 +423,64 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     .reveal { opacity:1; transform:none; transition:none; }
     html { scroll-behavior:auto; }
 }
+
+/* ===== 新功能：主题调色盘 ===== */
+body[data-theme="ocean"]  { --blue:#3f9ec4; --blue-soft:#a8d8ea; --blue-glow:rgba(63,158,196,.32); --violet:#5fb0c8; --violet-glow:rgba(95,176,200,.24); --pink:#8fd4c8; --pink-glow:rgba(143,212,200,.20); }
+body[data-theme="sakura"] { --blue:#e0739f; --blue-soft:#f7c3d8; --blue-glow:rgba(224,115,159,.32); --violet:#c98fc0; --violet-glow:rgba(201,143,192,.24); --pink:#f2a8cf; --pink-glow:rgba(242,168,207,.22); }
+body[data-theme="violet"] { --blue:#8f7ee0; --blue-soft:#cfc4f5; --blue-glow:rgba(143,126,224,.34); --violet:#a78bfa; --violet-glow:rgba(167,139,250,.26); --pink:#c9a7e8; --pink-glow:rgba(201,167,232,.22); }
+body[data-theme="mint"]   { --blue:#3fae8e; --blue-soft:#b6e6d6; --blue-glow:rgba(63,174,142,.32); --violet:#6fc9b4; --violet-glow:rgba(111,201,180,.24); --pink:#a8dfc4; --pink-glow:rgba(168,223,196,.20); }
+body[data-theme="sunset"] { --blue:#e0854a; --blue-soft:#f7cfae; --blue-glow:rgba(224,133,74,.32); --violet:#e8735c; --violet-glow:rgba(232,115,92,.24); --pink:#f2b06b; --pink-glow:rgba(242,176,107,.22); }
+.theme-pop { position:fixed; top:62px; right:20px; z-index:1200; background:var(--paper-solid); border:1px solid var(--line-strong); border-radius:18px; padding:15px 18px 16px; box-shadow:var(--shadow); display:none; animation:fadeInUp .3s ease; }
+.theme-pop.open { display:block; }
+.theme-pop h4 { font-family:var(--serif); font-size:.78rem; letter-spacing:.12em; color:var(--ink-soft); margin-bottom:12px; font-weight:400; }
+.theme-dots { display:flex; gap:11px; }
+.theme-dot { width:26px; height:26px; border-radius:50%; border:2px solid transparent; cursor:pointer; transition:transform .3s ease, box-shadow .3s ease; padding:0; }
+.theme-dot:hover { transform:scale(1.18); }
+.theme-dot.active { border-color:var(--ink); box-shadow:0 0 0 3px var(--blue-glow); }
+
+/* ===== 新功能：音频频谱可视化 ===== */
+.viz-wrap { margin-top:16px; background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:12px 16px 8px; box-shadow:var(--shadow-soft); }
+.viz-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+.viz-title { font-size:.64rem; letter-spacing:.2em; color:var(--ink-faint); text-transform:uppercase; }
+.viz-mode-btn { font-family:var(--sans); font-size:.64rem; letter-spacing:.08em; padding:3px 11px; border-radius:999px; border:1px solid var(--line-strong); background:transparent; color:var(--ink-soft); cursor:pointer; transition:all .3s ease; }
+.viz-mode-btn:hover { border-color:var(--blue); color:var(--blue); box-shadow:0 0 12px var(--blue-glow); }
+#vizCanvas { width:100%; height:90px; display:block; border-radius:10px; }
+
+/* ===== 新功能：断点续播提示条 ===== */
+.resume-bar { position:fixed; left:50%; bottom:86px; z-index:998; display:flex; align-items:center; gap:12px; padding:11px 18px; border-radius:999px; background:var(--paper-solid); border:1px solid var(--line-strong); box-shadow:var(--shadow); font-size:.78rem; color:var(--ink-soft); max-width:calc(100vw - 36px); transform:translateX(-50%) translateY(150%); opacity:0; pointer-events:none; transition:transform .45s cubic-bezier(.25,.8,.25,1), opacity .35s ease; }
+.resume-bar.show { transform:translateX(-50%) translateY(0); opacity:1; pointer-events:auto; }
+.resume-bar .rb-text { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.resume-bar button { font-family:var(--sans); border:none; background:none; cursor:pointer; padding:0; }
+.resume-go { color:var(--blue); font-weight:700; font-size:.78rem; letter-spacing:.05em; }
+.resume-go:hover { text-decoration:underline; }
+.resume-close { color:var(--ink-faint); font-size:1rem; line-height:1; }
+.resume-close:hover { color:var(--ink); }
+
+/* ===== 新功能：留言表情回应 ===== */
+.msg-react { display:inline-flex; align-items:center; gap:5px; margin-top:9px; font-family:var(--sans); font-size:.7rem; padding:4px 12px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.5); color:var(--ink-faint); cursor:pointer; transition:all .25s ease; }
+.msg-react:hover { border-color:var(--pink); color:var(--pink); }
+.msg-react.on { border-color:#e0608f; color:#e0608f; background:rgba(224,96,143,.10); font-weight:700; }
+.msg-react.bump { animation:reactBump .45s ease; }
+@keyframes reactBump { 0% { transform:scale(1); } 40% { transform:scale(1.28); } 100% { transform:scale(1); } }
+
+/* ===== 新功能：加入日历 ===== */
+.venue-cal { position:absolute; top:10px; left:12px; z-index:2; font-family:var(--sans); font-size:.66rem; padding:3px 9px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.6); color:var(--ink-faint); cursor:pointer; transition:all .25s ease; }
+.venue-cal:hover { border-color:var(--blue); color:var(--blue); box-shadow:0 0 12px var(--blue-glow); }
+
+/* ===== 新功能：命令面板 Ctrl+K ===== */
+.cmdk { position:fixed; inset:0; z-index:15000; background:rgba(30,40,60,.5); backdrop-filter:blur(6px); display:none; align-items:flex-start; justify-content:center; padding:12vh 20px 20px; }
+.cmdk.open { display:flex; }
+.cmdk-box { width:100%; max-width:560px; background:var(--paper-solid); border:1px solid var(--line-strong); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; animation:fadeInUp .3s ease; }
+.cmdk-input { width:100%; border:none; outline:none; padding:18px 22px; font-family:var(--sans); font-size:.94rem; color:var(--ink); background:transparent; border-bottom:1px solid var(--line); }
+.cmdk-input::placeholder { color:var(--ink-faint); }
+.cmdk-list { max-height:52vh; overflow-y:auto; padding:8px; }
+.cmdk-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:12px; cursor:pointer; font-size:.84rem; color:var(--ink-soft); transition:background .18s ease; }
+.cmdk-item.sel { background:rgba(95,143,208,.13); color:var(--ink); }
+.cmdk-item .ci-icon { font-size:1rem; flex-shrink:0; }
+.cmdk-item .ci-text { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.cmdk-item .ci-hint { font-size:.62rem; color:var(--ink-faint); letter-spacing:.08em; flex-shrink:0; }
+.cmdk-empty { text-align:center; color:var(--ink-faint); font-size:.82rem; padding:26px 0; }
+.cmdk-foot { display:flex; gap:14px; padding:9px 20px; border-top:1px solid var(--line); font-size:.62rem; color:var(--ink-faint); letter-spacing:.06em; }
 </style>
 </head>
 <body>
@@ -440,6 +498,19 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
 <div class="bg-noise"></div>
 <div class="petal-layer" id="petalLayer"></div>
 
+<!-- 主题调色盘 -->
+<div class="theme-pop" id="themePop">
+    <h4>主题配色</h4>
+    <div class="theme-dots" id="themeDots">
+        <button class="theme-dot active" data-theme="default" style="background:linear-gradient(135deg,#5f8fd0,#9a86c8)" title="默认蓝" onclick="setTheme('default')"></button>
+        <button class="theme-dot" data-theme="ocean" style="background:linear-gradient(135deg,#3f9ec4,#8fd4c8)" title="海洋" onclick="setTheme('ocean')"></button>
+        <button class="theme-dot" data-theme="sakura" style="background:linear-gradient(135deg,#e0739f,#f2a8cf)" title="樱花" onclick="setTheme('sakura')"></button>
+        <button class="theme-dot" data-theme="violet" style="background:linear-gradient(135deg,#8f7ee0,#c9a7e8)" title="紫罗兰" onclick="setTheme('violet')"></button>
+        <button class="theme-dot" data-theme="mint" style="background:linear-gradient(135deg,#3fae8e,#a8dfc4)" title="薄荷" onclick="setTheme('mint')"></button>
+        <button class="theme-dot" data-theme="sunset" style="background:linear-gradient(135deg,#e0854a,#f2b06b)" title="日落" onclick="setTheme('sunset')"></button>
+    </div>
+</div>
+
 <header class="topbar" id="topbar">
     <div class="topbar-inner">
         <a class="brand" href="index.html" id="brandText">棍涛舞团---成员Show--蔡顺毅</a>
@@ -450,6 +521,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
                 <span class="lang-opt" id="langKo" onclick="setLang('ko')">조</span>
             </div>
             <button class="pill" id="skinBtn" onclick="toggleSkin()">可爱风</button>
+            <button class="pill" id="themeBtn" onclick="toggleThemePop(event)" title="切换主题配色">🎨</button>
             <a class="pill pill-solid" href="index.html" id="btnHome">返回主站</a>
         </div>
     </div>
@@ -500,6 +572,15 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
             <input type="range" class="pb-vol-range" id="pbVol" min="0" max="100" value="85" title="音量">
         </div>
     </div>
+
+    <!-- 音频频谱可视化 -->
+    <div class="viz-wrap">
+        <div class="viz-head">
+            <span class="viz-title">Audio Visualizer</span>
+            <button class="viz-mode-btn" id="vizModeBtn" onclick="cycleVizMode()">频谱</button>
+        </div>
+        <canvas id="vizCanvas"></canvas>
+    </div>
 </section>
 
 <!-- Folia 原版音乐空间 -->
@@ -521,7 +602,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     </div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="countdown">
     <div class="section-head">
         <p class="eyebrow">Countdown</p>
         <h2 class="sec-title" id="titleCountdown">下一场演出倒计时</h2>
@@ -540,7 +621,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     </div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="venues">
     <div class="section-head">
         <p class="eyebrow">Venues</p>
         <h2 class="sec-title" id="titleVenues">多场地演出</h2>
@@ -549,7 +630,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     <div class="venue-grid" id="venueGrid"></div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="message">
     <div class="section-head">
         <p class="eyebrow">Message</p>
         <h2 class="sec-title" id="titleMessage">留言板</h2>
@@ -566,7 +647,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     </div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="tickets">
     <div class="section-head">
         <p class="eyebrow">Tickets</p>
         <h2 class="sec-title" id="titleTickets">购票</h2>
@@ -576,7 +657,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     <div class="orders-entry"><button class="pill" id="btnOrders" onclick="openOrders()">我的订单</button></div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="verify">
     <div class="section-head">
         <p class="eyebrow">Verify</p>
         <h2 class="sec-title" id="titleVerify">校验门票</h2>
@@ -589,7 +670,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     </div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="gallery">
     <div class="section-head">
         <p class="eyebrow">Gallery</p>
         <h2 class="sec-title" id="titleGallery">现场相册</h2>
@@ -598,7 +679,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     <div class="gallery-grid" id="galleryGrid"></div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="notice">
     <div class="section-head">
         <p class="eyebrow">Notice</p>
         <h2 class="sec-title" id="titleNotice">公告栏</h2>
@@ -607,7 +688,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     <div class="notice-list" id="noticeList"></div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="quick">
     <div class="section-head">
         <p class="eyebrow">Quick Links</p>
         <h2 class="sec-title" id="titleQuick">快速跳转</h2>
@@ -633,7 +714,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     </div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="faq">
     <div class="section-head">
         <p class="eyebrow">FAQ</p>
         <h2 class="sec-title" id="titleFaq">常见问题</h2>
@@ -642,7 +723,7 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
     <div id="faqList"></div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal" id="support">
     <div class="section-head">
         <p class="eyebrow">Support</p>
         <h2 class="sec-title" id="titleSupport">应援墙</h2>
@@ -667,6 +748,22 @@ input[type=range] { accent-color:var(--blue); cursor:pointer; }
 
 <div class="scroll-progress" id="scrollProgress"></div>
 <button class="back-top" id="backTop" onclick="scrollToTop()" title="回到顶部">↑</button>
+
+<!-- 断点续播提示条 -->
+<div class="resume-bar" id="resumeBar">
+    <span class="rb-text" id="resumeText">上次听到一半，继续？</span>
+    <button class="resume-go" onclick="resumePlayback()">继续播放</button>
+    <button class="resume-close" onclick="dismissResume()" title="关闭">✕</button>
+</div>
+
+<!-- 命令面板 Ctrl+K -->
+<div class="cmdk" id="cmdk">
+    <div class="cmdk-box">
+        <input type="text" class="cmdk-input" id="cmdkInput" placeholder="搜索歌曲、跳转板块、执行操作…" autocomplete="off">
+        <div class="cmdk-list" id="cmdkList"></div>
+        <div class="cmdk-foot"><span>↑↓ 选择</span><span>Enter 执行</span><span>Esc 关闭</span></div>
+    </div>
+</div>
 
 <div class="modal-overlay" id="ordersModal">
     <div class="modal-dialog">
@@ -1049,6 +1146,7 @@ function renderVenues() {
     const cdIdx = localStorage.getItem('csy_cd_target');
     document.getElementById('venueGrid').innerHTML = scheduleData.map((s, i) =>
         `<div class="venue-card ${cdIdx !== null && parseInt(cdIdx) === i ? 'selected' : ''}" onclick="selectCdTarget(${i})" title="点击切换倒计时">
+            <button class="venue-cal" onclick="event.stopPropagation();downloadIcs(${i})" title="加入日历">📅 日历</button>
             <div class="venue-city">${s.city}</div>
             <div class="venue-name">${s.venue}</div>
             <div class="venue-date">${s.date}</div>
@@ -1206,6 +1304,391 @@ function closeOrders() {
 }
 
 /* ============================================================
+   新功能 1：主题配色切换
+   ============================================================ */
+const THEME_KEY = 'csy_theme';
+function setTheme(name, silent) {
+    if (!name || name === 'default') document.body.removeAttribute('data-theme');
+    else document.body.setAttribute('data-theme', name);
+    try { localStorage.setItem(THEME_KEY, name || 'default'); } catch (e) {}
+    document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.theme === (name || 'default')));
+    if (!silent) {
+        const pop = document.getElementById('themePop');
+        if (pop) pop.classList.remove('open');
+    }
+}
+function toggleThemePop(e) {
+    if (e) e.stopPropagation();
+    const pop = document.getElementById('themePop');
+    if (!pop) return;
+    pop.classList.toggle('open');
+    if (pop.classList.contains('open')) drawVizFrameOnce();
+}
+function initTheme() {
+    let saved = 'default';
+    try { saved = localStorage.getItem(THEME_KEY) || 'default'; } catch (e) {}
+    setTheme(saved, true);
+}
+document.addEventListener('click', (e) => {
+    const pop = document.getElementById('themePop');
+    if (!pop || !pop.classList.contains('open')) return;
+    if (pop.contains(e.target)) return;
+    if (e.target.closest && e.target.closest('#themeBtn')) return;
+    pop.classList.remove('open');
+});
+
+/* ============================================================
+   新功能 2：音频频谱可视化（频谱 / 波形 两种模式）
+   ============================================================ */
+let vizCtx = null, vizAnalyser = null, vizSource = null, vizRaf = 0, vizMode = 0;
+const VIZ_MODES = ['频谱', '波形'];
+let vizData = null;
+function initViz() {
+    const cv = document.getElementById('vizCanvas');
+    if (!cv) return;
+    resizeViz();
+    window.addEventListener('resize', resizeViz, { passive: true });
+    drawVizIdle();
+}
+function resizeViz() {
+    const cv = document.getElementById('vizCanvas');
+    if (!cv) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = cv.getBoundingClientRect();
+    cv.width = Math.max(1, Math.floor(rect.width * dpr));
+    cv.height = Math.max(1, Math.floor(rect.height * dpr));
+    const ctx = cv.getContext('2d');
+    if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (!vizAnalyser) drawVizIdle();
+}
+function connectViz() {
+    if (vizAnalyser) return true;
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return false;
+    try {
+        vizCtx = new Ctx();
+        vizSource = vizCtx.createMediaElementSource(songAudio);
+        vizAnalyser = vizCtx.createAnalyser();
+        vizAnalyser.fftSize = 256;
+        vizAnalyser.smoothingTimeConstant = 0.78;
+        vizSource.connect(vizAnalyser);
+        vizAnalyser.connect(vizCtx.destination);
+        vizData = new Uint8Array(vizAnalyser.frequencyBinCount);
+        return true;
+    } catch (e) { return false; }
+}
+function vizColors() {
+    const cs = getComputedStyle(document.body);
+    return {
+        a: (cs.getPropertyValue('--blue') || '#5f8fd0').trim() || '#5f8fd0',
+        b: (cs.getPropertyValue('--violet') || '#9a86c8').trim() || '#9a86c8',
+        c: (cs.getPropertyValue('--pink') || '#d99ac0').trim() || '#d99ac0'
+    };
+}
+function drawVizIdle() {
+    const cv = document.getElementById('vizCanvas');
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    if (!ctx) return;
+    const w = cv.clientWidth, h = cv.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    const col = vizColors();
+    ctx.strokeStyle = col.a;
+    ctx.globalAlpha = 0.22;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 4) {
+        const y = h / 2 + Math.sin((x / w) * Math.PI * 3) * (h / 7);
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+}
+function drawVizFrameOnce() { if (!vizAnalyser) drawVizIdle(); }
+function vizLoop() {
+    const cv = document.getElementById('vizCanvas');
+    if (!cv || !vizAnalyser) return;
+    const ctx = cv.getContext('2d');
+    const w = cv.clientWidth, h = cv.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    const col = vizColors();
+    const grad = ctx.createLinearGradient(0, 0, w, 0);
+    grad.addColorStop(0, col.a);
+    grad.addColorStop(0.55, col.b);
+    grad.addColorStop(1, col.c);
+    vizAnalyser.getByteFrequencyData(vizData);
+    if (vizMode === 0) {
+        const bars = 48;
+        const step = Math.floor(vizData.length / bars) || 1;
+        const bw = w / bars;
+        for (let i = 0; i < bars; i++) {
+            let v = 0;
+            for (let k = 0; k < step; k++) v = Math.max(v, vizData[i * step + k] || 0);
+            const bh = Math.max(2, (v / 255) * (h - 4));
+            const x = i * bw + bw * 0.18;
+            const bwidth = bw * 0.64;
+            ctx.fillStyle = grad;
+            const r = Math.min(3, bwidth / 2);
+            const y = h - bh;
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(x, y, bwidth, bh, [r, r, 0, 0]);
+            else ctx.rect(x, y, bwidth, bh);
+            ctx.fill();
+        }
+    } else {
+        vizAnalyser.getByteTimeDomainData(vizData);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const n = vizData.length;
+        for (let i = 0; i < n; i++) {
+            const x = (i / (n - 1)) * w;
+            const y = h / 2 + ((vizData[i] - 128) / 128) * (h / 2 - 3);
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+    vizRaf = requestAnimationFrame(vizLoop);
+}
+function startViz() {
+    if (!connectViz()) { drawVizIdle(); return; }
+    if (vizCtx && vizCtx.state === 'suspended') vizCtx.resume().catch(() => {});
+    if (!vizRaf) vizRaf = requestAnimationFrame(vizLoop);
+}
+function stopViz() {
+    if (vizRaf) { cancelAnimationFrame(vizRaf); vizRaf = 0; }
+    drawVizIdle();
+}
+function cycleVizMode() {
+    vizMode = (vizMode + 1) % VIZ_MODES.length;
+    const btn = document.getElementById('vizModeBtn');
+    if (btn) btn.textContent = VIZ_MODES[vizMode];
+}
+
+/* ============================================================
+   新功能 3：断点续播（记住上次听到哪）
+   ============================================================ */
+const RESUME_KEY = 'csy_resume';
+let resumePending = null, resumeSaveTimer = 0;
+function saveResume() {
+    if (!songAudio || !songAudio.src) return;
+    if (!songAudio.currentTime || songAudio.duration < 20) return;
+    try {
+        localStorage.setItem(RESUME_KEY, JSON.stringify({
+            i: currentIndex,
+            t: Math.floor(songAudio.currentTime),
+            at: Date.now()
+        }));
+    } catch (e) {}
+}
+function loadResume() {
+    let r = null;
+    try { r = JSON.parse(localStorage.getItem(RESUME_KEY) || 'null'); } catch (e) { return null; }
+    if (!r || typeof r.i !== 'number' || !r.t) return null;
+    if (Date.now() - (r.at || 0) > 86400000 * 7) return null;
+    if (r.t < 8) return null;
+    return r;
+}
+function showResumeBar() {
+    const r = loadResume();
+    if (!r) return;
+    const name = SONG_NAMES[r.i] || ('曲目' + (r.i + 1));
+    const el = document.getElementById('resumeText');
+    if (el) el.textContent = '上次听到「' + name + '」' + fmtTime(r.t) + '，继续？';
+    resumePending = r;
+    const bar = document.getElementById('resumeBar');
+    if (bar) setTimeout(() => bar.classList.add('show'), 1200);
+}
+function resumePlayback() {
+    const bar = document.getElementById('resumeBar');
+    if (bar) bar.classList.remove('show');
+    if (!resumePending) return;
+    const r = resumePending;
+    resumePending = null;
+    loadAndPlay(r.i);
+    const seekTo = () => {
+        try { songAudio.currentTime = r.t; } catch (e) {}
+        songAudio.removeEventListener('loadedmetadata', seekTo);
+    };
+    songAudio.addEventListener('loadedmetadata', seekTo);
+}
+function dismissResume() {
+    const bar = document.getElementById('resumeBar');
+    if (bar) bar.classList.remove('show');
+    resumePending = null;
+}
+
+/* ============================================================
+   新功能 4：留言表情回应（👍 ❤️ 😂）
+   ============================================================ */
+const REACT_EMOJIS = ['👍', '❤️', '😂'];
+function reactKey(m) { return 'r_' + (m.time || '') + '_' + (m.name || ''); }
+function getReacts() {
+    try { return JSON.parse(localStorage.getItem('csy_reacts') || '{}'); } catch (e) { return {}; }
+}
+function saveReacts(o) {
+    try { localStorage.setItem('csy_reacts', JSON.stringify(o)); } catch (e) {}
+}
+function buildReactBar(m) {
+    const all = getReacts();
+    const mine = all[reactKey(m)] || {};
+    return '<div class="msg-react-row" style="display:flex;gap:8px;flex-wrap:wrap;">'
+        + REACT_EMOJIS.map(em => {
+            const n = mine[em] || 0;
+            return '<button class="msg-react ' + (n > 0 ? 'on' : '') + '" data-em="' + em + '" onclick="toggleReact(event,this)">'
+                + em + (n > 0 ? ' <span>' + n + '</span>' : '') + '</button>';
+        }).join('')
+        + '</div>';
+}
+function toggleReact(e, btn) {
+    e.stopPropagation();
+    const item = btn.closest('.msg-item');
+    if (!item) return;
+    const m = { time: item.dataset.time || '', name: item.dataset.name || '' };
+    const em = btn.dataset.em;
+    const all = getReacts();
+    const key = reactKey(m);
+    const mine = all[key] || {};
+    mine[em] = (mine[em] || 0) + 1;
+    all[key] = mine;
+    saveReacts(all);
+    btn.classList.add('on', 'bump');
+    setTimeout(() => btn.classList.remove('bump'), 460);
+    btn.innerHTML = em + ' <span>' + mine[em] + '</span>';
+}
+
+/* ============================================================
+   新功能 5：加入日历（.ics 下载）
+   ============================================================ */
+function downloadIcs(idx) {
+    const s = scheduleData[idx];
+    if (!s) return;
+    const dt = s.date.replace(/-/g, '');
+    const uid = 'gt-' + idx + '-' + dt + '@guntaodance';
+    const summary = '棍涛舞团 · 蔡顺毅 ' + s.city + '演出';
+    const location = s.venue + ', ' + s.city;
+    const lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//GunTao Troupe//CSY Show//CN',
+        'CALSCALE:GREGORIAN',
+        'BEGIN:VEVENT',
+        'UID:' + uid,
+        'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+        'DTSTART;VALUE=DATE:' + dt,
+        'DTEND;VALUE=DATE:' + dt,
+        'SUMMARY:' + summary,
+        'LOCATION:' + location,
+        'DESCRIPTION:棍涛舞团成员蔡顺毅演出，地点：' + location,
+        'BEGIN:VALARM',
+        'TRIGGER:-P1D',
+        'ACTION:DISPLAY',
+        'DESCRIPTION:' + summary + ' 明天开演',
+        'END:VALARM',
+        'END:VEVENT',
+        'END:VCALENDAR'
+    ];
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'guntao-' + s.city + '-' + s.date + '.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+/* ============================================================
+   新功能 6：命令面板（Ctrl+K / ⌘K）
+   ============================================================ */
+let cmdkOpen = false, cmdkItems = [], cmdkSel = 0;
+function cmdkCommands() {
+    const list = [];
+    for (let i = 0; i < (isDevMode() ? 15 : 12); i++) {
+        const name = SONG_NAMES[i] || ('曲目' + (i + 1));
+        if (name === '暂未添加') continue;
+        list.push({ icon: '🎵', text: '播放 · ' + name, hint: '歌曲', run: () => selectPick(i) });
+    }
+    list.push({ icon: '⏯', text: '播放 / 暂停', hint: '空格', run: () => togglePlay() });
+    list.push({ icon: '🔀', text: '随机播放一首', hint: 'S', run: () => playRandom() });
+    list.push({ icon: '⏭', text: '下一首', hint: '→', run: () => playNext() });
+    list.push({ icon: '⏮', text: '上一首', hint: '←', run: () => playPrev() });
+    list.push({ icon: '🎨', text: '切换主题配色', hint: '外观', run: () => { cycleThemeNext(); } });
+    list.push({ icon: '🐾', text: '切换可爱风 / 清爽风', hint: '外观', run: () => toggleSkin() });
+    list.push({ icon: '📊', text: '切换可视化模式', hint: '频谱/波形', run: () => cycleVizMode() });
+    list.push({ icon: '💗', text: '为蔡顺毅应援', hint: '应援墙', run: () => addSupport() });
+    list.push({ icon: '🔄', text: '刷新留言板', hint: '云端', run: () => fetchMessages() });
+    list.push({ icon: '🎟', text: '查看我的订单', hint: '购票', run: () => openOrders() });
+    list.push({ icon: '⬆', text: '回到顶部', hint: '顶部', run: () => scrollToTop() });
+    const secs = [
+        ['点播', 'pick'], ['Folia 音乐空间', 'music-space'], ['留言板', 'message'],
+        ['购票', 'tickets'], ['现场相册', 'gallery'], ['常见问题', 'faq'], ['应援墙', 'support']
+    ];
+    secs.forEach(([label, id]) => {
+        list.push({ icon: '➡', text: '跳转到 · ' + label, hint: '板块', run: () => scrollToSection(id) });
+    });
+    return list;
+}
+function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+const THEME_ORDER = ['default', 'ocean', 'sakura', 'violet', 'mint', 'sunset'];
+function cycleThemeNext() {
+    let cur = 'default';
+    try { cur = localStorage.getItem(THEME_KEY) || 'default'; } catch (e) {}
+    const i = THEME_ORDER.indexOf(cur);
+    setTheme(THEME_ORDER[(i + 1) % THEME_ORDER.length], true);
+    if (!vizAnalyser) drawVizIdle();
+}
+function openCmdk() {
+    const el = document.getElementById('cmdk');
+    if (!el) return;
+    cmdkOpen = true;
+    el.classList.add('open');
+    const inp = document.getElementById('cmdkInput');
+    inp.value = '';
+    cmdkSel = 0;
+    renderCmdk('');
+    setTimeout(() => inp.focus(), 30);
+}
+function closeCmdk() {
+    cmdkOpen = false;
+    const el = document.getElementById('cmdk');
+    if (el) el.classList.remove('open');
+}
+function renderCmdk(q) {
+    q = (q || '').trim().toLowerCase();
+    const all = cmdkCommands();
+    cmdkItems = q ? all.filter(c => c.text.toLowerCase().includes(q) || c.hint.toLowerCase().includes(q)) : all;
+    if (cmdkSel >= cmdkItems.length) cmdkSel = 0;
+    const box = document.getElementById('cmdkList');
+    if (!box) return;
+    if (!cmdkItems.length) { box.innerHTML = '<div class="cmdk-empty">没有匹配的结果</div>'; return; }
+    box.innerHTML = cmdkItems.map((c, i) =>
+        `<div class="cmdk-item ${i === cmdkSel ? 'sel' : ''}" data-i="${i}" onclick="runCmdk(${i})">
+            <span class="ci-icon">${c.icon}</span>
+            <span class="ci-text">${escapeHtml(c.text)}</span>
+            <span class="ci-hint">${escapeHtml(c.hint)}</span>
+         </div>`
+    ).join('');
+}
+function runCmdk(i) {
+    const c = cmdkItems[i];
+    if (!c) return;
+    closeCmdk();
+    setTimeout(() => { try { c.run(); } catch (e) {} }, 60);
+}
+function cmdkMove(dir) {
+    if (!cmdkItems.length) return;
+    cmdkSel = (cmdkSel + dir + cmdkItems.length) % cmdkItems.length;
+    renderCmdk(document.getElementById('cmdkInput').value);
+    const sel = document.querySelector('.cmdk-item.sel');
+    if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
+}
+
+/* ============================================================
    通用工具：复制 & 转义 & 回到顶部
    ============================================================ */
 function copyText(txt, btn) {
@@ -1241,10 +1724,8 @@ function scrollToTop() {
 /* ============================================================
    留言板（云端优先，本地兜底）
    ============================================================ */
-let csyMessages = [];      // 内存状态：最旧在前
-function saveLocalMessages() {
-    try { localStorage.setItem('csy_messages', JSON.stringify(csyMessages)); } catch (e) {}
-}
+let csyMessages = [];      // 内存状态：最旧在前（仅作渲染缓存，不再读写 localStorage）
+let msgLoadState = 'idle'; // idle | loading | ok | fail
 function fmtMsgTime(t) {
     if (!t) return '';
     try { return new Date(t).toLocaleString('zh-CN', { hour12: false }); }
@@ -1274,35 +1755,47 @@ function renderMessages() {
     const list = document.getElementById('msgList');
     if (!list) return;
     const dict = i18n[currentLang];
+    if (msgLoadState === 'loading' && !csyMessages.length) {
+        list.innerHTML = '<div class="msg-empty">⏳ 正在从云端加载留言…</div>';
+        return;
+    }
+    if (msgLoadState === 'fail' && !csyMessages.length) {
+        list.innerHTML = '<div class="msg-empty">⚠️ 云端留言加载失败，请检查网络后点击下方按钮重试'
+            + '<br><button class="pill" style="margin-top:10px" onclick="fetchMessages()">重新加载</button></div>';
+        return;
+    }
     if (!csyMessages.length) {
         list.innerHTML = '<div class="msg-empty">' + dict.msgEmpty + '</div>';
         return;
     }
     list.innerHTML = csyMessages.slice().reverse().map(m =>
-        `<div class="msg-item">
+        `<div class="msg-item" data-time="${escapeHtml(m.time || '')}" data-name="${escapeHtml(m.name || '')}">
             <div class="msg-head"><span class="msg-name">${escapeHtml(m.name)}</span><span class="msg-time">${escapeHtml(fmtMsgTime(m.time))}</span></div>
             <div class="msg-text">${escapeHtml(m.text)}</div>
             ${buildMsgMeta(m)}
+            ${buildReactBar(m)}
          </div>`
     ).join('');
 }
+/* 留言只从云端读取，不再合并 localStorage —— 后台改过的内容能立刻生效 */
 async function fetchMessages() {
-    if (!API_BASE) return;
+    msgLoadState = 'loading';
+    renderMessages();
+    if (!API_BASE) { msgLoadState = 'fail'; renderMessages(); return; }
     try {
-        const res = await fetch(API_BASE + '/api/messages');
-        if (!res.ok) return;
+        const res = await fetch(API_BASE + '/api/messages?_=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
-        if (data && data.ok && Array.isArray(data.messages)) {
-            const server = data.messages.slice().reverse(); // 服务器新→旧，转为旧→新
-            // 合并：保留本地有、服务器暂时还没同步的留言（如刚提交、KV尚未生效的）
-            const serverKeys = {};
-            server.forEach(m => { serverKeys[m.time + '|' + m.text] = true; });
-            const onlyLocal = csyMessages.filter(m => !serverKeys[m.time + '|' + m.text]);
-            csyMessages = server.concat(onlyLocal);
-            saveLocalMessages();
-            renderMessages();
-        }
-    } catch (e) { /* 服务器不可达：继续用本地数据 */ }
+        if (!data || !data.ok || !Array.isArray(data.messages)) throw new Error('bad payload');
+        csyMessages = data.messages.slice().reverse(); // 服务器新→旧，转为旧→新
+        msgLoadState = 'ok';
+        // 顺手清掉历史遗留的本地留言缓存，避免以后又被旧数据干扰
+        try { localStorage.removeItem('csy_messages'); } catch (e) {}
+        renderMessages();
+    } catch (e) {
+        msgLoadState = 'fail';
+        renderMessages();
+    }
 }
 async function submitMsg() {
     const nameEl = document.getElementById('msgName');
@@ -1311,24 +1804,24 @@ async function submitMsg() {
     const name = nameEl.value.trim() || dict.msgAnon;
     const text = textEl.value.trim();
     if (!text) { textEl.focus(); return; }
+    if (!API_BASE) { alert('云端服务未配置，暂时无法发布留言'); return; }
 
-    const msg = { name, text, time: new Date().toISOString(), device: deviceCodeOf(navigator.userAgent) };
-    csyMessages.push(msg);
-    if (csyMessages.length > 100) csyMessages.shift();
-    saveLocalMessages();
-    renderMessages();
-    nameEl.value = '';
-    textEl.value = '';
-
-    if (API_BASE) {
-        try {
-            const res = await fetch(API_BASE + '/api/messages', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, text })
-            });
-            if (res.ok) await fetchMessages();
-        } catch (e) { /* 上传失败：留言仍保留在本地 */ }
+    const btn = document.getElementById('msgSubmitBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '发布中…'; }
+    try {
+        const res = await fetch(API_BASE + '/api/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, text })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        nameEl.value = '';
+        textEl.value = '';
+        await fetchMessages(); // 发完立刻以云端为准刷新
+    } catch (e) {
+        alert('留言发布失败，请稍后重试');
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = dict.msgSubmit || '发布留言'; }
     }
 }
 
@@ -1824,9 +2317,12 @@ function closeAudioModal() {
 // 初始化
 window.addEventListener('DOMContentLoaded', () => {
     checkDevice();
-    try { csyMessages = JSON.parse(localStorage.getItem('csy_messages') || '[]'); } catch (e) { csyMessages = []; }
+    csyMessages = []; // 留言一律从云端拉取，不再读本地缓存
+    try { localStorage.removeItem('csy_messages'); } catch (e) {}
     csySupportCount = parseInt(localStorage.getItem('csy_support') || '0');
     setLang('zh');
+    initTheme();
+    initViz();
     renderGallery();
     if (API_BASE) document.getElementById('msgCloudHint').classList.remove('hidden');
     renderMessages();
@@ -1836,6 +2332,31 @@ window.addEventListener('DOMContentLoaded', () => {
     tickCountdown();
     setInterval(tickCountdown, 1000);
     setTimeout(tryPlayBgm, 300);
+    showResumeBar();
+
+    // 断点续播：定时保存进度
+    songAudio.addEventListener('timeupdate', () => {
+        if (Date.now() - resumeSaveTimer < 4000) return;
+        resumeSaveTimer = Date.now();
+        saveResume();
+    });
+    songAudio.addEventListener('play', () => { startViz(); });
+    songAudio.addEventListener('pause', () => { stopViz(); });
+    songAudio.addEventListener('ended', () => { stopViz(); });
+
+    // 命令面板输入
+    const cmdInp = document.getElementById('cmdkInput');
+    if (cmdInp) {
+        cmdInp.addEventListener('input', () => { cmdkSel = 0; renderCmdk(cmdInp.value); });
+        cmdInp.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') { e.preventDefault(); cmdkMove(1); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); cmdkMove(-1); }
+            else if (e.key === 'Enter') { e.preventDefault(); runCmdk(cmdkSel); }
+            else if (e.key === 'Escape') { e.preventDefault(); closeCmdk(); }
+        });
+    }
+    const cmdkEl = document.getElementById('cmdk');
+    if (cmdkEl) cmdkEl.addEventListener('click', (e) => { if (e.target === cmdkEl) closeCmdk(); });
 
     window.addEventListener('scroll', () => {
         const y = window.scrollY;
@@ -1873,6 +2394,16 @@ document.getElementById('imgModal').addEventListener('click', function(e) {
    键盘快捷键：空格=播放/暂停，←/→=切歌，S=随机
    ============================================================ */
 document.addEventListener('keydown', (e) => {
+    // 命令面板：Ctrl+K / ⌘K
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        cmdkOpen ? closeCmdk() : openCmdk();
+        return;
+    }
+    if (cmdkOpen) {
+        if (e.key === 'Escape') { e.preventDefault(); closeCmdk(); }
+        return;
+    }
     const tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea') return;
     if (document.querySelector('.modal-overlay.active') || document.querySelector('.secret-modal.active') || document.getElementById('koreaFull').classList.contains('active')) return;
@@ -1881,6 +2412,7 @@ document.addEventListener('keydown', (e) => {
     else if (e.code === 'ArrowRight') { playNext(); }
     else if (e.code === 'ArrowLeft') { playPrev(); }
     else if (e.code === 'KeyS') { playRandom(); }
+    else if (e.code === 'Slash') { e.preventDefault(); openCmdk(); }
 });
 </script>
 </body>
