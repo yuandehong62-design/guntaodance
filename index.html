@@ -3914,7 +3914,7 @@ document.addEventListener('keydown', (e) => {
         var ver = iosVer[1] ? (iosVer[1] + '.' + iosVer[2]) : '';
         var device = os;
         if (os === 'iPhone' && ver) device = 'iPhone iOS ' + ver;
-        fetch('https://funthing.me/api/visit', {
+        fetch('https://funthing-pages.pages.dev/api/visit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
