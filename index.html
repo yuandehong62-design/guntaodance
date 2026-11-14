@@ -3899,5 +3899,33 @@ document.addEventListener('keydown', (e) => {
     else if (e.code === 'Slash') { e.preventDefault(); openCmdk(); }
 });
 </script>
+<script>
+// 访问统计上报 → 导航页后台（funthing.me/admin 的访问统计）
+(function(){
+    try {
+        var ua = navigator.userAgent || '';
+        var os = '未知';
+        if (/iPhone|iPad|iPod/.test(ua)) { os = 'iPhone'; }
+        else if (/Android/.test(ua)) { os = 'Android'; }
+        else if (/Windows/.test(ua)) { os = 'Windows'; }
+        else if (/Macintosh|Mac OS X/.test(ua)) { os = 'Mac'; }
+        else if (/Linux/.test(ua)) { os = 'Linux'; }
+        var iosVer = (ua.match(/OS (\d+)[_.](\d+)/) || []);
+        var ver = iosVer[1] ? (iosVer[1] + '.' + iosVer[2]) : '';
+        var device = os;
+        if (os === 'iPhone' && ver) device = 'iPhone iOS ' + ver;
+        fetch('https://funthing.me/api/visit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                site: 'guntaodance.cc.cd',
+                device: device,
+                path: location.pathname,
+                referer: document.referrer || ''
+            })
+        }).catch(function(){});
+    } catch (e) {}
+})();
+</script>
 </body>
 </html>
