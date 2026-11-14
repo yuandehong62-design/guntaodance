@@ -62,7 +62,9 @@ export async function onRequest(context) {
         model: AI_MODEL,
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.6,
-        max_tokens: 2048,
+        max_tokens: 4096,
+        // 关键：关闭推理（此模型默认把 token 花在内部思考上，导致 content 为空）
+        reasoning_effort: 'none',
       }),
     });
 
@@ -73,7 +75,9 @@ export async function onRequest(context) {
     }
 
     const data = await r.json();
-    const content = (data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
+    // 兼容不同模型返回结构：优先 content，其次 reasoning（有些模型把文本放 reasoning）
+    const msg = (data && data.choices && data.choices[0] && data.choices[0].message) || {};
+    const content = (msg.content || '').trim();
     if (!content) return json({ ok: false, error: 'AI 返回为空' }, 502);
 
     return json({ ok: true, content });
