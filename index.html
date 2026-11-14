@@ -655,6 +655,20 @@ body[data-dark="true"] .toolbox { background:var(--paper-solid); }
 .chk-day.on .chk-d { color:var(--blue); }
 .chk-w { font-size:.62rem; color:var(--ink-faint); margin-top:2px; }
 .chk-total { font-size:.7rem; color:var(--ink-faint); text-align:center; margin-top:12px; letter-spacing:.05em; }
+
+/* ===== 客户端下载 ===== */
+.dl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; max-width:820px; margin:0 auto; }
+.dl-card { position:relative; display:flex; flex-direction:column; align-items:center; gap:10px; padding:28px 20px 24px; background:var(--paper); border:1px solid var(--line); border-radius:20px; text-decoration:none; color:var(--ink); cursor:pointer; overflow:hidden; transition:transform .3s ease, border-color .3s ease, box-shadow .3s ease, background .3s ease; }
+.dl-card:hover { transform:translateY(-5px); border-color:var(--blue); box-shadow:0 0 28px var(--blue-glow); background:rgba(95,143,208,0.07); }
+.dl-icon { width:64px; height:64px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:2rem; color:#fff; box-shadow:0 8px 20px rgba(0,0,0,.14); }
+.dl-icon.win { background:linear-gradient(135deg,#3b82c4,#1f6fb2); }
+.dl-icon.and { background:linear-gradient(135deg,#52c97c,#2aa75c); }
+.dl-icon.mac { background:linear-gradient(135deg,#7f8ba3,#4c5568); }
+.dl-name { font-family:var(--serif); font-size:1.02rem; letter-spacing:.06em; }
+.dl-desc { font-size:.72rem; color:var(--ink-faint); letter-spacing:.06em; }
+.dl-size { font-size:.68rem; color:var(--ink-soft); padding:4px 14px; border:1px solid var(--line-strong); border-radius:999px; letter-spacing:.05em; }
+.dl-tip { font-size:.7rem; color:var(--ink-faint); text-align:center; margin-top:16px; letter-spacing:.06em; }
+@media (max-width:640px) { .dl-grid { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -914,6 +928,35 @@ body[data-dark="true"] .toolbox { background:var(--paper-solid); }
     </div>
 </section>
 
+<section class="section reveal" id="download">
+    <div class="section-head">
+        <p class="eyebrow">Download</p>
+        <h2 class="sec-title" id="titleDownload">客户端下载</h2>
+        <hr class="hair">
+    </div>
+    <div class="dl-grid">
+        <a class="dl-card" href="GuntaoDance-Windows.exe" download="棍涛舞团-Windows.exe">
+            <span class="dl-icon win">🪟</span>
+            <span class="dl-name">Windows 端</span>
+            <span class="dl-desc">Windows 7 / 10 / 11</span>
+            <span class="dl-size">.exe · 4.3 MB</span>
+        </a>
+        <a class="dl-card" href="GuntaoDance-Android.apk" download="棍涛舞团-Android.apk">
+            <span class="dl-icon and">🤖</span>
+            <span class="dl-name">Android 端</span>
+            <span class="dl-desc">Android 5.0 及以上</span>
+            <span class="dl-size">.apk · 2.5 MB</span>
+        </a>
+        <a class="dl-card" href="GuntaoDance-macOS.dmg" download="棍涛舞团-macOS.dmg">
+            <span class="dl-icon mac">🍎</span>
+            <span class="dl-name">macOS 端</span>
+            <span class="dl-desc">macOS 10.13 及以上</span>
+            <span class="dl-size">.dmg · 8.6 MB</span>
+        </a>
+    </div>
+    <p class="dl-tip" id="dlTip">点击即可下载安装包 · 本地文件无需服务器</p>
+</section>
+
 <section class="section reveal" id="faq">
     <div class="section-head">
         <p class="eyebrow">FAQ</p>
@@ -1139,6 +1182,7 @@ const i18n = {
         titleGallery: '现场相册',
         titleNotice: '公告栏',
         titleQuick: '快速跳转',
+        titleDownload: '客户端下载', dlTip: '点击即可下载安装包 · 本地文件无需服务器',
         titleFaq: '常见问题',
         btnVerify: '核 对',
         inputPlaceholder: '请输入校验码',
@@ -1177,6 +1221,7 @@ const i18n = {
         titleGallery: 'ライブフォト',
         titleNotice: 'お知らせ',
         titleQuick: 'クイックリンク',
+        titleDownload: 'クライアントダウンロード', dlTip: 'クリックでインストーラをダウンロード',
         titleFaq: 'よくある質問',
         btnVerify: '認 証',
         inputPlaceholder: '認証コードを入力',
@@ -1215,6 +1260,7 @@ const i18n = {
         titleGallery: '현장 사진',
         titleNotice: '공지사항',
         titleQuick: '바로가기',
+        titleDownload: '클라이언트 다운로드', dlTip: '클릭하여 설치 파일을 다운로드',
         titleFaq: '자주 묻는 질문',
         btnVerify: '인 증',
         inputPlaceholder: '인증 코드를 입력하세요',
@@ -1333,6 +1379,8 @@ function setLang(lang) {
     document.getElementById('titleGallery').textContent = dict.titleGallery;
     document.getElementById('titleNotice').textContent = dict.titleNotice;
     document.getElementById('titleQuick').textContent = dict.titleQuick;
+    document.getElementById('titleDownload').textContent = dict.titleDownload;
+    document.getElementById('dlTip').textContent = dict.dlTip;
     document.getElementById('titleFaq').textContent = dict.titleFaq;
     document.getElementById('btnVerify').textContent = dict.btnVerify;
     document.getElementById('verifyInput').placeholder = dict.inputPlaceholder;
