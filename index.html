@@ -2382,15 +2382,12 @@ function parseLRC(lrcText) {
 /* ============================================================
    AI 歌词识别/生成（商汤 SenseNova，OpenAI 兼容 chat/completions）
    ------------------------------------------------------------
-   - 前端直接调用 token.sensenova.cn，本地打开即可用，无需上传。
-   - U1 Fast 是文生图模型（不能对话），这里走对话模型 deepseek-v4-flash。
-   - 纯前端直连：接口若需 CORS 或代理，会在错误里提示。
-   - 识别目标：把当前歌曲 mp3 的内容转写成带时间轴的歌词。
+   - 通过 Pages Function 服务端代理 /api/ai-lyrics 调用，避开浏览器 CORS 预检。
+   - 使用对话模型 sensenova-6.8-flash-lite 生成带时间轴的 LRC 歌词。
+   - AI Key 只存服务端，前端不再内联密钥。
+   - 无音频转写能力时，退化为「根据歌名/歌手生成歌词」。
      （没有音频转写能力时，退化为「根据歌名/歌手生成歌词」并做纯歌词显示。）
    ============================================================ */
-const AI_API_KEY = 'sk-MJWr35l77exhpEW3bNb6x2eosbRxFY9M';
-const AI_BASE_URL = 'https://token.sensenova.cn/v1';
-const AI_MODEL = 'sensenova-6.8-flash-lite'; // SenseNova 6.8 Flash Lite 对话模型
 const AI_LYRICS_KEY = 'csy_ai_lyrics'; // 缓存：{ key, lrc, fetchedAt }
 
 function aiCacheKey() {
@@ -2402,7 +2399,6 @@ async function aiFetchLyrics() {
     const listEl = document.getElementById('lyricsList');
     const name = trackName(currentIndex);
     const artist = trackArtist(currentIndex);
-    const dict = i18n[currentLang];
 
     // 缓存命中
     try {
@@ -2416,39 +2412,20 @@ async function aiFetchLyrics() {
     if (btn) { btn.classList.add('loading'); btn.textContent = '识别中…'; }
     listEl.innerHTML = '<div class="lyric-line active">🤖 正在调用 AI 识别歌词…</div>';
 
-    const prompt = [
-        '你是一名专业的歌词转写助手。',
-        '请为歌曲《' + name + '》' + (artist ? '（演唱者：' + artist + '）' : '') + '输出完整歌词，',
-        '并严格按 LRC 歌词格式逐行输出，每行形如 [mm:ss.xx] 歌词文本。',
-        '时间轴要均匀分布（约每行 3~6 秒），尽量贴合原曲演唱顺序。',
-        '只输出 LRC 内容本身，不要任何解释、标题、代码块标记。',
-        '若不确定具体歌词，请根据歌名与风格生成通顺、贴合意境的歌词，仍按 LRC 格式输出。'
-    ].join('');
-
     try {
-        const res = await fetch(AI_BASE_URL + '/chat/completions', {
+        const res = await fetch(API_BASE + '/api/ai-lyrics', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + AI_API_KEY
-            },
-            body: JSON.stringify({
-                model: AI_MODEL,
-                messages: [{ role: 'user', content: prompt }],
-                temperature: 0.6,
-                max_tokens: 2048
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, artist })
         });
         if (!res.ok) {
             let detail = 'HTTP ' + res.status;
-            try { const j = await res.json(); detail = (j && (j.error && j.error.message || j.message)) || detail; } catch (e) {}
+            try { const j = await res.json(); detail = (j && (j.error && j.error.message || j.error)) || detail; } catch (e) {}
             throw new Error(detail);
         }
         const data = await res.json();
-        let content = '';
-        try {
-            content = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
-        } catch (e) {}
+        if (!data.ok) throw new Error(data.error || 'AI 返回异常');
+        const content = data.content;
         if (!content) throw new Error('AI 返回为空');
 
         const lrc = parseLRC(content);
